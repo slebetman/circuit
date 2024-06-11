@@ -1,5 +1,18 @@
-import { memo, FC, useState, FormEvent, KeyboardEvent } from "react";
+import {
+  memo,
+  FC,
+  useState,
+  FormEvent,
+  KeyboardEvent,
+  CSSProperties,
+} from "react";
 import { NodeProps } from "reactflow";
+
+const textStyle: CSSProperties = {
+  fontSize: "10px",
+  width: "20rem",
+  height: "5rem",
+};
 
 const CommentNode: FC<NodeProps> = ({ data }) => {
   const [editmode, setEditmode] = useState(false);
@@ -9,25 +22,18 @@ const CommentNode: FC<NodeProps> = ({ data }) => {
     setEditmode(true);
   };
 
-  const handleCommentInput = (e: FormEvent<HTMLInputElement>) => {
+  const handleCommentInput = (e: FormEvent<HTMLTextAreaElement>) => {
     setComment(e.currentTarget.value);
-  };
-
-  const handleCommentKey = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === "Enter") {
-      setEditmode(false);
-    }
   };
 
   return (
     <>
       {editmode ? (
-        <input
-          type="text"
+        <textarea
           value={comment}
           onChange={handleCommentInput}
-          onKeyUp={handleCommentKey}
           onBlur={() => setEditmode(false)}
+          style={textStyle}
         />
       ) : (
         <div onDoubleClick={handleCommentClick}>{comment}</div>

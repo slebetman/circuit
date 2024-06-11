@@ -16,4 +16,5 @@
   font-style: italic;
   background-color: #ffa;
   padding: 2px 5px;
+  white-space: pre-wrap;
 }
