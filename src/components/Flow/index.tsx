@@ -1,6 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
-  Node,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -15,44 +14,11 @@ import CommentNode from "./CommentNode";
 
 import styles from "./Flow.module.css";
 import Code from "components/Icons/Code";
-
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "input",
-    data: { label: "Node 1" },
-    position: { x: 250, y: 5 },
-  },
-  {
-    id: "2",
-    data: { label: "Node 2" },
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: "3",
-    data: { label: "Node 3" },
-    position: { x: 400, y: 100 },
-  },
-  {
-    id: "4",
-    data: { label: "Node 4" },
-    position: { x: 400, y: 200 },
-    type: "custom",
-    className: styles.customNode,
-  },
-  {
-    id: "5",
-    data: { label: "This is a comment" },
-    position: { x: 10, y: 0 },
-    type: "comment",
-    className: styles.commentNode,
-  },
-];
-
-const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2" },
-  { id: "e1-3", source: "1", target: "3" },
-];
+import FloppyDisk from "components/Icons/FloppyDisk";
+import FolderOpen from "components/Icons/FolderOpen";
+import useChart from "components/hooks/useChart";
+import FilePicker from "components/FilePicker/FilePicker";
+import SaveDialog from "components/SaveDialog/SaveDialog";
 
 const nodeTypes = {
   custom: CustomNode,
@@ -60,20 +26,92 @@ const nodeTypes = {
 };
 
 const defaultEdgeOptions = {
-  animated: true,
   type: "smoothstep",
 };
 
 function Flow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [mode, setMode] = useState<"open" | "save" | "chart">("chart");
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
-  return (
+  const chart = useChart();
+
+  const handleSaveDialog = () => {
+    setMode("save");
+  };
+
+  const handleSave = (name: string) => {
+    if (!name?.match(/.json$/)) {
+      name += ".json";
+    }
+
+    if (name) {
+      chart.setName(name);
+      chart.save({
+        nodes,
+        edges,
+      });
+    }
+
+    setMode("chart");
+  };
+
+  const handleOpenFolder = () => {
+    setMode("open");
+  };
+
+  const handleSelectFile = (f: string) => {
+    chart.load(f);
+    setMode("chart");
+  };
+
+  useEffect(() => {
+    if (chart.chart) {
+      setNodes(chart.chart.nodes);
+      setEdges(chart.chart.edges);
+    }
+  }, [chart.chart]);
+
+  const renderChart = () => (
     <div className={styles.flow}>
+      <div
+        style={{
+          position: "fixed",
+        }}
+      >
+        Chart: {chart.name}
+      </div>
+      {chart.error ? (
+        <div
+          style={{
+            position: "absolute",
+            top: "45vh",
+            textAlign: "center",
+            width: "100%",
+            zIndex: "9999999",
+          }}
+        >
+          <span
+            style={{
+              padding: "10px",
+              backgroundColor: "#f66",
+            }}
+          >
+            Error: {chart.error.message} &nbsp;
+            <button
+              onClick={() => {
+                chart.clearError();
+              }}
+            >
+              x
+            </button>
+          </span>
+        </div>
+      ) : null}
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -86,13 +124,43 @@ function Flow() {
         fitView
       >
         <Controls>
-          <ControlButton onClick={() => console.log("Nodes", nodes)}>
+          <ControlButton
+            title="dump nodes"
+            onClick={() => console.log("Nodes", nodes)}
+          >
             <Code />
+          </ControlButton>
+          <ControlButton title="save chart" onClick={handleSaveDialog}>
+            <FloppyDisk />
+          </ControlButton>
+          <ControlButton title="open chart" onClick={handleOpenFolder}>
+            <FolderOpen />
           </ControlButton>
         </Controls>
       </ReactFlow>
     </div>
   );
+
+  const renderFilePicker = () => (
+    <FilePicker onSelect={handleSelectFile} onCancel={() => setMode("chart")} />
+  );
+
+  const renderSaveDialog = () => (
+    <SaveDialog
+      name={chart.name}
+      onSubmit={handleSave}
+      onCancel={() => setMode("chart")}
+    />
+  );
+
+  switch (mode) {
+    case "open":
+      return renderFilePicker();
+    case "save":
+      return renderSaveDialog();
+    default:
+      return renderChart();
+  }
 }
 
 export default Flow;

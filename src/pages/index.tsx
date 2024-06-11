@@ -1,9 +1,9 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
+import type { NextPage } from "next";
+import Head from "next/head";
 
-import Flow from 'components/Flow';
+import Flow from "components/Flow";
 
-import styles from '../styles/Home.module.css';
+import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   return (
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <header className={styles.header}>React Flow - Next.js Example</header>
+      {/* <header className={styles.header}>React Flow - Next.js Example</header> */}
       <Flow />
     </div>
   );
