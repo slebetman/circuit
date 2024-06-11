@@ -1,11 +1,4 @@
-import {
-  memo,
-  FC,
-  useState,
-  FormEvent,
-  KeyboardEvent,
-  CSSProperties,
-} from "react";
+import { memo, FC, useState, FormEvent, CSSProperties } from "react";
 import { NodeProps } from "reactflow";
 
 const textStyle: CSSProperties = {

@@ -7,11 +7,14 @@ import ReactFlow, {
   Connection,
   Edge,
   ConnectionLineType,
+  Controls,
+  ControlButton,
 } from "reactflow";
 import CustomNode from "./CustomNode";
 import CommentNode from "./CommentNode";
 
 import styles from "./Flow.module.css";
+import Code from "components/Icons/Code";
 
 const initialNodes: Node[] = [
   {
@@ -81,7 +84,13 @@ function Flow() {
         defaultEdgeOptions={defaultEdgeOptions}
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
-      />
+      >
+        <Controls>
+          <ControlButton onClick={() => console.log("Nodes", nodes)}>
+            <Code />
+          </ControlButton>
+        </Controls>
+      </ReactFlow>
     </div>
   );
 }
