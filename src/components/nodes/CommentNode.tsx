@@ -1,14 +1,5 @@
-import { Chart } from "../hooks/useChart";
-import {
-  memo,
-  FC,
-  useState,
-  FormEvent,
-  CSSProperties,
-  useCallback,
-  useEffect,
-} from "react";
-import { NodeProps, Node, useOnSelectionChange } from "reactflow";
+import { memo, FC, useState, FormEvent, CSSProperties, useEffect } from "react";
+import { NodeProps } from "reactflow";
 
 const commentFont: CSSProperties = {
   fontFamily: "monospace",
@@ -30,11 +21,6 @@ const nodeStyle: CSSProperties = {
   padding: "2px 5px",
 };
 
-const nodeSelectedStyle: CSSProperties = {
-  ...nodeStyle,
-  border: "1px solid black",
-};
-
 const editStyle: CSSProperties = {
   border: "1px solid #ccc",
   display: "flex",
@@ -44,22 +30,6 @@ const editStyle: CSSProperties = {
 const CommentNode: FC<NodeProps> = ({ data, id }) => {
   const [editmode, setEditmode] = useState(false);
   const [comment, setComment] = useState(data.label);
-  const [isSelected, setIsSelected] = useState(false);
-
-  const onSelect = useCallback(
-    (c: Chart) => {
-      const myself = c.nodes.find((x: Node) => x.id === id);
-
-      if (myself) {
-        setIsSelected(true);
-      } else {
-        setIsSelected(false);
-      }
-    },
-    [id]
-  );
-
-  useOnSelectionChange({ onChange: onSelect });
 
   const handleCommentClick = () => {
     setEditmode(true);
@@ -86,10 +56,7 @@ const CommentNode: FC<NodeProps> = ({ data, id }) => {
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
       ) : (
-        <div
-          onDoubleClick={handleCommentClick}
-          style={isSelected ? nodeSelectedStyle : nodeStyle}
-        >
+        <div onDoubleClick={handleCommentClick} style={nodeStyle}>
           {comment}
         </div>
       )}
