@@ -1,4 +1,3 @@
-
 import Not from "components/Icons/Not";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
