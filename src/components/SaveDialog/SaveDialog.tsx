@@ -13,9 +13,14 @@ const SaveDialog = ({ name, onSubmit, onCancel }: SaveDialogProps) => {
     <div
       style={{
         border: "1px solid #ccc",
-        margin: "50px auto",
         borderRadius: "10px",
         overflow: "hidden",
+        position: "absolute",
+        width: "400px",
+        top: "10vh",
+        left: "calc(50vw - 200px)",
+        background: "#fff",
+        boxShadow: "3px 3px 15px #999",
       }}
     >
       <div

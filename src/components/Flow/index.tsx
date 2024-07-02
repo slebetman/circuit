@@ -9,8 +9,6 @@ import ReactFlow, {
   Controls,
   ControlButton,
 } from "reactflow";
-import CustomNode from "../nodes/CustomNode";
-import CommentNode from "../nodes/CommentNode";
 
 import styles from "./Flow.module.css";
 import Code from "components/Icons/Code";
@@ -19,11 +17,7 @@ import FolderOpen from "components/Icons/FolderOpen";
 import useChart from "components/hooks/useChart";
 import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
-
-const nodeTypes = {
-  custom: CustomNode,
-  comment: CommentNode,
-};
+import nodeTypes from "components/nodes";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -81,8 +75,8 @@ function Flow() {
     }
   }, [chart.chart]);
 
-  const renderChart = () => {
-    return (
+  return (
+    <>
       <div className={styles.flow}>
         <div
           style={{
@@ -145,29 +139,21 @@ function Flow() {
           </Controls>
         </ReactFlow>
       </div>
-    );
-  };
-
-  const renderFilePicker = () => (
-    <FilePicker onSelect={handleSelectFile} onCancel={() => setMode("chart")} />
+      {mode === "open" && (
+        <FilePicker
+          onSelect={handleSelectFile}
+          onCancel={() => setMode("chart")}
+        />
+      )}
+      {mode === "save" && (
+        <SaveDialog
+          name={chart.name}
+          onSubmit={handleSave}
+          onCancel={() => setMode("chart")}
+        />
+      )}
+    </>
   );
-
-  const renderSaveDialog = () => (
-    <SaveDialog
-      name={chart.name}
-      onSubmit={handleSave}
-      onCancel={() => setMode("chart")}
-    />
-  );
-
-  switch (mode) {
-    case "open":
-      return renderFilePicker();
-    case "save":
-      return renderSaveDialog();
-    default:
-      return renderChart();
-  }
 }
 
 export default Flow;
