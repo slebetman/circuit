@@ -1,15 +1,8 @@
 import Or from "components/Icons/Or";
-import { memo, FC, CSSProperties } from "react";
+import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const nodeStyle: CSSProperties = {
-  border: "1px solid #000",
-  backgroundColor: "#fff",
-  padding: "2px 5px",
-  height: "20px",
-};
-
-const OrGate: FC<NodeProps> = ({ data, id }) => {
+const OrGate: FC<NodeProps> = () => {
   return (
     <>
       <Handle
