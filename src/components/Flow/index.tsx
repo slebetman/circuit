@@ -9,8 +9,8 @@ import ReactFlow, {
   Controls,
   ControlButton,
 } from "reactflow";
-import CustomNode from "./CustomNode";
-import CommentNode from "./CommentNode";
+import CustomNode from "../nodes/CustomNode";
+import CommentNode from "../nodes/CommentNode";
 
 import styles from "./Flow.module.css";
 import Code from "components/Icons/Code";
@@ -71,75 +71,82 @@ function Flow() {
 
   useEffect(() => {
     if (chart.chart) {
-      setNodes(chart.chart.nodes);
-      setEdges(chart.chart.edges);
+      // HACK: Not sure why but need some delay to set nodes
+      setNodes([]);
+      setEdges([]);
+      setTimeout(() => {
+        setNodes(chart?.chart?.nodes || []);
+        setEdges(chart?.chart?.edges || []);
+      }, 0);
     }
   }, [chart.chart]);
 
-  const renderChart = () => (
-    <div className={styles.flow}>
-      <div
-        style={{
-          position: "fixed",
-        }}
-      >
-        Chart: {chart.name}
-      </div>
-      {chart.error ? (
+  const renderChart = () => {
+    return (
+      <div className={styles.flow}>
         <div
           style={{
-            position: "absolute",
-            top: "45vh",
-            textAlign: "center",
-            width: "100%",
-            zIndex: "9999999",
+            position: "fixed",
           }}
         >
-          <span
+          Chart: {chart.name}
+        </div>
+        {chart.error ? (
+          <div
             style={{
-              padding: "10px",
-              backgroundColor: "#f66",
+              position: "absolute",
+              top: "45vh",
+              textAlign: "center",
+              width: "100%",
+              zIndex: "9999999",
             }}
           >
-            Error: {chart.error.message} &nbsp;
-            <button
-              onClick={() => {
-                chart.clearError();
+            <span
+              style={{
+                padding: "10px",
+                backgroundColor: "#f66",
               }}
             >
-              x
-            </button>
-          </span>
-        </div>
-      ) : null}
-      <ReactFlow
-        nodes={nodes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        defaultEdgeOptions={defaultEdgeOptions}
-        connectionLineType={ConnectionLineType.SmoothStep}
-        fitView
-      >
-        <Controls>
-          <ControlButton
-            title="dump nodes"
-            onClick={() => console.log("Nodes", nodes)}
-          >
-            <Code />
-          </ControlButton>
-          <ControlButton title="save chart" onClick={handleSaveDialog}>
-            <FloppyDisk />
-          </ControlButton>
-          <ControlButton title="open chart" onClick={handleOpenFolder}>
-            <FolderOpen />
-          </ControlButton>
-        </Controls>
-      </ReactFlow>
-    </div>
-  );
+              Error: {chart.error.message} &nbsp;
+              <button
+                onClick={() => {
+                  chart.clearError();
+                }}
+              >
+                x
+              </button>
+            </span>
+          </div>
+        ) : null}
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          fitView
+        >
+          <Controls>
+            <ControlButton
+              title="dump nodes"
+              onClick={() => console.log("Nodes", nodes)}
+            >
+              <Code />
+            </ControlButton>
+            <ControlButton title="save chart" onClick={handleSaveDialog}>
+              <FloppyDisk />
+            </ControlButton>
+            <ControlButton title="open chart" onClick={handleOpenFolder}>
+              <FolderOpen />
+            </ControlButton>
+          </Controls>
+        </ReactFlow>
+      </div>
+    );
+  };
 
   const renderFilePicker = () => (
     <FilePicker onSelect={handleSelectFile} onCancel={() => setMode("chart")} />

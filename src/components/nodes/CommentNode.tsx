@@ -1,4 +1,4 @@
-import { Chart } from "components/hooks/useChart";
+import { Chart } from "../hooks/useChart";
 import {
   memo,
   FC,
@@ -8,26 +8,37 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { NodeProps, Node, useOnSelectionChange, useReactFlow } from "reactflow";
+import { NodeProps, Node, useOnSelectionChange } from "reactflow";
+
+const commentFont: CSSProperties = {
+  fontFamily: "monospace",
+  fontSize: "10px",
+  fontStyle: "italic",
+  whiteSpace: "pre-wrap",
+};
 
 const textStyle: CSSProperties = {
-  fontSize: "10px",
+  ...commentFont,
   width: "20rem",
   height: "5rem",
 };
 
 const nodeStyle: CSSProperties = {
-  border: "none",
-  fontSize: "10px",
-  fontStyle: "italic",
+  ...commentFont,
+  border: "1px solid #ffa",
   backgroundColor: "#ffa",
   padding: "2px 5px",
-  whiteSpace: "pre-wrap",
 };
 
 const nodeSelectedStyle: CSSProperties = {
   ...nodeStyle,
-  border: "2px solid black",
+  border: "1px solid black",
+};
+
+const editStyle: CSSProperties = {
+  border: "1px solid #ccc",
+  display: "flex",
+  flexDirection: "column",
 };
 
 const CommentNode: FC<NodeProps> = ({ data, id }) => {
@@ -65,12 +76,15 @@ const CommentNode: FC<NodeProps> = ({ data, id }) => {
   return (
     <>
       {editmode ? (
-        <textarea
-          value={comment}
-          onChange={handleCommentInput}
-          onBlur={() => setEditmode(false)}
-          style={textStyle}
-        />
+        <div style={editStyle}>
+          <textarea
+            value={comment}
+            onChange={handleCommentInput}
+            onBlur={() => setEditmode(false)}
+            style={textStyle}
+          />
+          <button onClick={() => setEditmode(false)}>OK</button>
+        </div>
       ) : (
         <div
           onDoubleClick={handleCommentClick}
