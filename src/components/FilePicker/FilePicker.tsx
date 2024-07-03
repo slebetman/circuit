@@ -1,6 +1,6 @@
 import File from "components/Icons/File";
 import Popup from "components/Popup/Popup";
-import useChartList from "components/hooks/useChartList";
+import useChartList from "hooks/useChartList";
 import { useEffect, useState } from "react";
 
 type FilePickerProps = {

@@ -15,7 +15,7 @@ import styles from "./Flow.module.css";
 import Code from "components/Icons/Code";
 import FloppyDisk from "components/Icons/FloppyDisk";
 import FolderOpen from "components/Icons/FolderOpen";
-import useChart from "components/hooks/useChart";
+import useChart from "hooks/useChart";
 import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
 import nodeTypes from "components/Nodes";
