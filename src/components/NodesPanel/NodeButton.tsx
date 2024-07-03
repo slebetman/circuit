@@ -1,4 +1,4 @@
-import { FC, ReactNode, createElement } from "react";
+import { FC, createElement, useState } from "react";
 
 type NodeButtonProp = {
 	icon: FC,
@@ -6,10 +6,12 @@ type NodeButtonProp = {
 	actionType?: string;
 }
 
-const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => (
-	<button
+const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => {
+	const [hover, setHover] = useState(false);
+
+	return <button
 		style={{
-			backgroundColor: '#fff',
+			backgroundColor: hover ? '#adf' : '#fff',
 			border: '1px solid #ccc',
 			width: '50px',
 			height: '50px',
@@ -22,9 +24,11 @@ const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => (
 		onClick={() => {
 			if (onClick) onClick(actionType);
 		}}
+		onMouseEnter={() => setHover(true)}
+		onMouseLeave={() => setHover(false)}
 	>
 		{createElement(icon)}
 	</button>
-)
+}
 
 export default NodeButton;
