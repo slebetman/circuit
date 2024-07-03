@@ -82,6 +82,8 @@ function Flow() {
         <div
           style={{
             position: "fixed",
+            right: '5px',
+            top: '2px',
           }}
         >
           Chart: {chart.name}
@@ -122,6 +124,8 @@ function Flow() {
           nodeTypes={nodeTypes}
           defaultEdgeOptions={defaultEdgeOptions}
           connectionLineType={ConnectionLineType.SmoothStep}
+          minZoom={0.1}
+          maxZoom={10}
           fitView
         >
           <Controls>

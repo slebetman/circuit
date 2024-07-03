@@ -5,6 +5,12 @@ const labelFont: CSSProperties = {
   fontSize: "8px",
 };
 
+const inputStyle: CSSProperties = {
+  ...labelFont,
+  paddingRight: "0",
+  paddingLeft: "10px",
+}
+
 const nodeStyle: CSSProperties = {
   ...labelFont,
   width: "auto",
@@ -45,7 +51,8 @@ const OutputNode: FC<NodeProps> = ({ data, id }) => {
             value={label}
             onChange={handleCommentInput}
             onBlur={() => setEditmode(false)}
-            style={labelFont}
+            style={inputStyle}
+            size={label.length || 1}
           />
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
