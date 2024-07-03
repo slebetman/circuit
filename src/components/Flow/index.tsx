@@ -8,6 +8,7 @@ import ReactFlow, {
   ConnectionLineType,
   Controls,
   ControlButton,
+  DefaultEdgeOptions,
 } from "reactflow";
 
 import styles from "./Flow.module.css";
@@ -19,7 +20,7 @@ import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
 import nodeTypes from "components/nodes";
 
-const defaultEdgeOptions = {
+const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
 };
 
