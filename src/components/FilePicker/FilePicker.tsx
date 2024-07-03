@@ -1,4 +1,5 @@
 import File from "components/Icons/File";
+import Popup from "components/Popup/Popup";
 import useChartList from "components/hooks/useChartList";
 import { useEffect, useState } from "react";
 
@@ -15,31 +16,7 @@ const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
   }, []);
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        overflow: "hidden",
-        position: "absolute",
-        width: "400px",
-        top: "10vh",
-        left: "calc(50vw - 200px)",
-        background: "#fff",
-        boxShadow: "3px 3px 15px #999",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          backgroundColor: "#666",
-          color: "#fff",
-          padding: "10px",
-        }}
-      >
-        Open File
-        <button onClick={onCancel}>Cancel</button>
-      </div>
+    <Popup title="Open File" onCancel={onCancel}>
       <div
         style={{
           padding: "10px",
@@ -71,7 +48,7 @@ const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </Popup>
   );
 };
 

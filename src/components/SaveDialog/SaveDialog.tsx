@@ -1,3 +1,4 @@
+import Popup from "components/Popup/Popup";
 import { useState } from "react";
 
 type SaveDialogProps = {
@@ -10,31 +11,7 @@ const SaveDialog = ({ name, onSubmit, onCancel }: SaveDialogProps) => {
   const [fileName, setFileName] = useState(name);
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        overflow: "hidden",
-        position: "absolute",
-        width: "400px",
-        top: "10vh",
-        left: "calc(50vw - 200px)",
-        background: "#fff",
-        boxShadow: "3px 3px 15px #999",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          backgroundColor: "#666",
-          color: "#fff",
-          padding: "10px",
-        }}
-      >
-        Save File
-        <button onClick={onCancel}>Cancel</button>
-      </div>
+    <Popup title="Save File" onCancel={onCancel}>
       <div
         style={{
           padding: "20px",
@@ -54,7 +31,7 @@ const SaveDialog = ({ name, onSubmit, onCancel }: SaveDialogProps) => {
         />
         <button onClick={() => onSubmit(fileName)}>Save</button>
       </div>
-    </div>
+    </Popup>
   );
 };
 
