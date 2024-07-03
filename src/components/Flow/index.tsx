@@ -22,6 +22,7 @@ import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
+import NodesPanel from "components/NodesPanel/NodesPanel";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -84,33 +85,6 @@ function Flow() {
   return (
     <>
       <div className={styles.flow}>
-        {chart.error ? (
-          <div
-            style={{
-              position: "absolute",
-              top: "45vh",
-              textAlign: "center",
-              width: "100%",
-              zIndex: "9999999",
-            }}
-          >
-            <span
-              style={{
-                padding: "10px",
-                backgroundColor: "#f66",
-              }}
-            >
-              Error: {chart.error.message} &nbsp;
-              <button
-                onClick={() => {
-                  chart.clearError();
-                }}
-              >
-                x
-              </button>
-            </span>
-          </div>
-        ) : null}
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -128,20 +102,11 @@ function Flow() {
           <Panel position="top-center">
             {chart.name || null}
           </Panel>
-          <Controls>
-            <ControlButton
-              title="dump nodes"
-              onClick={() => console.log("Nodes", nodes)}
-            >
-              <Code />
-            </ControlButton>
-            <ControlButton title="save chart" onClick={handleSaveDialog}>
-              <FloppyDisk />
-            </ControlButton>
-            <ControlButton title="open chart" onClick={handleOpenFolder}>
-              <FolderOpen />
-            </ControlButton>
-          </Controls>
+          <NodesPanel position="top-left" handlers={{
+            open: handleOpenFolder,
+            save: handleSaveDialog,
+          }} />
+          <Controls />
         </ReactFlow>
       </div>
       {mode === "open" && (
@@ -157,6 +122,33 @@ function Flow() {
           onCancel={() => setMode("chart")}
         />
       )}
+      {chart.error ? (
+        <div
+          style={{
+            position: "absolute",
+            top: "45vh",
+            textAlign: "center",
+            width: "100%",
+            zIndex: "9999999",
+          }}
+        >
+          <span
+            style={{
+              padding: "10px",
+              backgroundColor: "#f66",
+            }}
+          >
+            Error: {chart.error.message} &nbsp;
+            <button
+              onClick={() => {
+                chart.clearError();
+              }}
+            >
+              x
+            </button>
+          </span>
+        </div>
+      ) : null}
     </>
   );
 }
