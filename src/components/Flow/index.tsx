@@ -9,6 +9,7 @@ import ReactFlow, {
   Controls,
   ControlButton,
   DefaultEdgeOptions,
+  Panel,
 } from "reactflow";
 
 import styles from "./Flow.module.css";
@@ -76,15 +77,6 @@ function Flow() {
   return (
     <>
       <div className={styles.flow}>
-        <div
-          style={{
-            position: "fixed",
-            right: '5px',
-            top: '2px',
-          }}
-        >
-          Chart: {chart.name}
-        </div>
         {chart.error ? (
           <div
             style={{
@@ -125,6 +117,9 @@ function Flow() {
           maxZoom={10}
           fitView
         >
+          <Panel position="top-center">
+            {chart.name || null}
+          </Panel>
           <Controls>
             <ControlButton
               title="dump nodes"
