@@ -18,7 +18,7 @@ import FolderOpen from "components/Icons/FolderOpen";
 import useChart from "components/hooks/useChart";
 import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
-import nodeTypes from "components/nodes";
+import nodeTypes from "components/Nodes";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
