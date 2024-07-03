@@ -27,7 +27,31 @@ const useChart = () => {
   };
 
   const save = async (c: Chart) => {
-    setChart(c);
+    setChart({
+      nodes: c.nodes.map(x => {
+        delete x.positionAbsolute;
+        delete x.width;
+        delete x.height;
+        delete x.selected;
+        delete x.dragging;
+
+        if (x.data && Object.keys(x.data).length === 0) {
+          delete x.data;
+        }
+
+        return x;
+      }),
+      edges: c.edges.map(x => {
+        delete x.type;
+        if (x.sourceHandle === null) {
+          delete x.sourceHandle;
+        }
+        if (x.targetHandle === null) {
+          delete x.targetHandle
+        }
+        return x;
+      }),
+    });
   };
 
   useEffect(() => {

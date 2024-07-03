@@ -46,10 +46,7 @@ function Flow() {
 
     if (name) {
       chart.setName(name);
-      chart.save({
-        nodes,
-        edges,
-      });
+      chart.save({nodes, edges});
     }
 
     setMode("chart");
