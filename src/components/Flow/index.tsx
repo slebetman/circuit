@@ -11,6 +11,7 @@ import ReactFlow, {
   DefaultEdgeOptions,
   Panel,
 } from "reactflow";
+import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
 import styles from "./Flow.module.css";
 import Code from "components/Icons/Code";
@@ -20,10 +21,16 @@ import useChart from "hooks/useChart";
 import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
 import nodeTypes from "components/Nodes";
+import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
+  // type: "smart"
 };
+
+const edgeTypes = {
+	smart: CustomSmartBezierEdge
+}
 
 function Flow() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -115,6 +122,7 @@ function Flow() {
           connectionLineType={ConnectionLineType.SmoothStep}
           minZoom={0.1}
           maxZoom={10}
+			    edgeTypes={edgeTypes}
           fitView
         >
           <Panel position="top-center">
