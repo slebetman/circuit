@@ -2,7 +2,7 @@ import Or from "components/Icons/Or";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const OrGate: FC<NodeProps> = () => {
+const OrGate: FC<NodeProps> = ({id}) => {
   return (
     <>
       <Handle
@@ -18,6 +18,7 @@ const OrGate: FC<NodeProps> = () => {
         style={{ top: "15px" }}
       />
       <Or />
+      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle
         type="source"
         id="c"

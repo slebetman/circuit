@@ -60,6 +60,7 @@ const InputNode: FC<NodeProps> = ({ data, id }) => {
           {label}
         </div>
       )}
+      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle type="source" id="c" position={Position.Right} />
     </>
   );

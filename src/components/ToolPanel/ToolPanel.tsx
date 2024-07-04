@@ -7,6 +7,7 @@ import { Panel, PanelPosition } from "reactflow";
 import ToolButton from "./ToolButton";
 import FolderOpen from "components/Icons/FolderOpen";
 import FloppyDisk from "components/Icons/FloppyDisk";
+import Code from "components/Icons/Code";
 
 type ActionType = 'nodes' | 'modules';
 
@@ -18,6 +19,7 @@ type ToolPanelProp = {
 type ToolActionHandlers = {
 	open?: Function;
 	save?: Function;
+	compile?: Function;
 	createNode?: (actionType: ActionType) => void;
 }
 
@@ -30,6 +32,8 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => {
 		<div>&nbsp;</div>
 		<ToolButton label="Nodes" onClick={handlers.createNode} actionType="nodes" />
 		<ToolButton label="Modules" onClick={handlers.createNode} actionType="modules" />
+		<div>&nbsp;</div>
+		<ToolButton icon={Code} onClick={handlers.compile} />
 	</Panel>
 }
 

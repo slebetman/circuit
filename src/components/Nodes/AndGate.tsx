@@ -2,7 +2,7 @@ import And from "components/Icons/And";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const AndGate: FC<NodeProps> = () => {
+const AndGate: FC<NodeProps> = ({id}) => {
   return (
     <>
       <Handle
@@ -18,6 +18,7 @@ const AndGate: FC<NodeProps> = () => {
         style={{ top: "15px" }}
       />
       <And />
+      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle
         type="source"
         id="c"

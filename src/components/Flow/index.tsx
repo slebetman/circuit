@@ -15,12 +15,14 @@ import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
 import styles from "./Flow.module.css";
 import useChart from "hooks/useChart";
-import FilePicker from "components/FilePicker/FilePicker";
-import SaveDialog from "components/SaveDialog/SaveDialog";
+import FilePicker from "components/Dialogs/FilePicker";
+import SaveDialog from "components/Dialogs/SaveDialog";
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
 import ToolPanel from "components/ToolPanel/ToolPanel";
-import NodesDialog from "components/NodesDialog/NodesDialog";
+import NodesDialog from "components/Dialogs/NodesDialog";
+import compile from "lib/compiler";
+import varName from "lib/normaliseVarName";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -69,6 +71,27 @@ function Flow() {
     setMode("chart");
   };
 
+  const handleCompile = () => {
+    if (instance) {
+      const n = instance.getNodes();
+      const e = instance.getEdges();
+
+      const outputs = n.filter(x => x.type === 'out');
+
+      const expressions = [];
+
+      for (const o of outputs) {
+        const wire = e.find(x => x.target === o.id);
+        
+        if (wire) {
+          expressions.push(`${varName(o.data.label)} = ${compile(wire,n,e)}`);
+        }
+      }
+
+      console.log(expressions);
+    }
+  }
+
   useEffect(() => {
     if (chart.chart) {
       // HACK: Not sure why but need some delay to set nodes
@@ -110,6 +133,7 @@ function Flow() {
           <ToolPanel position="top-left" handlers={{
             open: handleOpenFolder,
             save: handleSaveDialog,
+            compile: handleCompile,
             createNode: (actionType) => {
               switch(actionType) {
                 case 'nodes': return setNodesPaletteOpen(true);
