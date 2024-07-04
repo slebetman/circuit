@@ -12,7 +12,6 @@ const NotGate: FC<NodeProps> = ({id}) => {
         style={{ top: "10px" }}
       />
       <Not />
-      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle
         type="source"
         id="c"

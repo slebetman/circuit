@@ -18,7 +18,6 @@ const XorGate: FC<NodeProps> = ({id}) => {
         style={{ top: "15px" }}
       />
       <Xor />
-      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle
         type="source"
         id="c"

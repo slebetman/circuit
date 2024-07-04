@@ -18,7 +18,6 @@ const AndGate: FC<NodeProps> = ({id}) => {
         style={{ top: "15px" }}
       />
       <And />
-      <span style={{ fontSize: '5px' }}>{id}</span>
       <Handle
         type="source"
         id="c"
