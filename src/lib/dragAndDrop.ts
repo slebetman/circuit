@@ -1,10 +1,10 @@
 import { MutableRefObject, PointerEvent } from "react";
 
 const dragAndDrop =
-  (ref: MutableRefObject<any>) => (e: PointerEvent<HTMLElement>) => {
+  (dialogRef: MutableRefObject<any>) => (e: PointerEvent<HTMLElement>) => {
     let origin = {
-      x: e.currentTarget.offsetLeft,
-      y: e.currentTarget.offsetTop,
+      x: dialogRef.current.offsetLeft,
+      y: dialogRef.current.offsetTop,
       clientX: e.clientX,
       clientY: e.clientY,
     };
@@ -19,8 +19,8 @@ const dragAndDrop =
         const y = origin.y + e.clientY - origin.clientY;
         const x = origin.x + e.clientX - origin.clientX;
 
-        ref.current.style.top = `${y}px`;
-        ref.current.style.left = `${x}px`;
+        dialogRef.current.style.top = `${y}px`;
+        dialogRef.current.style.left = `${x}px`;
 
         e.stopPropagation();
         e.preventDefault();
