@@ -23,6 +23,7 @@ import ToolPanel from "components/ToolPanel/ToolPanel";
 import NodesDialog from "components/Dialogs/NodesDialog";
 import compile from "lib/compiler";
 import varName from "lib/normaliseVarName";
+import CodeDialog from "components/Dialogs/CodeDialog";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -38,7 +39,9 @@ function Flow() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
   const [mode, setMode] = useState<"open" | "save" | "chart">("chart");
-  const [nodesPaletteOpen, setNodesPaletteOpen] =useState(false);
+  const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
+  const [codeOpen, setCodeOpen] = useState(false);
+  const [code, setCode] = useState<string[]>([]);
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -84,11 +87,13 @@ function Flow() {
         const wire = e.find(x => x.target === o.id);
         
         if (wire) {
-          expressions.push(`${varName(o.data.label)} = ${compile(wire,n,e)}`);
+          expressions.push(`${varName(o.data.label)} = ${compile(wire,n,e)};`);
         }
       }
 
       console.log(expressions);
+      setCode(expressions);
+      setCodeOpen(true);
     }
   }
 
@@ -175,6 +180,12 @@ function Flow() {
           onClose={() => setNodesPaletteOpen(false)}
         />
       }
+      {codeOpen && (
+        <CodeDialog
+          onClose={() => setCodeOpen(false)}
+          code={code}
+        />
+      )}
       {mode === "open" && (
         <FilePicker
           onSelect={handleSelectFile}

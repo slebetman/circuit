@@ -1,0 +1,30 @@
+import Popup from "components/Popup/Popup";
+
+type CodeDialogProps = {
+  onClose: () => void;
+  code: string[];
+};
+
+const CodeDialog = ({ code, onClose }: CodeDialogProps) => {
+  return (
+    <Popup title="Compiled Expressions"
+      onCancel={onClose}
+      style={{
+			width: '800px',
+			minHeight: '300px',
+			overflow: 'auto',
+      }}
+	>
+      <pre
+	  	style={{
+			whiteSpace: 'pre-wrap',
+			padding: '5px 10px',
+		}}
+	  >
+		{code.join('\n\n')}
+	  </pre>
+    </Popup>
+  );
+};
+
+export default CodeDialog;
