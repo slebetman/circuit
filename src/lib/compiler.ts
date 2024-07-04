@@ -4,6 +4,10 @@ import varName from "./normaliseVarName";
 type Compiler = (wire: Edge, nodes: Node[], edges: Edge[]) => string;
 
 const compile: Compiler = (wire: Edge, nodes: Node[], edges: Edge[]) => {
+	if (!wire) {
+		return 'undefined';
+	}
+
 	const source = nodes.find(x => x.id === wire.source);
 
 	if (source) {

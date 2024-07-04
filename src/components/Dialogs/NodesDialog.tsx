@@ -35,7 +35,7 @@ const NodesDialog = ({ onClick, onClose }: NodesDialogProps) => {
 		<ToolButton icon={Not} onClick={onClick} actionType="not"/>
 		<ToolButton label="Input" onClick={onClick} actionType="in"/>
 		<ToolButton label="Output" onClick={onClick} actionType="out"/>
-		<ToolButton label="Note" onClick={onClick} actionType="comment"/>
+		<ToolButton label="Comment" onClick={onClick} actionType="comment"/>
       </div>
     </Popup>
   );
