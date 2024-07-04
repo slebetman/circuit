@@ -7,10 +7,9 @@ import ReactFlow, {
   Edge,
   ConnectionLineType,
   Controls,
-  ControlButton,
   DefaultEdgeOptions,
   Panel,
-  Node,
+  ReactFlowInstance,
 } from "reactflow";
 import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
@@ -35,13 +34,13 @@ const edgeTypes = {
 function Flow() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
   const [mode, setMode] = useState<"open" | "save" | "chart">("chart");
-  const [toolOpen, setToolOpen] =useState(false);
+  const [nodesPaletteOpen, setNodesPaletteOpen] =useState(false);
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
-
   const chart = useChart();
 
   const handleSaveDialog = () => {
@@ -78,9 +77,15 @@ function Flow() {
       setTimeout(() => {
         setNodes(chart?.chart?.nodes || []);
         setEdges(chart?.chart?.edges || []);
+        setTimeout(() => {
+          instance?.fitView({
+            padding: 0.25
+          });
+        }, 50);
       }, 0);
     }
   }, [chart.chart]);
+
 
   return (
     <>
@@ -97,7 +102,7 @@ function Flow() {
           minZoom={0.1}
           maxZoom={10}
 			    edgeTypes={edgeTypes}
-          fitView
+          onInit={(i) => setInstance(i)}
         >
           <Panel position="top-center">
             {chart.name || null}
@@ -107,7 +112,7 @@ function Flow() {
             save: handleSaveDialog,
             createNode: (actionType) => {
               switch(actionType) {
-                case 'nodes': return setToolOpen(true);
+                case 'nodes': return setNodesPaletteOpen(true);
                 case 'modules': return;
               }
             },
@@ -115,7 +120,7 @@ function Flow() {
           <Controls />
         </ReactFlow>
       </div>
-      {toolOpen &&
+      {nodesPaletteOpen &&
         <NodesDialog
           onClick={(actionType) => {
             setNodes((prev) => {
@@ -143,7 +148,7 @@ function Flow() {
               ]
             })
           }}
-          onClose={() => setToolOpen(false)}
+          onClose={() => setNodesPaletteOpen(false)}
         />
       }
       {mode === "open" && (
