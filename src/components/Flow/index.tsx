@@ -125,7 +125,7 @@ function Flow() {
                 case 'comment':
                 case 'in':
                 case 'out':
-                  data.label = '';
+                  data.label = actionType;
                   break;
               }
 
