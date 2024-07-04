@@ -6,6 +6,7 @@ type PopupProps = {
   title: string;
   onCancel: () => void;
   children: ReactNode;
+  style?: CSSProperties;
 };
 
 const popupStyle: CSSProperties = {
@@ -17,7 +18,7 @@ const popupStyle: CSSProperties = {
   top: "10vh",
   left: "calc(50vw - 200px)",
   background: "#fff",
-  boxShadow: "3px 3px 15px #999",
+  boxShadow: "3px 3px 15px #00000066",
 };
 
 const headerStyle: CSSProperties = {
@@ -34,17 +35,26 @@ const closeButtonStyle: CSSProperties = {
   color: "#fff",
 };
 
-const Popup = ({ title, onCancel, children }: PopupProps) => {
+const Popup = ({ title, onCancel, children, style }: PopupProps) => {
   const popupRef: MutableRefObject<any> = useRef(null);
 
   return (
     <div
       ref={popupRef}
       onPointerDown={dragAndDrop(popupRef)}
-      style={popupStyle}
+      style={{
+        ...popupStyle,
+        ...style,
+      }}
     >
       <div style={headerStyle}>
-        {title}
+        <span
+          style={{
+            userSelect: 'none'
+          }}
+        >
+          {title}
+        </span>
         <button style={closeButtonStyle} onClick={onCancel}>
           <Cross />
         </button>

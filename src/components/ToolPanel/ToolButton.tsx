@@ -1,13 +1,18 @@
 import { FC, createElement, useState } from "react";
 
-type NodeButtonProp = {
-	icon: FC,
+type ToolButtonProp = {
+	icon?: FC,
+	label?: string,
 	onClick?: Function;
 	actionType?: string;
 }
 
-const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => {
+const ToolButton: FC<ToolButtonProp> = ({ icon, label, onClick, actionType }) => {
 	const [hover, setHover] = useState(false);
+
+	if (icon === undefined && label === undefined) {
+		throw new Error('Requires either an icon or label');
+	}
 
 	return <button
 		style={{
@@ -20,6 +25,7 @@ const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => {
 			justifyContent: 'center',
 			cursor: 'pointer',
 			boxShadow: '1px 3px 10px #ccc',
+			fontSize: '10px',
 		}}
 		onClick={() => {
 			if (onClick) onClick(actionType);
@@ -27,8 +33,8 @@ const NodeButton: FC<NodeButtonProp> = ({ icon, onClick, actionType }) => {
 		onMouseEnter={() => setHover(true)}
 		onMouseLeave={() => setHover(false)}
 	>
-		{createElement(icon)}
+		{icon ? createElement(icon) : label}
 	</button>
 }
 
-export default NodeButton;
+export default ToolButton;

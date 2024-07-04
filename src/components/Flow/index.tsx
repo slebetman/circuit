@@ -10,19 +10,18 @@ import ReactFlow, {
   ControlButton,
   DefaultEdgeOptions,
   Panel,
+  Node,
 } from "reactflow";
 import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
 
 import styles from "./Flow.module.css";
-import Code from "components/Icons/Code";
-import FloppyDisk from "components/Icons/FloppyDisk";
-import FolderOpen from "components/Icons/FolderOpen";
 import useChart from "hooks/useChart";
 import FilePicker from "components/FilePicker/FilePicker";
 import SaveDialog from "components/SaveDialog/SaveDialog";
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
-import NodesPanel from "components/NodesPanel/NodesPanel";
+import ToolPanel from "components/ToolPanel/ToolPanel";
+import NodesDialog from "components/NodesDialog/NodesDialog";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -37,6 +36,7 @@ function Flow() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [mode, setMode] = useState<"open" | "save" | "chart">("chart");
+  const [toolOpen, setToolOpen] =useState(false);
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -102,13 +102,50 @@ function Flow() {
           <Panel position="top-center">
             {chart.name || null}
           </Panel>
-          <NodesPanel position="top-left" handlers={{
+          <ToolPanel position="top-left" handlers={{
             open: handleOpenFolder,
             save: handleSaveDialog,
+            createNode: (actionType) => {
+              switch(actionType) {
+                case 'nodes': return setToolOpen(true);
+                case 'modules': return;
+              }
+            },
           }} />
           <Controls />
         </ReactFlow>
       </div>
+      {toolOpen &&
+        <NodesDialog
+          onClick={(actionType) => {
+            setNodes((prev) => {
+              let data: Record<string,any> = {};
+
+              switch(actionType) {
+                case 'comment':
+                case 'in':
+                case 'out':
+                  data.label = '';
+                  break;
+              }
+
+              return [
+                ...prev,
+                {
+                  id: `${Math.random()}`,
+                  type: actionType,
+                  data,
+                  position: {
+                    x: 0,
+                    y: 0,
+                  }
+                }
+              ]
+            })
+          }}
+          onClose={() => setToolOpen(false)}
+        />
+      }
       {mode === "open" && (
         <FilePicker
           onSelect={handleSelectFile}
