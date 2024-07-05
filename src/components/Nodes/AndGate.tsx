@@ -2,7 +2,7 @@ import And from "components/Icons/And";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const AndGate: FC<NodeProps> = ({id}) => {
+const AndGate: FC<NodeProps> = ({id, selected}) => {
   return (
     <>
       <Handle
@@ -17,7 +17,7 @@ const AndGate: FC<NodeProps> = ({id}) => {
         position={Position.Left}
         style={{ top: "15px" }}
       />
-      <And />
+      <And selected={selected} />
       <Handle
         type="source"
         id="c"

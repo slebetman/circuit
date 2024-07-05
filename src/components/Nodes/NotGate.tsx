@@ -2,7 +2,7 @@ import Not from "components/Icons/Not";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const NotGate: FC<NodeProps> = ({id}) => {
+const NotGate: FC<NodeProps> = ({id, selected}) => {
   return (
     <>
       <Handle
@@ -11,7 +11,7 @@ const NotGate: FC<NodeProps> = ({id}) => {
         position={Position.Left}
         style={{ top: "10px" }}
       />
-      <Not />
+      <Not selected={selected} />
       <Handle
         type="source"
         id="c"

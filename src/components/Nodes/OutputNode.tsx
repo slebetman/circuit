@@ -25,7 +25,7 @@ const editStyle: CSSProperties = {
   flexDirection: "row",
 };
 
-const OutputNode: FC<NodeProps> = ({ data, id }) => {
+const OutputNode: FC<NodeProps> = ({ data, id, selected }) => {
   const [editmode, setEditmode] = useState(false);
   const [label, setLabel] = useState(data.label);
 
@@ -57,7 +57,12 @@ const OutputNode: FC<NodeProps> = ({ data, id }) => {
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
       ) : (
-        <div onDoubleClick={handleCommentClick} style={nodeStyle}>
+        <div onDoubleClick={handleCommentClick}
+          style={{
+            ...nodeStyle,
+            borderWidth: selected? '2px' : '1px',
+          }}
+        >
           {label}
         </div>
       )}

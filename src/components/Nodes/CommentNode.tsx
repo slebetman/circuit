@@ -27,7 +27,7 @@ const editStyle: CSSProperties = {
   flexDirection: "column",
 };
 
-const CommentNode: FC<NodeProps> = ({ data, id }) => {
+const CommentNode: FC<NodeProps> = ({ data, id, selected }) => {
   const [editmode, setEditmode] = useState(false);
   const [comment, setComment] = useState(data.label);
 
@@ -56,7 +56,10 @@ const CommentNode: FC<NodeProps> = ({ data, id }) => {
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
       ) : (
-        <div onDoubleClick={handleCommentClick} style={nodeStyle}>
+        <div onDoubleClick={handleCommentClick} style={{
+          ...nodeStyle,
+          borderColor: selected? '#000' : '#ffa',
+        }}>
           {comment}
         </div>
       )}

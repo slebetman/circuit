@@ -1,4 +1,6 @@
-const Xor = () => (
+import { Icon } from "./types";
+
+const Xor:Icon = ({selected}) => (
   <svg
     width="35px"
     height="21px"
@@ -7,6 +9,7 @@ const Xor = () => (
     id="svg1"
     fill="#fff"
     stroke="#000"
+    strokeWidth={selected? 2 : 1}
   >
     <g id="layer1">
       <path

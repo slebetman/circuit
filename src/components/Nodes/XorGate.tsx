@@ -2,7 +2,7 @@ import Xor from "components/Icons/Xor";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const XorGate: FC<NodeProps> = ({id}) => {
+const XorGate: FC<NodeProps> = ({id, selected}) => {
   return (
     <>
       <Handle
@@ -17,7 +17,7 @@ const XorGate: FC<NodeProps> = ({id}) => {
         position={Position.Left}
         style={{ top: "15px" }}
       />
-      <Xor />
+      <Xor selected={selected} />
       <Handle
         type="source"
         id="c"

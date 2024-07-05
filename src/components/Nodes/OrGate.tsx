@@ -2,7 +2,7 @@ import Or from "components/Icons/Or";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const OrGate: FC<NodeProps> = ({id}) => {
+const OrGate: FC<NodeProps> = ({id, selected}) => {
   return (
     <>
       <Handle
@@ -17,7 +17,7 @@ const OrGate: FC<NodeProps> = ({id}) => {
         position={Position.Left}
         style={{ top: "15px" }}
       />
-      <Or />
+      <Or selected={selected} />
       <Handle
         type="source"
         id="c"

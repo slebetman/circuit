@@ -1,4 +1,6 @@
-const And = () => (
+import { Icon } from "./types";
+
+const And:Icon = ({selected}) => (
   <svg
     width="35px"
     height="21px"
@@ -7,6 +9,7 @@ const And = () => (
     id="svg1"
     fill="#fff"
     stroke="#000"
+    strokeWidth={selected? 2 : 1}
   >
     <defs id="defs1" />
     <g id="layer1">
