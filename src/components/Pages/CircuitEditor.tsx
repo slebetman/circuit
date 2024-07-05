@@ -71,6 +71,33 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
     setCodeOpen(true);
   };
 
+  const handleCreateNode = (actionType:string) => {
+	setNodes((prev) => {
+	  let data: Record<string, any> = {};
+
+	  switch (actionType) {
+		case "comment":
+		case "in":
+		case "out":
+		  data.label = actionType;
+		  break;
+	  }
+
+	  return [
+		...prev,
+		{
+		  id: `${generateId()}`,
+		  type: actionType,
+		  data,
+		  position: {
+			x: 0,
+			y: 0,
+		  },
+		},
+	  ];
+	});
+  }
+
   useEffect(() => {
     if (instance && codeOpen) {
       const n = instance.getNodes();
@@ -152,32 +179,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
       </div>
       {nodesPaletteOpen && (
         <NodesDialog
-          onClick={(actionType) => {
-            setNodes((prev) => {
-              let data: Record<string, any> = {};
-
-              switch (actionType) {
-                case "comment":
-                case "in":
-                case "out":
-                  data.label = actionType;
-                  break;
-              }
-
-              return [
-                ...prev,
-                {
-                  id: `${generateId()}`,
-                  type: actionType,
-                  data,
-                  position: {
-                    x: 0,
-                    y: 0,
-                  },
-                },
-              ];
-            });
-          }}
+          onClick={handleCreateNode}
           onClose={() => setNodesPaletteOpen(false)}
         />
       )}
