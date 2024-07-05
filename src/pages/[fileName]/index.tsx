@@ -1,10 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 
-import Flow from "components/Flow/Flow";
-
 import styles from "../../styles/Home.module.css";
 import { useRouter } from "next/router";
+import CircuitEditor from "components/Pages/CircuitEditor";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -19,7 +18,7 @@ const Home: NextPage = () => {
       </Head>
 
       {/* <header className={styles.header}>React Flow - Next.js Example</header> */}
-      <Flow fileName={fileName as string} />
+      <CircuitEditor fileName={fileName as string} />
     </div>
   );
 };
