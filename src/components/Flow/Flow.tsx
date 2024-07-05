@@ -90,6 +90,10 @@ const Flow: FC<FlowProps> = ({fileName}) => {
   };
 
   const handleCompile = () => {
+    setCodeOpen(true);
+  }
+
+  useEffect(() => {
     if (instance) {
       const n = instance.getNodes();
       const e = instance.getEdges();
@@ -126,9 +130,8 @@ const Flow: FC<FlowProps> = ({fileName}) => {
 
       console.log(expressions);
       setCode(expressions);
-      setCodeOpen(true);
     }
-  }
+  }, [codeOpen, nodes, edges])
 
   useEffect(() => {
     if (chart.chart) {
