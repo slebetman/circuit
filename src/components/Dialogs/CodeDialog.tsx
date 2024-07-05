@@ -12,6 +12,7 @@ const CodeDialog = ({ code, onClose }: CodeDialogProps) => {
       style={{
 			width: '800px',
 			minHeight: '300px',
+			left: 'calc(50% - 400px)',
 			overflow: 'auto',
       }}
 	>
