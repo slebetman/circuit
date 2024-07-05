@@ -9,6 +9,7 @@ import ReactFlow, {
   ReactFlowInstance,
   OnNodesChange,
   OnEdgesChange,
+  ReactFlowProps,
 } from "reactflow";
 import { SmartBezierEdge } from "@tisoap/react-flow-smart-edge";
 
@@ -25,33 +26,23 @@ const edgeTypes = {
   smart: CustomSmartBezierEdge,
 };
 
-type FlowActionHandlers = {
-  save: Function;
-  new: Function;
-  open: Function;
-  compile: Function;
-  run?: Function;
-  createNode: (actionType:string) => void;
-};
-
 type FlowProps = {
-  handlers: FlowActionHandlers;
   nodes: Node[];
   edges: Edge[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: (p: Connection | Edge) => any;
   onInit: (instance: ReactFlowInstance) => void;
-};
+} & ReactFlowProps;
 
 const Flow: FC<FlowProps> = ({
-  handlers,
   onInit,
   onNodesChange,
   onEdgesChange,
   onConnect,
   nodes,
   edges,
+  children,
 }) => {
   return (
     <ReactFlow
@@ -69,17 +60,7 @@ const Flow: FC<FlowProps> = ({
       onInit={onInit}
       fitView
     >
-      <ToolPanel
-        position="top-left"
-        handlers={{
-          open: handlers.open,
-          save: handlers.save,
-          new: handlers.new,
-          compile: handlers.compile,
-          run: handlers.run,
-          createNode: handlers.createNode,
-        }}
-      />
+      {children}
       <Controls />
     </ReactFlow>
   );

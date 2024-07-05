@@ -17,6 +17,7 @@ import {
   useEdgesState,
   useNodesState,
 } from "reactflow";
+import ToolPanel from "components/ToolPanel/ToolPanel";
 
 type EditorProps = {
   fileName?: string;
@@ -161,21 +162,26 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onInit={(i) => setInstance(i)}
-          handlers={{
-            open: handleOpenFolder,
-            save: handleSaveDialog,
-            new: handleNew,
-            compile: handleCompile,
-            createNode: (actionType: string) => {
-              switch (actionType) {
-                case "nodes":
-                  return setNodesPaletteOpen(true);
-                case "modules":
-                  return;
-              }
-            },
-          }}
-        />
+        >
+			<ToolPanel
+				position="top-left"
+				handlers={{
+					open: handleOpenFolder,
+					save: handleSaveDialog,
+					new: handleNew,
+					compile: handleCompile,
+					run: () => {},
+					createNode: (actionType) => {
+						switch (actionType) {
+						case "nodes":
+							return setNodesPaletteOpen(true);
+						case "modules":
+							return;
+						}
+					},
+				}}
+			/>
+		</Flow>
       </div>
       {nodesPaletteOpen && (
         <NodesDialog
