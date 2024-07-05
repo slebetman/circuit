@@ -5,6 +5,7 @@ type CompilerOptions = {
 	nodes: Node[];
 	edges: Edge[];
 	prefix?: string;
+	getId? : (n:Node) => string;
 }
 
 type Compiler = (wire: Edge, opt:CompilerOptions) => string;
@@ -33,7 +34,8 @@ const compile: Compiler = (wire, opt) => {
 			}
 		}
 		else if (source.type === 'in') {
-			return `${varName(source.data.label, opt.prefix)}`;
+			let varId = opt.getId ? opt.getId(source) : source.data.label;
+			return `${varName(varId, opt.prefix)}`;
 		}
 	}
 

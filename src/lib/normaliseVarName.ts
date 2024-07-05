@@ -2,7 +2,7 @@ const varName = (name:string, prefix?: string) => {
 	let normalised = name.replace(/[- ]+/g,'_');
 
 	if (prefix) {
-		normalised = `${prefix}.${normalised}`;
+		normalised = `${prefix}["${normalised}"]`;
 	}
 
 	return normalised;

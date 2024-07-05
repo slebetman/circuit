@@ -88,7 +88,10 @@ function Flow() {
         const wire = e.find(x => x.target === o.id);
         
         if (wire) {
-          expressions.push(`${varName(o.data.label)} = ${compile(wire,{nodes:n,edges:e})};`);
+          expressions.push(`${varName(o.data.label)} = ${compile(wire,{
+            nodes:n,
+            edges:e,
+          })};`);
         }
       }
 
