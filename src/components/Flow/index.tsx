@@ -82,7 +82,7 @@ function Flow() {
 
       const outputs = n.filter(x => x.type === 'out');
 
-      const expressions = [];
+      const expressions: string[] = [];
 
       for (const o of outputs) {
         const wire = e.find(x => x.target === o.id);
@@ -91,7 +91,7 @@ function Flow() {
           expressions.push(`${varName(o.data.label)} = ${compile(wire,{
             nodes:n,
             edges:e,
-          })};`);
+          })}`);
         }
       }
 

@@ -19,6 +19,7 @@ const CodeDialog = ({ code, onClose }: CodeDialogProps) => {
 	  	style={{
 			whiteSpace: 'pre-wrap',
 			padding: '5px 10px',
+			fontSize: '14px',
 		}}
 	  >
 		{code.join('\n\n')}
