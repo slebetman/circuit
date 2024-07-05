@@ -2,7 +2,7 @@ import Xor from "components/Icons/Xor";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const XorGate: FC<NodeProps> = ({id, selected}) => {
+const XorGate: FC<NodeProps> = ({ id, selected }) => {
   return (
     <>
       <Handle

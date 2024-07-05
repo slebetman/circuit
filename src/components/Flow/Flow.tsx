@@ -10,7 +10,7 @@ import ReactFlow, {
   OnNodesChange,
   OnEdgesChange,
 } from "reactflow";
-import { SmartBezierEdge } from '@tisoap/react-flow-smart-edge'
+import { SmartBezierEdge } from "@tisoap/react-flow-smart-edge";
 
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
@@ -22,8 +22,8 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 };
 
 const edgeTypes = {
-	smart: CustomSmartBezierEdge
-}
+  smart: CustomSmartBezierEdge,
+};
 
 type FlowActionHandlers = {
   save: Function;
@@ -31,7 +31,7 @@ type FlowActionHandlers = {
   open: Function;
   compile: Function;
   createNode: Function;
-}
+};
 
 type FlowProps = {
   handlers: FlowActionHandlers;
@@ -39,11 +39,19 @@ type FlowProps = {
   edges: Edge[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
-  onConnect: (p: Connection|Edge) => any;
+  onConnect: (p: Connection | Edge) => any;
   onInit: (instance: ReactFlowInstance) => void;
-}
+};
 
-const Flow: FC<FlowProps> = ({handlers, onInit, onNodesChange, onEdgesChange, onConnect, nodes, edges}) => {
+const Flow: FC<FlowProps> = ({
+  handlers,
+  onInit,
+  onNodesChange,
+  onEdgesChange,
+  onConnect,
+  nodes,
+  edges,
+}) => {
   return (
     <ReactFlow
       nodes={nodes}
@@ -60,16 +68,19 @@ const Flow: FC<FlowProps> = ({handlers, onInit, onNodesChange, onEdgesChange, on
       onInit={onInit}
       fitView
     >
-      <ToolPanel position="top-left" handlers={{
-        open: handlers?.open,
-        save: handlers?.save,
-        new: handlers?.new,
-        compile: handlers?.compile,
-        createNode: () => handlers?.createNode(),
-      }} />
+      <ToolPanel
+        position="top-left"
+        handlers={{
+          open: handlers?.open,
+          save: handlers?.save,
+          new: handlers?.new,
+          compile: handlers?.compile,
+          createNode: () => handlers?.createNode(),
+        }}
+      />
       <Controls />
     </ReactFlow>
   );
-}
+};
 
 export default Flow;

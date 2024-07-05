@@ -2,7 +2,7 @@ import Not from "components/Icons/Not";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const NotGate: FC<NodeProps> = ({id, selected}) => {
+const NotGate: FC<NodeProps> = ({ id, selected }) => {
   return (
     <>
       <Handle

@@ -12,30 +12,31 @@ type NodesDialogProps = {
 
 const NodesDialog = ({ onClick, onClose }: NodesDialogProps) => {
   return (
-    <Popup title="Nodes"
+    <Popup
+      title="Nodes"
       onCancel={onClose}
       style={{
-			width: 'fit-content',
-			top: '16px',
-			left: '80px'
+        width: "fit-content",
+        top: "16px",
+        left: "80px",
       }}
-	>
+    >
       <div
         style={{
-          width: '106px',
+          width: "106px",
           padding: "2px",
           display: "flex",
           gap: "2px",
-          flexWrap: 'wrap',
+          flexWrap: "wrap",
         }}
       >
-        <ToolButton icon={And} onClick={onClick} actionType="and"/>
-		<ToolButton icon={Or} onClick={onClick} actionType="or"/>
-		<ToolButton icon={Xor} onClick={onClick} actionType="xor"/>
-		<ToolButton icon={Not} onClick={onClick} actionType="not"/>
-		<ToolButton label="Input" onClick={onClick} actionType="in"/>
-		<ToolButton label="Output" onClick={onClick} actionType="out"/>
-		<ToolButton label="Comment" onClick={onClick} actionType="comment"/>
+        <ToolButton icon={And} onClick={onClick} actionType="and" />
+        <ToolButton icon={Or} onClick={onClick} actionType="or" />
+        <ToolButton icon={Xor} onClick={onClick} actionType="xor" />
+        <ToolButton icon={Not} onClick={onClick} actionType="not" />
+        <ToolButton label="Input" onClick={onClick} actionType="in" />
+        <ToolButton label="Output" onClick={onClick} actionType="out" />
+        <ToolButton label="Comment" onClick={onClick} actionType="comment" />
       </div>
     </Popup>
   );

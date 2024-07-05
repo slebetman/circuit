@@ -9,7 +9,7 @@ const inputStyle: CSSProperties = {
   ...labelFont,
   paddingRight: "0",
   paddingLeft: "10px",
-}
+};
 
 const nodeStyle: CSSProperties = {
   ...labelFont,
@@ -56,10 +56,11 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
       ) : (
-        <div onDoubleClick={handleCommentClick}
+        <div
+          onDoubleClick={handleCommentClick}
           style={{
             ...nodeStyle,
-            borderWidth: selected? '2px' : '1px',
+            borderWidth: selected ? "2px" : "1px",
           }}
         >
           {label}

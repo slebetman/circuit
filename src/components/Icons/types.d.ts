@@ -1,5 +1,5 @@
 export type IconProp = {
-	selected?: boolean;
-}
+  selected?: boolean;
+};
 
 export type Icon = React.FC<IconProp>;

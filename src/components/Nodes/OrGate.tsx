@@ -2,7 +2,7 @@ import Or from "components/Icons/Or";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const OrGate: FC<NodeProps> = ({id, selected}) => {
+const OrGate: FC<NodeProps> = ({ id, selected }) => {
   return (
     <>
       <Handle

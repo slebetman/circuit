@@ -10,13 +10,20 @@ import varName from "lib/normaliseVarName";
 import CodeDialog from "components/Dialogs/CodeDialog";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
-import { addEdge, Connection, Edge, ReactFlowInstance, useEdgesState, useNodesState } from "reactflow";
+import {
+  addEdge,
+  Connection,
+  Edge,
+  ReactFlowInstance,
+  useEdgesState,
+  useNodesState,
+} from "reactflow";
 
 type EditorProps = {
   fileName?: string;
-}
+};
 
-const CircuitEditor: FC<EditorProps> = ({fileName}) => {
+const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
@@ -26,7 +33,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
   const [code, setCode] = useState<string[]>([]);
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
   const chart = useChart();
 
@@ -35,8 +42,8 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
   const handleNew = () => {
     setNodes([]);
     setEdges([]);
-    router.replace('/');
-  }
+    router.replace("/");
+  };
 
   const handleSaveDialog = () => {
     setMode("save");
@@ -45,7 +52,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
   const handleSave = (name: string) => {
     if (name) {
       chart.setName(name);
-      chart.save({nodes, edges});
+      chart.save({ nodes, edges });
       router.replace(`/${name}`);
     }
 
@@ -63,25 +70,25 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
 
   const handleCompile = () => {
     setCodeOpen(true);
-  }
+  };
 
   useEffect(() => {
     if (instance && codeOpen) {
       const n = instance.getNodes();
       const e = instance.getEdges();
 
-      const outputs = n.filter(x => x.type === 'out');
+      const outputs = n.filter((x) => x.type === "out");
 
       const expressions: string[] = [];
       const neededEdges: string[] = [];
 
       for (const o of outputs) {
-        const wire = e.find(x => x.target === o.id);
-        
+        const wire = e.find((x) => x.target === o.id);
+
         if (wire) {
-          const [expr, loops] = compile(wire,{
-            nodes:n,
-            edges:e,
+          const [expr, loops] = compile(wire, {
+            nodes: n,
+            edges: e,
           });
           expressions.push(`${varName(o.data.label)} = ${expr};`);
           neededEdges.push(...loops);
@@ -92,9 +99,9 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
         const wire = instance.getEdge(w);
 
         if (wire) {
-          const [expr] = compile(wire,{
-            nodes:n,
-            edges:e,
+          const [expr] = compile(wire, {
+            nodes: n,
+            edges: e,
           });
           expressions.push(`${varName(w)} = ${expr};`);
         }
@@ -102,7 +109,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
 
       setCode(expressions);
     }
-  }, [codeOpen, nodes, edges])
+  }, [codeOpen, nodes, edges]);
 
   useEffect(() => {
     if (chart.chart) {
@@ -114,7 +121,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
         setEdges(chart?.chart?.edges || []);
         setTimeout(() => {
           instance?.fitView({
-            padding: 0.25
+            padding: 0.25,
           });
         }, 50);
       }, 0);
@@ -125,7 +132,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
     if (fileName) {
       chart.load(fileName);
     }
-  },[fileName])
+  }, [fileName]);
 
   const generateId = () => {
     let ok = false;
@@ -133,50 +140,54 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
     // retry if id is duplicate
     while (!ok) {
       id = nanoid(5);
-      if (!(instance?.getNode(id))) {
+      if (!instance?.getNode(id)) {
         ok = true;
       }
     }
     return id;
-  }
+  };
 
   return (
     <>
-      <div style={{
-		flexGrow: 1,
-		fontSize: '12px'
-	  }}>
+      <div
+        style={{
+          flexGrow: 1,
+          fontSize: "12px",
+        }}
+      >
         <Flow
-			nodes={nodes}
-			edges={edges}
-			onConnect={onConnect}
-			onNodesChange={onNodesChange}
-			onEdgesChange={onEdgesChange}
-			onInit={(i) => setInstance(i)}
-			handlers={{
-				open: handleOpenFolder,
-				save: handleSaveDialog,
-				new: handleNew,
-				compile: handleCompile,
-				createNode: (actionType:string) => {
-					switch(actionType) {
-						case 'nodes': return setNodesPaletteOpen(true);
-						case 'modules': return;
-					}
-				}
-			}}
-		/>
+          nodes={nodes}
+          edges={edges}
+          onConnect={onConnect}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onInit={(i) => setInstance(i)}
+          handlers={{
+            open: handleOpenFolder,
+            save: handleSaveDialog,
+            new: handleNew,
+            compile: handleCompile,
+            createNode: (actionType: string) => {
+              switch (actionType) {
+                case "nodes":
+                  return setNodesPaletteOpen(true);
+                case "modules":
+                  return;
+              }
+            },
+          }}
+        />
       </div>
-      {nodesPaletteOpen &&
+      {nodesPaletteOpen && (
         <NodesDialog
           onClick={(actionType) => {
             setNodes((prev) => {
-              let data: Record<string,any> = {};
+              let data: Record<string, any> = {};
 
-              switch(actionType) {
-                case 'comment':
-                case 'in':
-                case 'out':
+              switch (actionType) {
+                case "comment":
+                case "in":
+                case "out":
                   data.label = actionType;
                   break;
               }
@@ -190,19 +201,16 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
                   position: {
                     x: 0,
                     y: 0,
-                  }
-                }
-              ]
-            })
+                  },
+                },
+              ];
+            });
           }}
           onClose={() => setNodesPaletteOpen(false)}
         />
-      }
+      )}
       {codeOpen && (
-        <CodeDialog
-          onClose={() => setCodeOpen(false)}
-          code={code}
-        />
+        <CodeDialog onClose={() => setCodeOpen(false)} code={code} />
       )}
       {mode === "open" && (
         <FilePicker
@@ -246,6 +254,6 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
       ) : null}
     </>
   );
-}
+};
 
 export default CircuitEditor;

@@ -2,7 +2,7 @@ import And from "components/Icons/And";
 import { memo, FC } from "react";
 import { NodeProps, Handle, Position } from "reactflow";
 
-const AndGate: FC<NodeProps> = ({id, selected}) => {
+const AndGate: FC<NodeProps> = ({ id, selected }) => {
   return (
     <>
       <Handle

@@ -28,7 +28,7 @@ const useChart = () => {
 
   const save = async (c: Chart) => {
     setChart({
-      nodes: c.nodes.map(x => {
+      nodes: c.nodes.map((x) => {
         delete x.positionAbsolute;
         delete x.width;
         delete x.height;
@@ -41,13 +41,13 @@ const useChart = () => {
 
         return x;
       }),
-      edges: c.edges.map(x => {
+      edges: c.edges.map((x) => {
         delete x.type;
         if (x.sourceHandle === null) {
           delete x.sourceHandle;
         }
         if (x.targetHandle === null) {
-          delete x.targetHandle
+          delete x.targetHandle;
         }
         return x;
       }),

@@ -56,10 +56,13 @@ const CommentNode: FC<NodeProps> = ({ data, id, selected }) => {
           <button onClick={() => setEditmode(false)}>OK</button>
         </div>
       ) : (
-        <div onDoubleClick={handleCommentClick} style={{
-          ...nodeStyle,
-          borderColor: selected? '#000' : '#ffa',
-        }}>
+        <div
+          onDoubleClick={handleCommentClick}
+          style={{
+            ...nodeStyle,
+            borderColor: selected ? "#000" : "#ffa",
+          }}
+        >
           {comment}
         </div>
       )}

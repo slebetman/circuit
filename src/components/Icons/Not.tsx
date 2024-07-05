@@ -1,6 +1,6 @@
 import { Icon } from "./types";
 
-const Not:Icon = ({selected}) => (
+const Not: Icon = ({ selected }) => (
   <svg
     width="35px"
     height="21px"
@@ -9,7 +9,7 @@ const Not:Icon = ({selected}) => (
     id="svg1"
     fill="#fff"
     stroke="#000"
-    strokeWidth={selected? 2 : 1}
+    strokeWidth={selected ? 2 : 1}
   >
     <g id="layer1">
       <path id="rect1" d="M 8,17 24.292893,10 8,3 Z" />

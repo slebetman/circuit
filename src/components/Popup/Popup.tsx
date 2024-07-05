@@ -46,13 +46,10 @@ const Popup = ({ title, onCancel, children, style }: PopupProps) => {
         ...style,
       }}
     >
-      <div
-        style={headerStyle}
-        onPointerDown={dragAndDrop(popupRef)}
-      >
+      <div style={headerStyle} onPointerDown={dragAndDrop(popupRef)}>
         <span
           style={{
-            userSelect: 'none'
+            userSelect: "none",
           }}
         >
           {title}
