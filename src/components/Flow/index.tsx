@@ -83,15 +83,30 @@ function Flow() {
       const outputs = n.filter(x => x.type === 'out');
 
       const expressions: string[] = [];
+      const neededEdges: string[] = [];
 
       for (const o of outputs) {
         const wire = e.find(x => x.target === o.id);
         
         if (wire) {
-          expressions.push(`${varName(o.data.label)} = ${compile(wire,{
+          const [expr, loops] = compile(wire,{
             nodes:n,
             edges:e,
-          })}`);
+          });
+          expressions.push(`${varName(o.data.label)} = ${expr};`);
+          neededEdges.push(...loops);
+        }
+      }
+
+      for (const w of neededEdges) {
+        const wire = instance.getEdge(w);
+
+        if (wire) {
+          const [expr] = compile(wire,{
+            nodes:n,
+            edges:e,
+          });
+          expressions.push(`${varName(w)} = ${expr};`);
         }
       }
 

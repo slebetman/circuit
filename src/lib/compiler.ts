@@ -8,38 +8,54 @@ type CompilerOptions = {
 	getId? : (n:Node) => string;
 }
 
-type Compiler = (wire: Edge, opt:CompilerOptions) => string;
+type Compiler = (wire: Edge, opt:CompilerOptions) => [string, string[]];
+
+type InternalCompiler = (wire: Edge) => string;
 
 const compile: Compiler = (wire, opt) => {
-	if (!wire) {
-		return 'undefined';
-	}
+	const processedEdges: Record<string, boolean> = {};
+	const loops: string[] = [];
 
-	const source = opt.nodes.find(x => x.id === wire.source);
+	const comp: InternalCompiler = (w: Edge) => {
+		if (!w) {
+			return 'undefined';
+		}
 
-	if (source) {
-		const inputs = opt.edges.filter(x => x.target === source?.id);
-		if (inputs?.length) {
-			switch (source.type) {
-				case 'and':
-					return `(${compile(inputs[0],opt)} && ${compile(inputs[1],opt)})`;
-				case 'or':
-					return `(${compile(inputs[0],opt)} || ${compile(inputs[1],opt)})`;
-				case 'xor':
-					return `(${compile(inputs[0],opt)} !== ${compile(inputs[1],opt)})`;
-				case 'not':
-					return `!(${compile(inputs[0],opt)})`;
-				default:
-					throw new Error('Unsupported node type!');
+		const source = opt.nodes.find(x => x.id === w.source);
+
+		if (processedEdges[w.id]) {
+			loops.push(w.id);
+			return w.id;
+		}
+
+		processedEdges[w.id] = true;
+
+		if (source) {
+			const inputs = opt.edges.filter(x => x.target === source?.id);
+			if (inputs?.length) {
+				switch (source.type) {
+					case 'and':
+						return `(${comp(inputs[0])} && ${comp(inputs[1])})`;
+					case 'or':
+						return `(${comp(inputs[0])} || ${comp(inputs[1])})`;
+					case 'xor':
+						return `(${comp(inputs[0])} !== ${comp(inputs[1])})`;
+					case 'not':
+						return `!(${comp(inputs[0])})`;
+					default:
+						throw new Error('Unsupported node type!');
+				}
+			}
+			else if (source.type === 'in') {
+				let varId = opt.getId ? opt.getId(source) : source.data.label;
+				return `${varName(varId, opt.prefix)}`;
 			}
 		}
-		else if (source.type === 'in') {
-			let varId = opt.getId ? opt.getId(source) : source.data.label;
-			return `${varName(varId, opt.prefix)}`;
-		}
+
+		throw new Error('Not supposed to get here');
 	}
 
-	throw new Error('Not supposed to get here');
+	return [comp(wire),	loops]
 }
 
 export default compile;
