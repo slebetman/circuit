@@ -1,14 +1,10 @@
-import And from "components/Icons/And";
-import Not from "components/Icons/Not";
-import Or from "components/Icons/Or";
-import Xor from "components/Icons/Xor";
 import { FC, useState } from "react";
 import { Panel, PanelPosition } from "reactflow";
 import ToolButton from "./ToolButton";
 import FolderOpen from "components/Icons/FolderOpen";
-import FloppyDisk from "components/Icons/FloppyDisk";
 import Code from "components/Icons/Code";
-import File from "components/Icons/File";
+import FileNew from "components/Icons/FileNew";
+import FileSave from "components/Icons/FileSave";
 
 type ActionType = 'nodes' | 'modules';
 
@@ -25,19 +21,18 @@ type ToolActionHandlers = {
 	createNode?: (actionType: ActionType) => void;
 }
 
-const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => {
-	const [isOpen, setIsOpen] = useState(true);
+const Divider = () => (<div style={{userSelect:'none'}}>&nbsp;</div>);
 
-	return <Panel position={position}>
-		<ToolButton icon={File} onClick={handlers.new} />
-		<ToolButton icon={FolderOpen} onClick={handlers.open} />
-		<ToolButton icon={FloppyDisk} onClick={handlers.save} />
-		<div>&nbsp;</div>
-		<ToolButton label="Nodes" onClick={handlers.createNode} actionType="nodes" />
-		<ToolButton label="Modules" onClick={handlers.createNode} actionType="modules" />
-		<div>&nbsp;</div>
-		<ToolButton icon={Code} onClick={handlers.compile} />
-	</Panel>
-}
+const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
+<Panel position={position}>
+	<ToolButton icon={FileNew} onClick={handlers.new} title="New circuit" />
+	<ToolButton icon={FolderOpen} onClick={handlers.open} title="Open circuit" />
+	<ToolButton icon={FileSave} onClick={handlers.save} title="Save circuit" />
+	<Divider />
+	<ToolButton label="Nodes" onClick={handlers.createNode} actionType="nodes" title="Nodes pallete" />
+	<ToolButton label="Modules" onClick={handlers.createNode} actionType="modules" title="Modules pallete" />
+	<Divider />
+	<ToolButton icon={Code} onClick={handlers.compile} title="Compile circuit expression" />
+</Panel>);
 
 export default ToolPanel;

@@ -19,12 +19,14 @@ const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
     <Popup title="Open File" onCancel={onCancel}>
       <div
         style={{
-          padding: "10px",
+          maxHeight: "210px",
+          overflow: "hidden auto",
         }}
       >
         <table
           style={{
             width: "100%",
+            margin: "10px",
           }}
         >
           <tbody>
@@ -35,7 +37,7 @@ const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
                 </td>
                 <td
                   style={{
-                    minWidth: "300px",
+                    minWidth: "220px",
                   }}
                 >
                   {f}

@@ -187,9 +187,6 @@ const Flow: FC<FlowProps> = ({fileName}) => {
           onInit={(i) => setInstance(i)}
           fitView
         >
-          <Panel position="top-center">
-            {chart.name || null}
-          </Panel>
           <ToolPanel position="top-left" handlers={{
             open: handleOpenFolder,
             save: handleSaveDialog,

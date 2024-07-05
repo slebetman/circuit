@@ -5,9 +5,10 @@ type ToolButtonProp = {
 	label?: string,
 	onClick?: Function;
 	actionType?: string;
+	title?: string;
 }
 
-const ToolButton: FC<ToolButtonProp> = ({ icon, label, onClick, actionType }) => {
+const ToolButton: FC<ToolButtonProp> = ({ icon, label, onClick, actionType, title }) => {
 	const [hover, setHover] = useState(false);
 
 	if (icon === undefined && label === undefined) {
@@ -32,8 +33,9 @@ const ToolButton: FC<ToolButtonProp> = ({ icon, label, onClick, actionType }) =>
 		}}
 		onMouseEnter={() => setHover(true)}
 		onMouseLeave={() => setHover(false)}
+		title={title}
 	>
-		{icon ? createElement(icon) : label}
+		{icon ? createElement(icon) : <span style={{userSelect:'none'}}>{label}</span>}
 	</button>
 }
 

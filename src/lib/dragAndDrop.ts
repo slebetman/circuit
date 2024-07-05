@@ -15,16 +15,14 @@ const dragAndDrop =
     };
 
     window.onpointermove = (e) => {
-      if (origin) {
-        const y = origin.y + e.clientY - origin.clientY;
-        const x = origin.x + e.clientX - origin.clientX;
+      const y = origin.y + e.clientY - origin.clientY;
+      const x = origin.x + e.clientX - origin.clientX;
 
-        dialogRef.current.style.top = `${y}px`;
-        dialogRef.current.style.left = `${x}px`;
+      dialogRef.current.style.top = `${y}px`;
+      dialogRef.current.style.left = `${x}px`;
 
-        e.stopPropagation();
-        e.preventDefault();
-      }
+      e.stopPropagation();
+      e.preventDefault();
     };
   };
 
