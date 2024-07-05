@@ -67,10 +67,6 @@ const Flow: FC<FlowProps> = ({fileName}) => {
   };
 
   const handleSave = (name: string) => {
-    if (!name?.match(/.json$/)) {
-      name += ".json";
-    }
-
     if (name) {
       chart.setName(name);
       chart.save({nodes, edges});
@@ -128,7 +124,6 @@ const Flow: FC<FlowProps> = ({fileName}) => {
         }
       }
 
-      console.log(expressions);
       setCode(expressions);
     }
   }, [codeOpen, nodes, edges])
