@@ -66,7 +66,7 @@ const CircuitEditor: FC<EditorProps> = ({fileName}) => {
   }
 
   useEffect(() => {
-    if (instance) {
+    if (instance && codeOpen) {
       const n = instance.getNodes();
       const e = instance.getEdges();
 
