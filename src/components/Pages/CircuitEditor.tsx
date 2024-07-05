@@ -72,42 +72,44 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
     setCodeOpen(true);
   };
 
-  const handleCreateNode = (actionType:string) => {
-	setNodes((prev) => {
-	  let data: Record<string, any> = {};
+  const handleCreateNode = (actionType: string) => {
+    setNodes((prev) => {
+      let data: Record<string, any> = {};
 
-	  switch (actionType) {
-		case "comment":
-		case "in":
-		case "out":
-		  data.label = actionType;
-		  break;
-	  }
+      switch (actionType) {
+        case "comment":
+        case "in":
+        case "out":
+          data.label = actionType;
+          break;
+      }
 
-	  return [
-		...prev,
-		{
-		  id: `${generateId()}`,
-		  type: actionType,
-		  data,
-		  position: {
-			x: 0,
-			y: 0,
-		  },
-		},
-	  ];
-	});
-  }
+      return [
+        ...prev,
+        {
+          id: `${generateId()}`,
+          type: actionType,
+          data,
+          position: {
+            x: 0,
+            y: 0,
+          },
+        },
+      ];
+    });
+  };
 
   useEffect(() => {
     if (instance && codeOpen) {
       const n = instance.getNodes();
       const e = instance.getEdges();
 
-      setCode(compile({
-		nodes: n,
-		edges: e,
-	  }));
+      setCode(
+        compile({
+          nodes: n,
+          edges: e,
+        }),
+      );
     }
   }, [codeOpen, nodes, edges]);
 
@@ -163,25 +165,25 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           onEdgesChange={onEdgesChange}
           onInit={(i) => setInstance(i)}
         >
-			<ToolPanel
-				position="top-left"
-				handlers={{
-					open: handleOpenFolder,
-					save: handleSaveDialog,
-					new: handleNew,
-					compile: handleCompile,
-					run: () => {},
-					createNode: (actionType) => {
-						switch (actionType) {
-						case "nodes":
-							return setNodesPaletteOpen(true);
-						case "modules":
-							return;
-						}
-					},
-				}}
-			/>
-		</Flow>
+          <ToolPanel
+            position="top-left"
+            handlers={{
+              open: handleOpenFolder,
+              save: handleSaveDialog,
+              new: handleNew,
+              compile: handleCompile,
+              run: () => {},
+              createNode: (actionType) => {
+                switch (actionType) {
+                  case "nodes":
+                    return setNodesPaletteOpen(true);
+                  case "modules":
+                    return;
+                }
+              },
+            }}
+          />
+        </Flow>
       </div>
       {nodesPaletteOpen && (
         <NodesDialog

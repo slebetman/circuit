@@ -12,7 +12,7 @@ type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
 
 type InternalCompiler = (wire: Edge) => string;
 
-export const compile = (opt:CompilerOptions) => {
+export const compile = (opt: CompilerOptions) => {
   const outputs = opt.nodes.filter((x) => x.type === "out");
 
   const expressions: string[] = [];
@@ -30,7 +30,7 @@ export const compile = (opt:CompilerOptions) => {
   }
 
   for (const w of neededEdges) {
-    const wire = opt.edges.find(x => x.id === w);
+    const wire = opt.edges.find((x) => x.id === w);
 
     if (wire) {
       const [expr] = compileWire(wire, opt);
@@ -39,7 +39,7 @@ export const compile = (opt:CompilerOptions) => {
   }
 
   return expressions;
-}
+};
 
 export const compileWire: Compiler = (wire, opt) => {
   const processedEdges: Record<string, boolean> = {};
@@ -85,4 +85,3 @@ export const compileWire: Compiler = (wire, opt) => {
 
   return [comp(wire), loops];
 };
-

@@ -53,11 +53,7 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
       onClick={handlers.compile}
       title="Compile circuit expression"
     />
-	<ToolButton
-      icon={Play}
-      onClick={handlers.run}
-      title="Run Simulation"
-    />
+    <ToolButton icon={Play} onClick={handlers.run} title="Run Simulation" />
   </Panel>
 );
 
