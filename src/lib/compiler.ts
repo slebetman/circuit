@@ -1,33 +1,39 @@
 import { Edge, Node } from "reactflow";
 import varName from "./normaliseVarName";
 
-type Compiler = (wire: Edge, nodes: Node[], edges: Edge[]) => string;
+type CompilerOptions = {
+	nodes: Node[];
+	edges: Edge[];
+	prefix?: string;
+}
 
-const compile: Compiler = (wire: Edge, nodes: Node[], edges: Edge[]) => {
+type Compiler = (wire: Edge, opt:CompilerOptions) => string;
+
+const compile: Compiler = (wire, opt) => {
 	if (!wire) {
 		return 'undefined';
 	}
 
-	const source = nodes.find(x => x.id === wire.source);
+	const source = opt.nodes.find(x => x.id === wire.source);
 
 	if (source) {
-		const inputs = edges.filter(x => x.target === source?.id);
+		const inputs = opt.edges.filter(x => x.target === source?.id);
 		if (inputs?.length) {
 			switch (source.type) {
 				case 'and':
-					return `(${compile(inputs[0],nodes,edges)} && ${compile(inputs[1],nodes,edges)})`;
+					return `(${compile(inputs[0],opt)} && ${compile(inputs[1],opt)})`;
 				case 'or':
-					return `(${compile(inputs[0],nodes,edges)} || ${compile(inputs[1],nodes,edges)})`;
+					return `(${compile(inputs[0],opt)} || ${compile(inputs[1],opt)})`;
 				case 'xor':
-					return `(${compile(inputs[0],nodes,edges)} !== ${compile(inputs[1],nodes,edges)})`;
+					return `(${compile(inputs[0],opt)} !== ${compile(inputs[1],opt)})`;
 				case 'not':
-					return `!(${compile(inputs[0],nodes,edges)})`;
+					return `!(${compile(inputs[0],opt)})`;
 				default:
 					throw new Error('Unsupported node type!');
 			}
 		}
 		else if (source.type === 'in') {
-			return `${varName(source.data.label)}`;
+			return `${varName(source.data.label, opt.prefix)}`;
 		}
 	}
 

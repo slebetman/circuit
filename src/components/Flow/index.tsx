@@ -24,6 +24,7 @@ import NodesDialog from "components/Dialogs/NodesDialog";
 import compile from "lib/compiler";
 import varName from "lib/normaliseVarName";
 import CodeDialog from "components/Dialogs/CodeDialog";
+import { nanoid } from "nanoid";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -87,7 +88,7 @@ function Flow() {
         const wire = e.find(x => x.target === o.id);
         
         if (wire) {
-          expressions.push(`${varName(o.data.label)} = ${compile(wire,n,e)};`);
+          expressions.push(`${varName(o.data.label)} = ${compile(wire,{nodes:n,edges:e})};`);
         }
       }
 
@@ -114,6 +115,18 @@ function Flow() {
     }
   }, [chart.chart]);
 
+  const generateId = () => {
+    let ok = false;
+    let id;
+    // retry if id is duplicate
+    while (!ok) {
+      id = nanoid(5);
+      if (!(instance?.getNode(id))) {
+        ok = true;
+      }
+    }
+    return id;
+  }
 
   return (
     <>
@@ -131,6 +144,7 @@ function Flow() {
           maxZoom={10}
 			    edgeTypes={edgeTypes}
           onInit={(i) => setInstance(i)}
+          fitView
         >
           <Panel position="top-center">
             {chart.name || null}
@@ -166,7 +180,7 @@ function Flow() {
               return [
                 ...prev,
                 {
-                  id: `${Math.random()}`,
+                  id: `${generateId()}`,
                   type: actionType,
                   data,
                   position: {
