@@ -8,6 +8,7 @@ import ToolButton from "./ToolButton";
 import FolderOpen from "components/Icons/FolderOpen";
 import FloppyDisk from "components/Icons/FloppyDisk";
 import Code from "components/Icons/Code";
+import File from "components/Icons/File";
 
 type ActionType = 'nodes' | 'modules';
 
@@ -19,6 +20,7 @@ type ToolPanelProp = {
 type ToolActionHandlers = {
 	open?: Function;
 	save?: Function;
+	new?: Function;
 	compile?: Function;
 	createNode?: (actionType: ActionType) => void;
 }
@@ -27,6 +29,7 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => {
 	const [isOpen, setIsOpen] = useState(true);
 
 	return <Panel position={position}>
+		<ToolButton icon={File} onClick={handlers.new} />
 		<ToolButton icon={FolderOpen} onClick={handlers.open} />
 		<ToolButton icon={FloppyDisk} onClick={handlers.save} />
 		<div>&nbsp;</div>

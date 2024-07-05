@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   useNodesState,
   useEdgesState,
@@ -25,6 +25,7 @@ import compile from "lib/compiler";
 import varName from "lib/normaliseVarName";
 import CodeDialog from "components/Dialogs/CodeDialog";
 import { nanoid } from "nanoid";
+import { useRouter } from "next/router";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
@@ -35,7 +36,11 @@ const edgeTypes = {
 	smart: CustomSmartBezierEdge
 }
 
-function Flow() {
+type FlowProps = {
+  fileName?: string;
+}
+
+const Flow: FC<FlowProps> = ({fileName}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
@@ -49,6 +54,14 @@ function Flow() {
   );
   const chart = useChart();
 
+  const router = useRouter();
+
+  const handleNew = () => {
+    setNodes([]);
+    setEdges([]);
+    router.replace('/');
+  }
+
   const handleSaveDialog = () => {
     setMode("save");
   };
@@ -61,6 +74,7 @@ function Flow() {
     if (name) {
       chart.setName(name);
       chart.save({nodes, edges});
+      router.replace(`/${name}`);
     }
 
     setMode("chart");
@@ -71,8 +85,8 @@ function Flow() {
   };
 
   const handleSelectFile = (f: string) => {
-    chart.load(f);
     setMode("chart");
+    router.replace(`/${f}`);
   };
 
   const handleCompile = () => {
@@ -133,6 +147,12 @@ function Flow() {
     }
   }, [chart.chart]);
 
+  useEffect(() => {
+    if (fileName) {
+      chart.load(fileName);
+    }
+  },[fileName])
+
   const generateId = () => {
     let ok = false;
     let id;
@@ -170,6 +190,7 @@ function Flow() {
           <ToolPanel position="top-left" handlers={{
             open: handleOpenFolder,
             save: handleSaveDialog,
+            new: handleNew,
             compile: handleCompile,
             createNode: (actionType) => {
               switch(actionType) {
