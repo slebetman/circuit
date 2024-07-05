@@ -5,8 +5,7 @@ import useChart from "hooks/useChart";
 import FilePicker from "components/Dialogs/FilePicker";
 import SaveDialog from "components/Dialogs/SaveDialog";
 import NodesDialog from "components/Dialogs/NodesDialog";
-import compileWire from "lib/compiler";
-import varName from "lib/normaliseVarName";
+import { compile } from "lib/compiler";
 import CodeDialog from "components/Dialogs/CodeDialog";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
@@ -77,37 +76,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
       const n = instance.getNodes();
       const e = instance.getEdges();
 
-      const outputs = n.filter((x) => x.type === "out");
-
-      const expressions: string[] = [];
-      const neededEdges: string[] = [];
-
-      for (const o of outputs) {
-        const wire = e.find((x) => x.target === o.id);
-
-        if (wire) {
-          const [expr, loops] = compileWire(wire, {
-            nodes: n,
-            edges: e,
-          });
-          expressions.push(`${varName(o.data.label)} = ${expr};`);
-          neededEdges.push(...loops);
-        }
-      }
-
-      for (const w of neededEdges) {
-        const wire = instance.getEdge(w);
-
-        if (wire) {
-          const [expr] = compileWire(wire, {
-            nodes: n,
-            edges: e,
-          });
-          expressions.push(`${varName(w)} = ${expr};`);
-        }
-      }
-
-      setCode(expressions);
+      setCode(compile({
+		nodes: n,
+		edges: e,
+	  }));
     }
   }, [codeOpen, nodes, edges]);
 
