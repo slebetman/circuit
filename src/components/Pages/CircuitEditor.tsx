@@ -5,7 +5,7 @@ import useChart from "hooks/useChart";
 import FilePicker from "components/Dialogs/FilePicker";
 import SaveDialog from "components/Dialogs/SaveDialog";
 import NodesDialog from "components/Dialogs/NodesDialog";
-import compile from "lib/compiler";
+import compileWire from "lib/compiler";
 import varName from "lib/normaliseVarName";
 import CodeDialog from "components/Dialogs/CodeDialog";
 import { nanoid } from "nanoid";
@@ -86,7 +86,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
         const wire = e.find((x) => x.target === o.id);
 
         if (wire) {
-          const [expr, loops] = compile(wire, {
+          const [expr, loops] = compileWire(wire, {
             nodes: n,
             edges: e,
           });
@@ -99,7 +99,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
         const wire = instance.getEdge(w);
 
         if (wire) {
-          const [expr] = compile(wire, {
+          const [expr] = compileWire(wire, {
             nodes: n,
             edges: e,
           });

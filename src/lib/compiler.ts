@@ -12,7 +12,7 @@ type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
 
 type InternalCompiler = (wire: Edge) => string;
 
-const compile: Compiler = (wire, opt) => {
+const compileWire: Compiler = (wire, opt) => {
   const processedEdges: Record<string, boolean> = {};
   const loops: string[] = [];
 
@@ -57,4 +57,4 @@ const compile: Compiler = (wire, opt) => {
   return [comp(wire), loops];
 };
 
-export default compile;
+export default compileWire;

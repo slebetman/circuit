@@ -30,7 +30,8 @@ type FlowActionHandlers = {
   new: Function;
   open: Function;
   compile: Function;
-  createNode: Function;
+  run?: Function;
+  createNode: (actionType:string) => void;
 };
 
 type FlowProps = {
@@ -71,11 +72,12 @@ const Flow: FC<FlowProps> = ({
       <ToolPanel
         position="top-left"
         handlers={{
-          open: handlers?.open,
-          save: handlers?.save,
-          new: handlers?.new,
-          compile: handlers?.compile,
-          createNode: () => handlers?.createNode(),
+          open: handlers.open,
+          save: handlers.save,
+          new: handlers.new,
+          compile: handlers.compile,
+          run: handlers.run,
+          createNode: handlers.createNode,
         }}
       />
       <Controls />

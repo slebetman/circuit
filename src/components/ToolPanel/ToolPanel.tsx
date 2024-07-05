@@ -1,10 +1,11 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Panel, PanelPosition } from "reactflow";
 import ToolButton from "./ToolButton";
 import FolderOpen from "components/Icons/FolderOpen";
 import Code from "components/Icons/Code";
 import FileNew from "components/Icons/FileNew";
 import FileSave from "components/Icons/FileSave";
+import Play from "components/Icons/Play";
 
 type ActionType = "nodes" | "modules";
 
@@ -18,6 +19,7 @@ type ToolActionHandlers = {
   save?: Function;
   new?: Function;
   compile?: Function;
+  run?: Function;
   createNode?: (actionType: ActionType) => void;
 };
 
@@ -50,6 +52,11 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
       icon={Code}
       onClick={handlers.compile}
       title="Compile circuit expression"
+    />
+	<ToolButton
+      icon={Play}
+      onClick={handlers.run}
+      title="Run Simulation"
     />
   </Panel>
 );
