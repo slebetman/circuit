@@ -41,7 +41,7 @@ export const compileForSim = (opt: ComilerOptions) => {
     outputs,
     state: {
       ...inputs.reduce((a, v) => {
-        a[v] = undefined;
+        a[v] = false;
         return a;
       }, {} as SimState),
     },
