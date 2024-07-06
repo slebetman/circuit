@@ -8,6 +8,19 @@ type ComilerOptions = {
   edges: Edge[];
 };
 
+export type SimState = Record<string, any>;
+
+export type SimObject = {
+  inputs: string[];
+  state: SimState;
+  start: (updater?: UpdaterFunction) => void;
+  stop: Function;
+  step: (updater?: UpdaterFunction) => void;
+  set: (key: string, val: boolean) => void;
+};
+
+export type UpdaterFunction = (state: SimState) => void;
+
 export const compileForSim = (opt: ComilerOptions) => {
   const inputs = opt.nodes
     .filter((x) => x.type === "in")
@@ -27,13 +40,10 @@ export const compileForSim = (opt: ComilerOptions) => {
     inputs,
     outputs,
     state: {
-      ...inputs.reduce(
-        (a, v) => {
-          a[v] = undefined;
-          return a;
-        },
-        {} as Record<string, any>,
-      ),
+      ...inputs.reduce((a, v) => {
+        a[v] = undefined;
+        return a;
+      }, {} as SimState),
     },
   };
 
@@ -57,7 +67,7 @@ export const simulator = (opt: ComilerOptions) => {
     clearInterval(interval);
   }
 
-  function step(updater?: Function) {
+  function step(updater?: UpdaterFunction) {
     for (const k in simData.state) {
       if (typeof simData.state[k] === "function") {
         simData.state[k]();
@@ -73,7 +83,7 @@ export const simulator = (opt: ComilerOptions) => {
     return newState;
   }
 
-  function start(updater?: Function) {
+  function start(updater?: UpdaterFunction) {
     stop();
     interval = setInterval(() => step(updater), 50);
   }
@@ -89,5 +99,5 @@ export const simulator = (opt: ComilerOptions) => {
     stop,
     step,
     set,
-  };
+  } as SimObject;
 };

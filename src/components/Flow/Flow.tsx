@@ -42,6 +42,7 @@ const Flow: FC<FlowProps> = ({
   nodes,
   edges,
   children,
+  ...props
 }) => {
   return (
     <ReactFlow
@@ -58,9 +59,10 @@ const Flow: FC<FlowProps> = ({
       edgeTypes={edgeTypes}
       onInit={onInit}
       fitView
+      {...props}
     >
       {children}
-      <Controls />
+      <Controls showInteractive={false} />
     </ReactFlow>
   );
 };

@@ -13,12 +13,13 @@ import {
   addEdge,
   Connection,
   Edge,
+  Panel,
   ReactFlowInstance,
   useEdgesState,
   useNodesState,
 } from "reactflow";
 import ToolPanel from "components/ToolPanel/ToolPanel";
-import { simulator } from "lib/simulator";
+import { SimObject, SimState, simulator } from "lib/simulator";
 
 type EditorProps = {
   fileName?: string;
@@ -32,6 +33,8 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
   const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
   const [codeOpen, setCodeOpen] = useState(false);
   const [code, setCode] = useState<string[]>([]);
+  const [sim, setSim] = useState<SimObject | null>(null);
+  const [editable, setEditable] = useState(true);
   const onConnect = useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
@@ -71,6 +74,51 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 
   const handleCompile = () => {
     setCodeOpen(true);
+  };
+
+  const handleSim = (active: boolean) => {
+    setEditable(!active);
+
+    if (active) {
+      const s = simulator({
+        nodes,
+        edges,
+      });
+
+      const updater = (state: SimState) => {
+        setNodes((nodes) =>
+          nodes.map((n) => {
+            if (state[n.id] !== undefined) {
+              n.data = {
+                ...n.data,
+                on: state[n.id],
+              };
+            }
+            return n;
+          }),
+        );
+      };
+
+      s.start(updater);
+      setSim(s);
+    } else {
+      sim?.stop();
+
+      setNodes((nodes) =>
+        nodes.map((n) => {
+          if (n.data) {
+            delete n.data.on;
+            n.data = {
+              ...n.data,
+            };
+          }
+
+          return n;
+        }),
+      );
+
+      setSim(null);
+    }
   };
 
   const handleCreateNode = (actionType: string) => {
@@ -165,7 +213,12 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onInit={(i) => setInstance(i)}
+          elementsSelectable={editable}
+          nodesConnectable={editable}
+          nodesDraggable={editable}
+          edgesUpdatable={editable}
         >
+          {sim && <Panel position="top-center">Simulation running..</Panel>}
           <ToolPanel
             position="top-left"
             handlers={{
@@ -173,34 +226,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
               save: handleSaveDialog,
               new: handleNew,
               compile: handleCompile,
-              run: () => {
-                // @ts-ignore
-                window.sim = simulator({
-                  nodes,
-                  edges,
-                });
-
-                //@ts-ignore
-                window.sim.s = () => {
-                  //@ts-ignore
-                  window.sim.step((state) => {
-                    setNodes((nodes) =>
-                      nodes.map((n) => {
-                        if (state[n.id] !== undefined) {
-                          n.data = {
-                            ...n.data,
-                            on: state[n.id],
-                          };
-                        }
-                        return n;
-                      }),
-                    );
-                  });
-                };
-
-                // @ts-ignore
-                console.log(window.sim);
-              },
+              run: handleSim,
               createNode: (actionType) => {
                 switch (actionType) {
                   case "nodes":

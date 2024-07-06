@@ -6,6 +6,8 @@ import Code from "components/Icons/Code";
 import FileNew from "components/Icons/FileNew";
 import FileSave from "components/Icons/FileSave";
 import Play from "components/Icons/Play";
+import ToggleButton from "./ToggleButton";
+import Pause from "components/Icons/Pause";
 
 type ActionType = "nodes" | "modules";
 
@@ -53,7 +55,12 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
       onClick={handlers.compile}
       title="Compile circuit expression"
     />
-    <ToolButton icon={Play} onClick={handlers.run} title="Run Simulation" />
+    <ToggleButton
+      icon={Play}
+      activeIcon={Pause}
+      onStateChange={handlers.run}
+      title="Simulation"
+    />
   </Panel>
 );
 
