@@ -15,7 +15,6 @@ import { SmartBezierEdge } from "@tisoap/react-flow-smart-edge";
 
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
-import ToolPanel from "components/ToolPanel/ToolPanel";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: "smoothstep",
