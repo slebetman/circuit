@@ -30,7 +30,9 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
   const [label, setLabel] = useState(data.label);
 
   const handleCommentClick = () => {
-    setEditmode(true);
+    if (!data.sim) {
+      setEditmode(true);
+    }
   };
 
   const handleCommentInput = (e: FormEvent<HTMLInputElement>) => {
@@ -57,9 +59,18 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
         </div>
       ) : (
         <div
+          onClick={(e) => {
+            if (data.sim) {
+              console.log('clicked', id, !data.on);
+              data.sim(!data.on);
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }}
           onDoubleClick={handleCommentClick}
           style={{
             ...nodeStyle,
+            zIndex: '9999999',
             borderWidth: selected ? "2px" : "1px",
             marginLeft: selected ? "-2px" : "0px",
             backgroundColor: data.on
@@ -67,6 +78,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
               : data.on === false
                 ? "#aaa"
                 : "#fff",
+            cursor: data.sim ? 'pointer' : 'grab',
           }}
         >
           {label}

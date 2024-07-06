@@ -85,6 +85,18 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
         edges,
       });
 
+      setNodes((nodes) =>
+        nodes.map((n) => {
+          if (n.data) {
+            n.data = {
+              ...n.data,
+              sim: (state:boolean) => s.set(n.id,state),
+            };
+          }
+          return n;
+        }),
+      );
+
       const updater = (state: SimState) => {
         setNodes((nodes) =>
           nodes.map((n) => {
@@ -108,11 +120,11 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
         nodes.map((n) => {
           if (n.data) {
             delete n.data.on;
+            delete n.data.sim;
             n.data = {
               ...n.data,
             };
           }
-
           return n;
         }),
       );
@@ -213,7 +225,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onInit={(i) => setInstance(i)}
-          elementsSelectable={editable}
+          zoomOnDoubleClick={editable}
           nodesConnectable={editable}
           nodesDraggable={editable}
           edgesUpdatable={editable}
