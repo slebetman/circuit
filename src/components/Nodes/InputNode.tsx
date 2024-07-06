@@ -61,7 +61,6 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
         <div
           onClick={(e) => {
             if (data.sim) {
-              console.log('clicked', id, !data.on);
               data.sim(!data.on);
               e.preventDefault();
               e.stopPropagation();
