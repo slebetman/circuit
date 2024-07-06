@@ -61,6 +61,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
           style={{
             ...nodeStyle,
             borderWidth: selected ? "2px" : "1px",
+            marginLeft: selected ? '-2px' : '0px',
           }}
         >
           {label}
