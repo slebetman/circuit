@@ -54,7 +54,7 @@ export const compileWire: Compiler = (wire, opt) => {
 
     if (processedEdges[w.id]) {
       loops.push(w.id);
-      return w.id;
+      return varName(w.id, opt.prefix);
     }
 
     processedEdges[w.id] = true;

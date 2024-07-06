@@ -37,6 +37,8 @@ const useChart = () => {
 
         if (x.data && Object.keys(x.data).length === 0) {
           delete x.data;
+        } else if (x.data) {
+          delete x.data.on;
         }
 
         return x;

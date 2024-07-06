@@ -1,85 +1,93 @@
-import { Edge, Node } from 'reactflow';
+import { Edge, Node } from "reactflow";
 
-import { compile } from "./compiler"
-import varName from './normaliseVarName';
-import { clearInterval } from 'timers';
+import { compile } from "./compiler";
+import varName from "./normaliseVarName";
 
 type ComilerOptions = {
-	nodes: Node[];
-	edges: Edge[];
-}
+  nodes: Node[];
+  edges: Edge[];
+};
 
-export const compileForSim = (opt:ComilerOptions) => {
-	const inputs = opt.nodes
-		.filter(x => x.type === 'in')
-		.map(x => varName(x.id));
+export const compileForSim = (opt: ComilerOptions) => {
+  const inputs = opt.nodes
+    .filter((x) => x.type === "in")
+    .map((x) => varName(x.id));
 
-	const outputs = opt.nodes
-		.filter(x => x.type === 'out')
-		.map(x => varName(x.id));
+  const outputs = opt.nodes
+    .filter((x) => x.type === "out")
+    .map((x) => varName(x.id));
 
-	const expressions = compile({
-		...opt,
-		getId: (n) => n.id,
-		prefix: 'this',
-	});
+  const expressions = compile({
+    ...opt,
+    getId: (n) => n.id,
+    prefix: "this",
+  });
 
-	let ret = {
-		inputs,
-		outputs,
-		state: {
-			...inputs.reduce((a,v) => {
-				a[v] = undefined;
-				return a;
-			},{} as Record<string, any>)
-		}
-	};
+  let ret = {
+    inputs,
+    outputs,
+    state: {
+      ...inputs.reduce(
+        (a, v) => {
+          a[v] = undefined;
+          return a;
+        },
+        {} as Record<string, any>,
+      ),
+    },
+  };
 
-	expressions.forEach(v => {
-		const [key, expr] = v.split('=').map(x => x.trim());
-		Object.defineProperty(ret.state, key, {
-			enumerable: true,
-			get: new Function(`return ${expr}`) as () => any,
-		})
-	});
+  expressions.forEach((v) => {
+    const [key, ...expr] = v.split("=").map((x) => x.trim());
+    ret.state[key] = undefined;
+    ret.state[`func_${key}`] = new Function(
+      `this["${key}"] = ${expr.join("=")}`,
+    );
+  });
 
-	return ret;
-}
+  return ret;
+};
 
 export const simulator = (opt: ComilerOptions) => {
-	const simData = compileForSim(opt);
+  const simData = compileForSim(opt);
 
-	let interval: any;
+  let interval: any;
 
-	function stop () {
-		clearInterval(interval);
-	}
+  function stop() {
+    clearInterval(interval);
+  }
 
-	function step (updater?:Function) {
-		const newState = {
-			...simData.state
-		};
+  function step(updater?: Function) {
+    for (const k in simData.state) {
+      if (typeof simData.state[k] === "function") {
+        simData.state[k]();
+      }
+    }
 
-		if (updater) updater(newState);
+    const newState = {
+      ...simData.state,
+    };
 
-		return newState;
-	}
+    if (updater) updater(newState);
 
-	function start (updater?:Function) {
-		stop();
-		interval = setInterval(() => step(updater), 50);
-	}
+    return newState;
+  }
 
-	function set (key:string, val: boolean) {
-		simData.state[key] = val;
-	}
+  function start(updater?: Function) {
+    stop();
+    interval = setInterval(() => step(updater), 50);
+  }
 
-	return {
-		inputs: simData.inputs,
-		state: simData.state,
-		start,
-		stop,
-		step,
-		set,
-	}
-}
+  function set(key: string, val: boolean) {
+    simData.state[key] = val;
+  }
+
+  return {
+    inputs: simData.inputs,
+    state: simData.state,
+    start,
+    stop,
+    step,
+    set,
+  };
+};

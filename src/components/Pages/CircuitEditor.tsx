@@ -18,6 +18,7 @@ import {
   useNodesState,
 } from "reactflow";
 import ToolPanel from "components/ToolPanel/ToolPanel";
+import { simulator } from "lib/simulator";
 
 type EditorProps = {
   fileName?: string;
@@ -172,7 +173,34 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
               save: handleSaveDialog,
               new: handleNew,
               compile: handleCompile,
-              run: () => {},
+              run: () => {
+                // @ts-ignore
+                window.sim = simulator({
+                  nodes,
+                  edges,
+                });
+
+                //@ts-ignore
+                window.sim.s = () => {
+                  //@ts-ignore
+                  window.sim.step((state) => {
+                    setNodes((nodes) =>
+                      nodes.map((n) => {
+                        if (state[n.id] !== undefined) {
+                          n.data = {
+                            ...n.data,
+                            on: state[n.id],
+                          };
+                        }
+                        return n;
+                      }),
+                    );
+                  });
+                };
+
+                // @ts-ignore
+                console.log(window.sim);
+              },
               createNode: (actionType) => {
                 switch (actionType) {
                   case "nodes":
