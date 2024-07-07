@@ -30,10 +30,10 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
         data.on
           ? "#6c6"
           : data.on === false
-          ? "#ccc"
-          : selected
-          ? "#000"
-          : "#ccc"
+            ? "#ccc"
+            : selected
+              ? "#000"
+              : "#ccc"
       }
       fill="transparent"
       d={path}
