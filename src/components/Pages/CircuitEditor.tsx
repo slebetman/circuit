@@ -44,6 +44,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
   const router = useRouter();
 
   const handleNew = () => {
+    stopSim();
     setNodes([]);
     setEdges([]);
     router.replace("/");
@@ -68,6 +69,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
   };
 
   const handleSelectFile = (f: string) => {
+    stopSim();
     setMode("chart");
     router.replace(`/${f}`);
   };
@@ -76,45 +78,48 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
     setCodeOpen(true);
   };
 
-  const handleSim = (active: boolean) => {
-    setEditable(!active);
+  const startSim = () => {
+    setEditable(false);
+    const s = simulator({
+      nodes,
+      edges,
+    });
 
-    if (active) {
-      const s = simulator({
-        nodes,
-        edges,
-      });
+    setNodes((nodes) =>
+      nodes.map((n) => {
+        if (n.data) {
+          n.data = {
+            ...n.data,
+            sim: (state:boolean) => s.set(n.id,state),
+          };
+        }
+        return n;
+      }),
+    );
 
+    const updater = (state: SimState) => {
       setNodes((nodes) =>
         nodes.map((n) => {
-          if (n.data) {
+          if (state[n.id] !== undefined) {
             n.data = {
               ...n.data,
-              sim: (state:boolean) => s.set(n.id,state),
+              on: state[n.id],
             };
           }
           return n;
         }),
       );
+    };
 
-      const updater = (state: SimState) => {
-        setNodes((nodes) =>
-          nodes.map((n) => {
-            if (state[n.id] !== undefined) {
-              n.data = {
-                ...n.data,
-                on: state[n.id],
-              };
-            }
-            return n;
-          }),
-        );
-      };
+    s.start(updater);
+    setSim(s);
+  }
 
-      s.start(updater);
-      setSim(s);
-    } else {
-      sim?.stop();
+  const stopSim = () => {
+    setEditable(true);
+
+    if (sim) {
+      sim.stop();
 
       setNodes((nodes) =>
         nodes.map((n) => {
@@ -130,6 +135,14 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
       );
 
       setSim(null);
+    }
+  }
+
+  const handleSim = (active: boolean) => {
+    if (active) {
+      startSim();
+    } else {
+      stopSim();
     }
   };
 
@@ -233,6 +246,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           {sim && <Panel position="top-center">Simulation running..</Panel>}
           <ToolPanel
             position="top-left"
+            simRunning={sim !== null}
             handlers={{
               open: handleOpenFolder,
               save: handleSaveDialog,

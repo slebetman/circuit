@@ -14,6 +14,7 @@ type ActionType = "nodes" | "modules";
 type ToolPanelProp = {
   position: PanelPosition;
   handlers: ToolActionHandlers;
+  simRunning: boolean;
 };
 
 type ToolActionHandlers = {
@@ -27,7 +28,7 @@ type ToolActionHandlers = {
 
 const Divider = () => <div style={{ userSelect: "none" }}>&nbsp;</div>;
 
-const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
+const ToolPanel: FC<ToolPanelProp> = ({ position, handlers, simRunning }) => (
   <Panel position={position}>
     <ToolButton icon={FileNew} onClick={handlers.new} title="New circuit" />
     <ToolButton
@@ -57,6 +58,7 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers }) => (
     />
     <ToggleButton
       icon={Play}
+      active={simRunning}
       activeIcon={Pause}
       onStateChange={handlers.run}
       title="Simulation"

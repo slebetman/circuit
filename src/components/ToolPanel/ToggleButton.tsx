@@ -6,7 +6,7 @@ type ToggleButtonProp = {
   label?: string;
   onStateChange?: Function;
   title?: string;
-  initialState?: boolean;
+  active: boolean;
 };
 
 const ToggleButton: FC<ToggleButtonProp> = ({
@@ -15,10 +15,9 @@ const ToggleButton: FC<ToggleButtonProp> = ({
   label,
   onStateChange,
   title,
-  initialState,
+  active,
 }) => {
   const [hover, setHover] = useState(false);
-  const [active, setActive] = useState(initialState || false);
 
   if (icon === undefined && label === undefined) {
     throw new Error("Requires either an icon or label");
@@ -46,7 +45,6 @@ const ToggleButton: FC<ToggleButtonProp> = ({
       }}
       onClick={() => {
         if (onStateChange) onStateChange(!active);
-        setActive((a) => !a);
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
