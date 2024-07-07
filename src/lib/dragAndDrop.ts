@@ -1,29 +1,29 @@
-import { MutableRefObject, PointerEvent } from "react";
+import { MutableRefObject, PointerEvent } from 'react';
 
 const dragAndDrop =
-  (dialogRef: MutableRefObject<any>) => (e: PointerEvent<HTMLElement>) => {
-    let origin = {
-      x: dialogRef.current.offsetLeft,
-      y: dialogRef.current.offsetTop,
-      clientX: e.clientX,
-      clientY: e.clientY,
-    };
+	(dialogRef: MutableRefObject<any>) => (e: PointerEvent<HTMLElement>) => {
+		let origin = {
+			x: dialogRef.current.offsetLeft,
+			y: dialogRef.current.offsetTop,
+			clientX: e.clientX,
+			clientY: e.clientY,
+		};
 
-    window.onpointerup = () => {
-      window.onpointermove = null;
-      window.onpointerup = null;
-    };
+		window.onpointerup = () => {
+			window.onpointermove = null;
+			window.onpointerup = null;
+		};
 
-    window.onpointermove = (e) => {
-      const y = origin.y + e.clientY - origin.clientY;
-      const x = origin.x + e.clientX - origin.clientX;
+		window.onpointermove = (e) => {
+			const y = origin.y + e.clientY - origin.clientY;
+			const x = origin.x + e.clientX - origin.clientX;
 
-      dialogRef.current.style.top = `${y}px`;
-      dialogRef.current.style.left = `${x}px`;
+			dialogRef.current.style.top = `${y}px`;
+			dialogRef.current.style.left = `${x}px`;
 
-      e.stopPropagation();
-      e.preventDefault();
-    };
-  };
+			e.stopPropagation();
+			e.preventDefault();
+		};
+	};
 
 export default dragAndDrop;

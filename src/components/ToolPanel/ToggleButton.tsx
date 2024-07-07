@@ -1,66 +1,61 @@
-import { FC, createElement, useState } from "react";
+import { FC, createElement, useState } from 'react';
 
 type ToggleButtonProp = {
-  icon?: FC;
-  activeIcon?: FC;
-  label?: string;
-  onStateChange?: Function;
-  title?: string;
-  active: boolean;
+	icon?: FC;
+	activeIcon?: FC;
+	label?: string;
+	onStateChange?: Function;
+	title?: string;
+	active: boolean;
 };
 
 const ToggleButton: FC<ToggleButtonProp> = ({
-  icon,
-  activeIcon,
-  label,
-  onStateChange,
-  title,
-  active,
+	icon,
+	activeIcon,
+	label,
+	onStateChange,
+	title,
+	active,
 }) => {
-  const [hover, setHover] = useState(false);
+	const [hover, setHover] = useState(false);
 
-  if (icon === undefined && label === undefined) {
-    throw new Error("Requires either an icon or label");
-  }
+	if (icon === undefined && label === undefined) {
+		throw new Error('Requires either an icon or label');
+	}
 
-  return (
-    <button
-      style={{
-        backgroundColor: hover
-          ? active
-            ? "#6ce"
-            : "#adf"
-          : active
-            ? "#afc"
-            : "#fff",
-        border: "1px solid #ccc",
-        width: "50px",
-        height: "50px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        boxShadow: "1px 3px 10px #ccc",
-        fontSize: "10px",
-      }}
-      onClick={() => {
-        if (onStateChange) onStateChange(!active);
-      }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      title={title}
-    >
-      {icon ? (
-        active && activeIcon ? (
-          createElement(activeIcon)
-        ) : (
-          createElement(icon)
-        )
-      ) : (
-        <span style={{ userSelect: "none" }}>{label}</span>
-      )}
-    </button>
-  );
+	return (
+		<button
+			style={{
+				backgroundColor:
+					hover ?
+						active ? '#6ce'
+						:	'#adf'
+					: active ? '#afc'
+					: '#fff',
+				border: '1px solid #ccc',
+				width: '50px',
+				height: '50px',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				cursor: 'pointer',
+				boxShadow: '1px 3px 10px #ccc',
+				fontSize: '10px',
+			}}
+			onClick={() => {
+				if (onStateChange) onStateChange(!active);
+			}}
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}
+			title={title}
+		>
+			{icon ?
+				active && activeIcon ?
+					createElement(activeIcon)
+				:	createElement(icon)
+			:	<span style={{ userSelect: 'none' }}>{label}</span>}
+		</button>
+	);
 };
 
 export default ToggleButton;

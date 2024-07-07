@@ -1,11 +1,11 @@
 const varName = (name: string, prefix?: string) => {
-  let normalised = name.replace(/[- ]+/g, "_");
+	let normalised = name.replace(/[- ]+/g, '_');
 
-  if (prefix) {
-    normalised = `${prefix}["${normalised}"]`;
-  }
+	if (prefix) {
+		normalised = `${prefix}["${normalised}"]`;
+	}
 
-  return normalised;
+	return normalised;
 };
 
 export default varName;
