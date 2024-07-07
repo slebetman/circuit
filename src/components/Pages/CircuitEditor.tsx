@@ -188,6 +188,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		});
 	};
 
+	const handleTools = (toolType: string) => {
+		switch (toolType) {
+			case 'nodes':
+				return setNodesPaletteOpen(true);
+			case 'modules':
+				return;
+		}
+	}
+
 	useEffect(() => {
 		if (instance && codeOpen) {
 			const n = instance.getNodes();
@@ -253,10 +262,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					onNodesChange={onNodesChange}
 					onEdgesChange={onEdgesChange}
 					onInit={(i) => setInstance(i)}
-					zoomOnDoubleClick={editable}
-					nodesConnectable={editable}
-					nodesDraggable={editable}
-					edgesUpdatable={editable}
+					editable={editable}
 				>
 					{sim && (
 						<Panel position='top-center'>
@@ -272,40 +278,32 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 							new: handleNew,
 							compile: handleCompile,
 							run: handleSim,
-							createNode: (actionType) => {
-								switch (actionType) {
-									case 'nodes':
-										return setNodesPaletteOpen(true);
-									case 'modules':
-										return;
-								}
-							},
+							tools: handleTools,
 						}}
 					/>
 				</Flow>
 			</div>
-			{nodesPaletteOpen && (
-				<NodesDialog
-					onClick={handleCreateNode}
-					onClose={() => setNodesPaletteOpen(false)}
-				/>
-			)}
-			{codeOpen && (
-				<CodeDialog onClose={() => setCodeOpen(false)} code={code} />
-			)}
-			{mode === 'open' && (
-				<FilePicker
-					onSelect={handleSelectFile}
-					onCancel={() => setMode('chart')}
-				/>
-			)}
-			{mode === 'save' && (
-				<SaveDialog
-					name={chart.name}
-					onSubmit={handleSave}
-					onCancel={() => setMode('chart')}
-				/>
-			)}
+			<NodesDialog
+				isOpen={nodesPaletteOpen}
+				onClick={handleCreateNode}
+				onClose={() => setNodesPaletteOpen(false)}
+			/>
+			<CodeDialog
+				isOpen={codeOpen}
+				onClose={() => setCodeOpen(false)}
+				code={code}
+			/>
+			<FilePicker
+				isOpen={mode === 'open'}
+				onSelect={handleSelectFile}
+				onClose={() => setMode('chart')}
+			/>
+			<SaveDialog
+				isOpen={mode === 'save'}
+				name={chart.name}
+				onSubmit={handleSave}
+				onClose={() => setMode('chart')}
+			/>
 			{chart.error ?
 				<div
 					style={{

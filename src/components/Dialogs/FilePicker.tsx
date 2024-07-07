@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 
 type FilePickerProps = {
 	onSelect: (file: string) => void;
-	onCancel: () => void;
+	onClose: () => void;
+	isOpen: boolean;
 };
 
-const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
+const FilePicker = ({ onSelect, onClose, isOpen }: FilePickerProps) => {
 	const chartList = useChartList();
 
 	useEffect(() => {
@@ -16,7 +17,7 @@ const FilePicker = ({ onSelect, onCancel }: FilePickerProps) => {
 	}, []);
 
 	return (
-		<Popup title='Open File' onCancel={onCancel}>
+		<Popup title='Open File' onClose={onClose} isOpen={isOpen}>
 			<div
 				style={{
 					maxHeight: '210px',

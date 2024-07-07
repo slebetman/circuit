@@ -4,7 +4,8 @@ import { CSSProperties, MutableRefObject, ReactNode, useRef } from 'react';
 
 type PopupProps = {
 	title: string;
-	onCancel: () => void;
+	onClose: () => void;
+	isOpen: boolean;
 	children: ReactNode;
 	style?: CSSProperties;
 };
@@ -35,32 +36,32 @@ const closeButtonStyle: CSSProperties = {
 	color: '#fff',
 };
 
-const Popup = ({ title, onCancel, children, style }: PopupProps) => {
+const Popup = ({ title, onClose, isOpen, children, style }: PopupProps) => {
 	const popupRef: MutableRefObject<any> = useRef(null);
 
-	return (
-		<div
-			ref={popupRef}
-			style={{
-				...popupStyle,
-				...style,
-			}}
-		>
-			<div style={headerStyle} onPointerDown={dragAndDrop(popupRef)}>
-				<span
-					style={{
-						userSelect: 'none',
-					}}
-				>
-					{title}
-				</span>
-				<button style={closeButtonStyle} onClick={onCancel}>
-					<Cross />
-				</button>
+	return isOpen ?
+			<div
+				ref={popupRef}
+				style={{
+					...popupStyle,
+					...style,
+				}}
+			>
+				<div style={headerStyle} onPointerDown={dragAndDrop(popupRef)}>
+					<span
+						style={{
+							userSelect: 'none',
+						}}
+					>
+						{title}
+					</span>
+					<button style={closeButtonStyle} onClick={onClose}>
+						<Cross />
+					</button>
+				</div>
+				{children}
 			</div>
-			{children}
-		</div>
-	);
+		:	null;
 };
 
 export default Popup;

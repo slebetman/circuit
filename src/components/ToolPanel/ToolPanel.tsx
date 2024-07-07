@@ -23,7 +23,7 @@ type ToolActionHandlers = {
 	new?: Function;
 	compile?: Function;
 	run?: Function;
-	createNode?: (actionType: ActionType) => void;
+	tools?: (actionType: ActionType) => void;
 };
 
 const Divider = () => <div style={{ userSelect: 'none' }}>&nbsp;</div>;
@@ -44,13 +44,13 @@ const ToolPanel: FC<ToolPanelProp> = ({ position, handlers, simRunning }) => (
 		<Divider />
 		<ToolButton
 			label='Nodes'
-			onClick={handlers.createNode}
+			onClick={handlers.tools}
 			actionType='nodes'
 			title='Nodes pallete'
 		/>
 		<ToolButton
 			label='Modules'
-			onClick={handlers.createNode}
+			onClick={handlers.tools}
 			actionType='modules'
 			title='Modules pallete'
 		/>

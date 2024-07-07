@@ -2,14 +2,16 @@ import Popup from 'components/Popup/Popup';
 
 type CodeDialogProps = {
 	onClose: () => void;
+	isOpen: boolean;
 	code: string[];
 };
 
-const CodeDialog = ({ code, onClose }: CodeDialogProps) => {
+const CodeDialog = ({ code, onClose, isOpen }: CodeDialogProps) => {
 	return (
 		<Popup
 			title='Compiled Expressions'
-			onCancel={onClose}
+			onClose={onClose}
+			isOpen={isOpen}
 			style={{
 				width: '800px',
 				minHeight: '300px',

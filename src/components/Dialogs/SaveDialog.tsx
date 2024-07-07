@@ -3,15 +3,16 @@ import { useState } from 'react';
 
 type SaveDialogProps = {
 	onSubmit: (file: string) => void;
-	onCancel: () => void;
+	onClose: () => void;
 	name: string;
+	isOpen: boolean;
 };
 
-const SaveDialog = ({ name, onSubmit, onCancel }: SaveDialogProps) => {
+const SaveDialog = ({ name, onSubmit, onClose, isOpen }: SaveDialogProps) => {
 	const [fileName, setFileName] = useState(name);
 
 	return (
-		<Popup title='Save File' onCancel={onCancel}>
+		<Popup title='Save File' onClose={onClose} isOpen={isOpen}>
 			<div
 				style={{
 					padding: '20px',

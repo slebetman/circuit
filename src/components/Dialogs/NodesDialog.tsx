@@ -8,13 +8,15 @@ import ToolButton from 'components/ToolPanel/ToolButton';
 type NodesDialogProps = {
 	onClick: (actionType: string) => void;
 	onClose: () => void;
+	isOpen: boolean;
 };
 
-const NodesDialog = ({ onClick, onClose }: NodesDialogProps) => {
+const NodesDialog = ({ onClick, onClose, isOpen }: NodesDialogProps) => {
 	return (
 		<Popup
 			title='Nodes'
-			onCancel={onClose}
+			onClose={onClose}
+			isOpen={isOpen}
 			style={{
 				width: 'fit-content',
 				top: '16px',

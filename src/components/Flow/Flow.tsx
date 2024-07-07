@@ -35,32 +35,26 @@ type FlowProps = {
 	onEdgesChange: OnEdgesChange;
 	onConnect: (p: Connection | Edge) => any;
 	onInit: (instance: ReactFlowInstance) => void;
+	editable: boolean;
 } & ReactFlowProps;
 
 const Flow: FC<FlowProps> = ({
-	onInit,
-	onNodesChange,
-	onEdgesChange,
-	onConnect,
-	nodes,
-	edges,
+	editable,
 	children,
 	...props
 }) => {
 	return (
 		<ReactFlow
-			nodes={nodes}
-			edges={edges}
-			onNodesChange={onNodesChange}
-			onEdgesChange={onEdgesChange}
-			onConnect={onConnect}
 			nodeTypes={nodeTypes}
 			defaultEdgeOptions={defaultEdgeOptions}
 			connectionLineType={ConnectionLineType.SmoothStep}
 			minZoom={0.1}
 			maxZoom={10}
 			edgeTypes={edgeTypes}
-			onInit={onInit}
+			zoomOnDoubleClick={editable}
+			nodesConnectable={editable}
+			nodesDraggable={editable}
+			edgesUpdatable={editable}
 			fitView
 			{...props}
 		>
