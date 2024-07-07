@@ -69,7 +69,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
           onDoubleClick={handleCommentClick}
           style={{
             ...nodeStyle,
-            zIndex: '9999999',
+            zIndex: "9999999",
             borderWidth: selected ? "2px" : "1px",
             marginLeft: selected ? "-2px" : "0px",
             backgroundColor: data.on
@@ -77,7 +77,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
               : data.on === false
                 ? "#aaa"
                 : "#fff",
-            cursor: data.sim ? 'pointer' : 'grab',
+            cursor: data.sim ? "pointer" : "grab",
           }}
         >
           {label}

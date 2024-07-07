@@ -20,6 +20,7 @@ import {
 } from "reactflow";
 import ToolPanel from "components/ToolPanel/ToolPanel";
 import { SimObject, SimState, simulator } from "lib/simulator";
+import varName from "lib/normaliseVarName";
 
 type EditorProps = {
   fileName?: string;
@@ -90,7 +91,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
         if (n.data) {
           n.data = {
             ...n.data,
-            sim: (state:boolean) => s.set(n.id,state),
+            sim: (state: boolean) => s.set(n.id, state),
           };
         }
         return n;
@@ -98,8 +99,8 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
     );
 
     const updater = (state: SimState) => {
-      setNodes((nodes) =>
-        nodes.map((n) => {
+      setNodes((prevNodes) =>
+        prevNodes.map((n) => {
           if (state[n.id] !== undefined) {
             n.data = {
               ...n.data,
@@ -109,11 +110,19 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           return n;
         }),
       );
+      setEdges((prevEdges) =>
+        prevEdges.map((e) => {
+          e.data = {
+            on: state[varName(e.id)],
+          };
+          return e;
+        }),
+      );
     };
 
     s.start(updater);
     setSim(s);
-  }
+  };
 
   const stopSim = () => {
     setEditable(true);
@@ -121,8 +130,8 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
     if (sim) {
       sim.stop();
 
-      setNodes((nodes) =>
-        nodes.map((n) => {
+      setNodes((prevNodes) =>
+        prevNodes.map((n) => {
           if (n.data) {
             delete n.data.on;
             delete n.data.sim;
@@ -133,10 +142,16 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
           return n;
         }),
       );
+      setEdges((prevEdges) =>
+        prevEdges.map((e) => {
+          e.data = {};
+          return e;
+        }),
+      );
 
       setSim(null);
     }
-  }
+  };
 
   const handleSim = (active: boolean) => {
     if (active) {

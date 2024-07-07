@@ -11,18 +11,21 @@ import ReactFlow, {
   OnEdgesChange,
   ReactFlowProps,
 } from "reactflow";
-import { SmartBezierEdge } from "@tisoap/react-flow-smart-edge";
 
 import nodeTypes from "components/Nodes";
 import { CustomSmartBezierEdge } from "./CustomSmartBezierEdge";
+import { SimulatableEdge } from "./SimulatableEdge";
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
-  type: "smoothstep",
-  // type: "smart"
+  type: "simulated",
+  // type: "smoothstep",
+  // type: "smart",
+  data: {},
 };
 
 const edgeTypes = {
   smart: CustomSmartBezierEdge,
+  simulated: SimulatableEdge,
 };
 
 type FlowProps = {

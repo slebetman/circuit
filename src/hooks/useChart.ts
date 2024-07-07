@@ -39,6 +39,7 @@ const useChart = () => {
           delete x.data;
         } else if (x.data) {
           delete x.data.on;
+          delete x.data.sim;
         }
 
         return x;
@@ -51,6 +52,15 @@ const useChart = () => {
         if (x.targetHandle === null) {
           delete x.targetHandle;
         }
+
+        if (x.data) {
+          delete x.data;
+        }
+
+        if (x.style) {
+          delete x.style;
+        }
+
         return x;
       }),
     });

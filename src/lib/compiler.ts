@@ -6,6 +6,7 @@ type CompilerOptions = {
   edges: Edge[];
   prefix?: string;
   getId?: (n: Node) => string;
+  all?: boolean;
 };
 
 type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
@@ -29,12 +30,19 @@ export const compile = (opt: CompilerOptions) => {
     }
   }
 
-  for (const w of neededEdges) {
-    const wire = opt.edges.find((x) => x.id === w);
-
-    if (wire) {
+  if (opt.all) {
+    for (const wire of opt.edges) {
       const [expr] = compileWire(wire, opt);
-      expressions.push(`${varName(w)} = ${expr};`);
+      expressions.push(`${varName(wire.id)} = ${expr};`);
+    }
+  } else {
+    for (const w of neededEdges) {
+      const wire = opt.edges.find((x) => x.id === w);
+
+      if (wire) {
+        const [expr] = compileWire(wire, opt);
+        expressions.push(`${varName(w)} = ${expr};`);
+      }
     }
   }
 

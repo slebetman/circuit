@@ -34,6 +34,7 @@ export const compileForSim = (opt: ComilerOptions) => {
     ...opt,
     getId: (n) => n.id,
     prefix: "this",
+    all: true,
   });
 
   let ret = {
