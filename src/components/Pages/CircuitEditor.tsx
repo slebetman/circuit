@@ -21,6 +21,8 @@ import {
 import ToolPanel from 'components/ToolPanel/ToolPanel';
 import { SimObject, SimState, simulator } from 'lib/simulator';
 import varName from 'lib/normaliseVarName';
+import ErrorDialog from 'components/Dialogs/ErrorDialog';
+import generateId from 'lib/generateId';
 
 type EditorProps = {
 	fileName?: string;
@@ -176,7 +178,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			return [
 				...prev,
 				{
-					id: `${generateId()}`,
+					id: `${generateId(instance)}`,
 					type: actionType,
 					data,
 					position: {
@@ -233,19 +235,6 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			chart.load(fileName);
 		}
 	}, [fileName]);
-
-	const generateId = () => {
-		let ok = false;
-		let id;
-		// retry if id is duplicate
-		while (!ok) {
-			id = nanoid(5);
-			if (!instance?.getNode(id)) {
-				ok = true;
-			}
-		}
-		return id;
-	};
 
 	return (
 		<>
@@ -304,33 +293,11 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				onSubmit={handleSave}
 				onClose={() => setMode('chart')}
 			/>
-			{chart.error ?
-				<div
-					style={{
-						position: 'absolute',
-						top: '45vh',
-						textAlign: 'center',
-						width: '100%',
-						zIndex: '9999999',
-					}}
-				>
-					<span
-						style={{
-							padding: '10px',
-							backgroundColor: '#f66',
-						}}
-					>
-						Error: {chart.error.message} &nbsp;
-						<button
-							onClick={() => {
-								chart.clearError();
-							}}
-						>
-							x
-						</button>
-					</span>
-				</div>
-			:	null}
+			<ErrorDialog
+				isOpen={chart.error != null}
+				onClose={() => chart.clearError()}
+				error={chart.error?.message || ''}
+			/>
 		</>
 	);
 };
