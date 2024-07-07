@@ -10,6 +10,7 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
     targetY,
     style,
     data,
+    selected,
   } = props;
 
   const [path] = getSmoothStepPath({
@@ -25,7 +26,15 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
   return (
     <path
       style={style}
-      stroke={data.on ? "#6c6" : data.on === false ? "#ccc" : "#ccc"}
+      stroke={
+        data.on
+          ? "#6c6"
+          : data.on === false
+          ? "#ccc"
+          : selected
+          ? "#000"
+          : "#ccc"
+      }
       fill="transparent"
       d={path}
     />
