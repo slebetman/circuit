@@ -38,11 +38,7 @@ type FlowProps = {
 	editable: boolean;
 } & ReactFlowProps;
 
-const Flow: FC<FlowProps> = ({
-	editable,
-	children,
-	...props
-}) => {
+const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
 	return (
 		<ReactFlow
 			nodeTypes={nodeTypes}

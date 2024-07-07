@@ -7,7 +7,6 @@ import SaveDialog from 'components/Dialogs/SaveDialog';
 import NodesDialog from 'components/Dialogs/NodesDialog';
 import { compile } from 'lib/compiler';
 import CodeDialog from 'components/Dialogs/CodeDialog';
-import { nanoid } from 'nanoid';
 import { useRouter } from 'next/router';
 import {
 	addEdge,
@@ -197,7 +196,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			case 'modules':
 				return;
 		}
-	}
+	};
 
 	useEffect(() => {
 		if (instance && codeOpen) {

@@ -1,5 +1,5 @@
-import { nanoid } from "nanoid";
-import { ReactFlowInstance } from "reactflow";
+import { nanoid } from 'nanoid';
+import { ReactFlowInstance } from 'reactflow';
 
 const generateId = (instance: ReactFlowInstance | null) => {
 	let ok = false;
@@ -7,7 +7,7 @@ const generateId = (instance: ReactFlowInstance | null) => {
 	// retry if id is duplicate
 	while (!ok) {
 		id = nanoid(5);
-		if (!(instance?.getNode(id))) {
+		if (!instance?.getNode(id)) {
 			ok = true;
 		}
 	}
