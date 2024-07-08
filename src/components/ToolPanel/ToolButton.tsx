@@ -1,4 +1,4 @@
-import { FC, createElement, useState } from 'react';
+import { CSSProperties, FC, createElement, useState } from 'react';
 
 type ToolButtonProp = {
 	icon?: FC;
@@ -6,6 +6,7 @@ type ToolButtonProp = {
 	onClick?: Function;
 	actionType?: string;
 	title?: string;
+	style?: CSSProperties;
 };
 
 const ToolButton: FC<ToolButtonProp> = ({
@@ -14,6 +15,7 @@ const ToolButton: FC<ToolButtonProp> = ({
 	onClick,
 	actionType,
 	title,
+	style,
 }) => {
 	const [hover, setHover] = useState(false);
 
@@ -34,6 +36,7 @@ const ToolButton: FC<ToolButtonProp> = ({
 				cursor: 'pointer',
 				boxShadow: '1px 3px 10px #ccc',
 				fontSize: '10px',
+				...style,
 			}}
 			onClick={() => {
 				if (onClick) onClick(actionType);

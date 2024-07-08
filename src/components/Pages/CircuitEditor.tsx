@@ -23,6 +23,7 @@ import varName from 'lib/normaliseVarName';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import generateId from 'lib/generateId';
 import { setChartRef } from 'lib/chartRefs';
+import ModulesDialog from 'components/Dialogs/ModulesDialog';
 
 type EditorProps = {
 	fileName?: string;
@@ -35,6 +36,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
 	const [mode, setMode] = useState<'open' | 'save' | 'chart'>('chart');
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
+	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
 	const [codeOpen, setCodeOpen] = useState(false);
 	const [code, setCode] = useState<string[]>([]);
 	const [sim, setSim] = useState<SimObject | null>(null);
@@ -196,7 +198,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			case 'nodes':
 				return setNodesPaletteOpen(true);
 			case 'modules':
-				return;
+				return setModulesPaletteOpen(true);
 		}
 	};
 
@@ -282,6 +284,11 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				isOpen={nodesPaletteOpen}
 				onClick={handleCreateNode}
 				onClose={() => setNodesPaletteOpen(false)}
+			/>
+			<ModulesDialog
+				isOpen={modulesPaletteOpen}
+				onClick={(x) => console.log(x)}
+				onClose={() => setModulesPaletteOpen(false)}
 			/>
 			<CodeDialog
 				isOpen={codeOpen}
