@@ -1,7 +1,6 @@
 import { Edge, Node } from 'reactflow';
 import varName from './normaliseVarName';
-import { ModuleProps } from 'components/Nodes/Module';
-import { useChartRefs } from 'hooks/useChart';
+import { getChartRef } from './chartRefs';
 
 type CompilerOptions = {
 	nodes: Node[];
@@ -23,7 +22,7 @@ export const compileModule = (
 	inputs: Edge[],
 	opt: CompilerOptions,
 ) => {
-	const chartRef = useChartRefs();
+	const chartRef = getChartRef();
 
 	const module = chartRef?.modules?.find(
 		(x) => x.type === moduleNode.data.type,
@@ -59,7 +58,8 @@ export const compileModule = (
 							const sourceWire = opt.edges.find(
 								(x) =>
 									x.target === moduleNode.id &&
-									x.targetHandle === `${moduleNode.id}_${n.id}`,
+									x.targetHandle ===
+										`${moduleNode.id}_${n.id}`,
 							);
 							if (sourceWire) {
 								const [expr] = compileWire(sourceWire, opt);

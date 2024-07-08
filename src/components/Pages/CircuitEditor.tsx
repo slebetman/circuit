@@ -22,6 +22,7 @@ import { SimObject, SimState, simulator } from 'lib/simulator';
 import varName from 'lib/normaliseVarName';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import generateId from 'lib/generateId';
+import { setChartRef } from 'lib/chartRefs';
 
 type EditorProps = {
 	fileName?: string;
@@ -236,6 +237,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			chart.load(fileName);
 		}
 	}, [fileName]);
+
+	useEffect(() => {
+		setChartRef({ nodes, edges, modules });
+	}, [nodes, edges, modules]);
 
 	return (
 		<>

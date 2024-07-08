@@ -1,4 +1,4 @@
-import { useChartRefs } from 'hooks/useChart';
+import { getChartRef } from 'lib/chartRefs';
 import { memo, FC, CSSProperties, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
@@ -62,7 +62,7 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 	const [inputs, setInputs] = useState<IO[]>([]);
 	const [outputs, setOutputs] = useState<IO[]>([]);
 
-	const chart = useChartRefs();
+	const chart = getChartRef();
 
 	useEffect(() => {
 		setTimeout(() => {

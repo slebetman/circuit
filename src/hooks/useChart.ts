@@ -1,8 +1,6 @@
 import { Node, Edge } from 'reactflow';
 import { useEffect, useState } from 'react';
 
-let chartRef: Chart | null = null;
-
 export type Module = {
 	type: string;
 	label: string;
@@ -29,7 +27,6 @@ const useChart = () => {
 		try {
 			const res = await fetch(`/api/charts/${filename}`);
 			const chart = await res.json();
-			chartRef = chart;
 			setChart(chart);
 		} catch (err) {
 			setError(err as Error);
@@ -119,10 +116,6 @@ const useChart = () => {
 		save,
 		clearError,
 	};
-};
-
-export const useChartRefs = () => {
-	return chartRef;
 };
 
 export default useChart;
