@@ -1,4 +1,4 @@
-import useChart, { useChartRefs } from 'hooks/useChart';
+import { useChartRefs } from 'hooks/useChart';
 import { memo, FC, CSSProperties, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 
@@ -13,6 +13,7 @@ const nodeStyle: CSSProperties = {
 	display: 'flex',
 	flexDirection: 'column',
 	gap: '2px',
+	backgroundColor: '#fff',
 };
 
 const nodeLabelStyle: CSSProperties = {
@@ -41,35 +42,53 @@ const ioStyle: CSSProperties = {
 	height: '10px',
 };
 
-type ModuleData = {
+export type ModuleData = {
 	label: string;
 	type: string;
 };
 
-type ModuleProps = {
+export type ModuleProps = {
+	id: string;
 	selected: boolean;
 	data: ModuleData;
 };
 
-const Module: FC<ModuleProps> = ({ data, selected }) => {
-	const [inputs, setInputs] = useState<string[]>([]);
-	const [outputs, setOutputs] = useState<string[]>([]);
+type IO = {
+	label: string;
+	id: string;
+};
+
+const Module: FC<ModuleProps> = ({ id, data, selected }) => {
+	const [inputs, setInputs] = useState<IO[]>([]);
+	const [outputs, setOutputs] = useState<IO[]>([]);
 
 	const chart = useChartRefs();
 
 	useEffect(() => {
-		const m = chart?.modules?.find((x) => x.type === data.type);
+		setTimeout(() => {
+			const m = chart?.modules?.find((x) => x.type === data.type);
 
-		if (m) {
-			setInputs(
-				m.nodes.filter((x) => x.type === 'in').map((x) => x.data.label),
-			);
-			setOutputs(
-				m.nodes
-					.filter((x) => x.type === 'out')
-					.map((x) => x.data.label),
-			);
-		}
+			console.log(chart);
+
+			if (m) {
+				setInputs(
+					m.nodes
+						.filter((x) => x.type === 'in')
+						.map((x) => ({
+							label: x.data.label,
+							id: x.id,
+						})),
+				);
+				setOutputs(
+					m.nodes
+						.filter((x) => x.type === 'out')
+						.map((x) => ({
+							label: x.data.label,
+							id: x.id,
+						})),
+				);
+			}
+		}, 1);
 	}, [chart, data.type]);
 
 	return (
@@ -77,7 +96,8 @@ const Module: FC<ModuleProps> = ({ data, selected }) => {
 			{inputs.map((i, idx) => (
 				<Handle
 					type='target'
-					id={`in${idx}`}
+					id={`${id}_${i.id}`}
+					key={i.id}
 					position={Position.Left}
 					style={{
 						top: `${28 + idx * 10}px`,
@@ -95,13 +115,15 @@ const Module: FC<ModuleProps> = ({ data, selected }) => {
 				<div style={ioContainerStyle}>
 					<div style={ioGroupStyle}>
 						{inputs.map((i) => (
-							<div style={ioStyle}>{i}</div>
+							<div style={{ ...ioStyle, textAlign: 'left' }}>
+								{i.label}
+							</div>
 						))}
 					</div>
 					<div style={ioGroupStyle}>
 						{outputs.map((o) => (
 							<div style={{ ...ioStyle, textAlign: 'right' }}>
-								{o}
+								{o.label}
 							</div>
 						))}
 					</div>
@@ -110,7 +132,8 @@ const Module: FC<ModuleProps> = ({ data, selected }) => {
 			{outputs.map((o, idx) => (
 				<Handle
 					type='source'
-					id={`out${idx}`}
+					id={`${id}_${o.id}`}
+					key={o.id}
 					position={Position.Right}
 					style={{
 						top: `${28 + idx * 10}px`,

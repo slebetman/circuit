@@ -33,7 +33,7 @@ export const compileForSim = (opt: ComilerOptions) => {
 	const expressions = compile({
 		...opt,
 		getId: (n) => n.id,
-		prefix: 'this',
+		useThis: true,
 		all: true,
 	});
 
@@ -51,10 +51,12 @@ export const compileForSim = (opt: ComilerOptions) => {
 	expressions.forEach((v) => {
 		const [key, ...expr] = v.split('=').map((x) => x.trim());
 		ret.state[key] = undefined;
-		ret.state[`func_${key}`] = new Function(
-			`this["${key}"] = ${expr.join('=')}`,
-		);
+		const functionBody = `this["${key}"] = ${expr.join('=')}`;
+		ret.state[`func_${key}`] = new Function(functionBody);
 	});
+
+	//@ts-ignore
+	window.sim = ret;
 
 	return ret;
 };

@@ -1,8 +1,17 @@
-const varName = (name: string, prefix?: string) => {
+export type VarNameOptions = {
+	prefix?: string;
+	withThis?: boolean;
+};
+
+const varName = (name: string, opt?: VarNameOptions) => {
 	let normalised = name.replace(/[- ]+/g, '_');
 
-	if (prefix) {
-		normalised = `${prefix}["${normalised}"]`;
+	if (opt?.prefix) {
+		normalised = `${opt.prefix}_${normalised}`;
+	}
+
+	if (opt?.withThis) {
+		normalised = `this["${normalised}"]`;
 	}
 
 	return normalised;

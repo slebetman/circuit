@@ -1,10 +1,14 @@
 import { Edge, Node } from 'reactflow';
 import varName from './normaliseVarName';
+import { ModuleProps } from 'components/Nodes/Module';
+import { useChartRefs } from 'hooks/useChart';
 
 type CompilerOptions = {
 	nodes: Node[];
 	edges: Edge[];
 	prefix?: string;
+	inputPrefix?: string;
+	useThis?: boolean;
 	getId?: (n: Node) => string;
 	all?: boolean;
 };
@@ -12,6 +16,65 @@ type CompilerOptions = {
 type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
 
 type InternalCompiler = (wire: Edge) => string;
+
+export const compileModule = (
+	sourceId: string,
+	moduleNode: Node,
+	inputs: Edge[],
+	opt: CompilerOptions,
+) => {
+	const chartRef = useChartRefs();
+
+	const module = chartRef?.modules?.find(
+		(x) => x.type === moduleNode.data.type,
+	);
+
+	if (module) {
+		const outputs = module.nodes.filter((x) => x.type === 'out');
+		const inputs = module.nodes.filter((x) => x.type === 'in');
+
+		let output: Node | undefined;
+
+		if (sourceId === moduleNode.id) {
+			output = outputs[0];
+		} else {
+			output = outputs.find(
+				(x) => `${moduleNode.id}_${x.id}` === sourceId,
+			);
+		}
+
+		if (output) {
+			const wire = module.edges.find((x) => x.target === output.id);
+
+			if (wire) {
+				const [expr] = compileWire(wire, {
+					...opt,
+					nodes: module.nodes,
+					edges: module.edges,
+					useThis: false,
+					prefix: moduleNode.id,
+					all: false,
+					getId: (n) => {
+						if (n.type === 'in') {
+							const sourceWire = opt.edges.find(
+								(x) =>
+									x.target === moduleNode.id &&
+									x.targetHandle === `${moduleNode.id}_${n.id}`,
+							);
+							if (sourceWire) {
+								const [expr] = compileWire(sourceWire, opt);
+								return expr;
+							}
+							return 'undefined';
+						}
+						return opt.getId ? opt.getId(n) : n.data?.label || n.id;
+					},
+				});
+				return expr;
+			}
+		}
+	}
+};
 
 export const compile = (opt: CompilerOptions) => {
 	const outputs = opt.nodes.filter((x) => x.type === 'out');
@@ -62,7 +125,10 @@ export const compileWire: Compiler = (wire, opt) => {
 
 		if (processedEdges[w.id]) {
 			loops.push(w.id);
-			return varName(w.id, opt.prefix);
+			return varName(w.id, {
+				withThis: opt.useThis,
+				prefix: opt.prefix,
+			});
 		}
 
 		processedEdges[w.id] = true;
@@ -79,12 +145,17 @@ export const compileWire: Compiler = (wire, opt) => {
 						return `(${comp(inputs[0])} !== ${comp(inputs[1])})`;
 					case 'not':
 						return `!(${comp(inputs[0])})`;
+					case 'module':
+						return `(${compileModule(w.sourceHandle || w.source, source, inputs, opt)})`;
 					default:
 						throw new Error('Unsupported node type!');
 				}
 			} else if (source.type === 'in') {
 				let varId = opt.getId ? opt.getId(source) : source.data.label;
-				return `${varName(varId, opt.prefix)}`;
+				return `${varName(varId, {
+					withThis: opt.useThis,
+					prefix: opt.inputPrefix,
+				})}`;
 			}
 		}
 

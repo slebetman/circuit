@@ -29,6 +29,7 @@ const useChart = () => {
 		try {
 			const res = await fetch(`/api/charts/${filename}`);
 			const chart = await res.json();
+			chartRef = chart;
 			setChart(chart);
 		} catch (err) {
 			setError(err as Error);
@@ -84,7 +85,6 @@ const useChart = () => {
 			}
 			setIsBusy(true);
 			if (!chart) return;
-			chartRef = chart;
 			try {
 				if (!name) {
 					throw new Error('Chart has no name!');

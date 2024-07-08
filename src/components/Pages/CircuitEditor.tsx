@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import Flow from 'components/Flow/Flow';
 
-import useChart from 'hooks/useChart';
+import useChart, { Module } from 'hooks/useChart';
 import FilePicker from 'components/Dialogs/FilePicker';
 import SaveDialog from 'components/Dialogs/SaveDialog';
 import NodesDialog from 'components/Dialogs/NodesDialog';
@@ -30,6 +30,7 @@ type EditorProps = {
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+	const [modules, setModules] = useState<Module[]>([]);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
 	const [mode, setMode] = useState<'open' | 'save' | 'chart'>('chart');
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
@@ -59,7 +60,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const handleSave = (name: string) => {
 		if (name) {
 			chart.setName(name);
-			chart.save({ nodes, edges });
+			chart.save({ nodes, edges, modules });
 			router.replace(`/${name}`);
 		}
 
@@ -218,8 +219,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			setNodes([]);
 			setEdges([]);
 			setTimeout(() => {
-				setNodes(chart?.chart?.nodes || []);
-				setEdges(chart?.chart?.edges || []);
+				setNodes(chart.chart?.nodes || []);
+				setEdges(chart.chart?.edges || []);
+				setModules(chart.chart?.modules || []);
 				setTimeout(() => {
 					instance?.fitView({
 						padding: 0.25,
