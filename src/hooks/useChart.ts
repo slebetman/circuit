@@ -1,9 +1,19 @@
 import { Node, Edge } from 'reactflow';
 import { useEffect, useState } from 'react';
 
+let chartRef: Chart | null = null;
+
+export type Module = {
+	type: string;
+	label: string;
+	nodes: Node<any>[];
+	edges: Edge<any>[];
+};
+
 export type Chart = {
 	nodes: Node<any>[];
 	edges: Edge<any>[];
+	modules?: Module[];
 };
 
 const useChart = () => {
@@ -23,7 +33,6 @@ const useChart = () => {
 		} catch (err) {
 			setError(err as Error);
 		}
-		setIsBusy(false);
 	};
 
 	const save = async (c: Chart) => {
@@ -63,13 +72,19 @@ const useChart = () => {
 
 				return x;
 			}),
+			modules: c.modules,
 		});
 	};
 
 	useEffect(() => {
 		(async () => {
+			if (isBusy) {
+				setIsBusy(false);
+				return;
+			}
 			setIsBusy(true);
 			if (!chart) return;
+			chartRef = chart;
 			try {
 				if (!name) {
 					throw new Error('Chart has no name!');
@@ -104,6 +119,10 @@ const useChart = () => {
 		save,
 		clearError,
 	};
+};
+
+export const useChartRefs = () => {
+	return chartRef;
 };
 
 export default useChart;
