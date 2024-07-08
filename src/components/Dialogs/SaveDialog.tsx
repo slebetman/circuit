@@ -1,5 +1,5 @@
 import Popup from 'components/Popup/Popup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type SaveDialogProps = {
 	onSubmit: (file: string) => void;
@@ -10,6 +10,10 @@ type SaveDialogProps = {
 
 const SaveDialog = ({ name, onSubmit, onClose, isOpen }: SaveDialogProps) => {
 	const [fileName, setFileName] = useState(name);
+
+	useEffect(() => {
+		setFileName(name);
+	}, [name]);
 
 	return (
 		<Popup title='Save File' onClose={onClose} isOpen={isOpen}>
