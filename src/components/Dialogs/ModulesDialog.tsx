@@ -5,10 +5,20 @@ import { getChartRef } from 'lib/chartRefs';
 type ModulesDialogProps = {
 	onClick: (actionType: string) => void;
 	onClose: () => void;
+	create?: () => void;
+	edit?: (type: string) => void;
+	del?: (type: string) => void;
 	isOpen: boolean;
 };
 
-const ModulesDialog = ({ onClick, onClose, isOpen }: ModulesDialogProps) => {
+const ModulesDialog = ({
+	onClick,
+	onClose,
+	isOpen,
+	create,
+	edit,
+	del,
+}: ModulesDialogProps) => {
 	const chartRef = getChartRef();
 
 	return (
@@ -30,7 +40,7 @@ const ModulesDialog = ({ onClick, onClose, isOpen }: ModulesDialogProps) => {
 					justifyContent: 'end',
 				}}
 			>
-				<button>+ New</button>
+				<button onClick={create}>+ New</button>
 			</div>
 			<div
 				style={{
@@ -64,8 +74,12 @@ const ModulesDialog = ({ onClick, onClose, isOpen }: ModulesDialogProps) => {
 								justifyContent: 'center',
 							}}
 						>
-							<button>Edit</button>
-							<button>Delete</button>
+							<button onClick={() => edit?.(module.type)}>
+								Edit
+							</button>
+							<button onClick={() => del?.(module.type)}>
+								Delete
+							</button>
 						</div>
 					</div>
 				))}

@@ -32,9 +32,17 @@ type EditorProps = {
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
+		[],
+	);
+	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
+		[],
+	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
-	const [mode, setMode] = useState<'open' | 'save' | 'chart'>('chart');
+	const [mode, setMode] = useState<'open' | 'save' | 'chart' | 'module'>(
+		'chart',
+	);
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
 	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
 	const [codeOpen, setCodeOpen] = useState(false);
@@ -267,6 +275,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						</Panel>
 					)}
 					<ToolPanel
+						mode={mode === 'module' ? 'module' : 'chart'}
 						position='top-left'
 						simRunning={sim !== null}
 						handlers={{
@@ -276,6 +285,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 							compile: handleCompile,
 							run: handleSim,
 							tools: handleTools,
+							backToChart: () => {
+								setMode('chart');
+							},
 						}}
 					/>
 				</Flow>
