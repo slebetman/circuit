@@ -21,9 +21,9 @@ import ToolPanel from 'components/ToolPanel/ToolPanel';
 import { SimObject, SimState, simulator } from 'lib/simulator';
 import varName from 'lib/normaliseVarName';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
-import generateId from 'lib/generateId';
 import { setChartRef } from 'lib/chartRefs';
 import ModulesDialog from 'components/Dialogs/ModulesDialog';
+import handlers from './Handlers';
 
 type EditorProps = {
 	fileName?: string;
@@ -33,15 +33,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[],
+		[]
 	);
 	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[],
+		[]
 	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
 	const [mode, setMode] = useState<'open' | 'save' | 'chart' | 'module'>(
-		'chart',
+		'chart'
 	);
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
 	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
@@ -51,46 +51,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [editable, setEditable] = useState(true);
 	const onConnect = useCallback(
 		(params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-		[setEdges],
+		[setEdges]
 	);
 	const chart = useChart();
-
 	const router = useRouter();
-
-	const handleNew = () => {
-		stopSim();
-		setNodes([]);
-		setEdges([]);
-		router.replace('/');
-	};
-
-	const handleSaveDialog = () => {
-		setMode('save');
-	};
-
-	const handleSave = (name: string) => {
-		if (name) {
-			chart.setName(name);
-			chart.save({ nodes, edges, modules });
-			router.replace(`/${name}`);
-		}
-
-		setMode('chart');
-	};
-
-	const handleOpenFolder = () => {
-		setMode('open');
-	};
-
-	const handleSelectFile = (f: string) => {
-		stopSim();
-		setMode('chart');
-		router.replace(`/${f}`);
-	};
-
-	const handleCompile = () => {
-		setCodeOpen(true);
-	};
 
 	const startSim = () => {
 		setEditable(false);
@@ -108,7 +72,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					};
 				}
 				return n;
-			}),
+			})
 		);
 
 		const updater = (state: SimState) => {
@@ -121,7 +85,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				}),
+				})
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
@@ -129,7 +93,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						on: state[varName(e.id)],
 					};
 					return e;
-				}),
+				})
 			);
 		};
 
@@ -153,60 +117,16 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				}),
+				})
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
 					e.data = {};
 					return e;
-				}),
+				})
 			);
 
 			setSim(null);
-		}
-	};
-
-	const handleSim = (active: boolean) => {
-		if (active) {
-			startSim();
-		} else {
-			stopSim();
-		}
-	};
-
-	const handleCreateNode = (actionType: string) => {
-		setNodes((prev) => {
-			let data: Record<string, any> = {};
-
-			switch (actionType) {
-				case 'comment':
-				case 'in':
-				case 'out':
-					data.label = actionType;
-					break;
-			}
-
-			return [
-				...prev,
-				{
-					id: `${generateId(instance)}`,
-					type: actionType,
-					data,
-					position: {
-						x: 0,
-						y: 0,
-					},
-				},
-			];
-		});
-	};
-
-	const handleTools = (toolType: string) => {
-		switch (toolType) {
-			case 'nodes':
-				return setNodesPaletteOpen(true);
-			case 'modules':
-				return setModulesPaletteOpen(true);
 		}
 	};
 
@@ -219,7 +139,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compile({
 					nodes: n,
 					edges: e,
-				}),
+				})
 			);
 		}
 	}, [codeOpen, nodes, edges]);
@@ -279,12 +199,20 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						position='top-left'
 						simRunning={sim !== null}
 						handlers={{
-							open: handleOpenFolder,
-							save: handleSaveDialog,
-							new: handleNew,
-							compile: handleCompile,
-							run: handleSim,
-							tools: handleTools,
+							open: handlers.handleOpenFolder(setMode),
+							save: handlers.handleSaveDialog(setMode),
+							new: handlers.handleNew(
+								stopSim,
+								setNodes,
+								setEdges,
+								router
+							),
+							compile: handlers.handleCompile(setCodeOpen),
+							run: handlers.handleSim(startSim, stopSim),
+							tools: handlers.handleTools(
+								setNodesPaletteOpen,
+								setModulesPaletteOpen
+							),
 							backToChart: () => {
 								setMode('chart');
 							},
@@ -294,7 +222,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			</div>
 			<NodesDialog
 				isOpen={nodesPaletteOpen}
-				onClick={handleCreateNode}
+				onClick={handlers.handleCreateNode(setNodes, instance)}
 				onClose={() => setNodesPaletteOpen(false)}
 			/>
 			<ModulesDialog
@@ -309,13 +237,20 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			/>
 			<FilePicker
 				isOpen={mode === 'open'}
-				onSelect={handleSelectFile}
+				onSelect={handlers.handleSelectFile(stopSim, setMode, router)}
 				onClose={() => setMode('chart')}
 			/>
 			<SaveDialog
 				isOpen={mode === 'save'}
 				name={chart.name}
-				onSubmit={handleSave}
+				onSubmit={handlers.handleSave(
+					chart,
+					router,
+					setMode,
+					nodes,
+					edges,
+					modules
+				)}
 				onClose={() => setMode('chart')}
 			/>
 			<ErrorDialog
