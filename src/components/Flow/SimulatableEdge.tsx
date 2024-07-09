@@ -1,4 +1,10 @@
-import { getSmoothStepPath, SmoothStepEdgeProps } from 'reactflow';
+import {
+	EdgeLabelRenderer,
+	getSmoothStepPath,
+	SmoothStepEdgeProps,
+} from 'reactflow';
+
+const DEBUG = false;
 
 export function SimulatableEdge(props: SmoothStepEdgeProps) {
 	const {
@@ -11,9 +17,10 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 		style,
 		data,
 		selected,
+		id,
 	} = props;
 
-	const [path] = getSmoothStepPath({
+	const [path, labelX, labelY] = getSmoothStepPath({
 		sourceX,
 		sourceY,
 		sourcePosition,
@@ -25,18 +32,34 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 	});
 
 	return (
-		<path
-			style={style}
-			stroke={
-				data.on ? '#6c6'
-				: data.on === false ?
-					'#ccc'
-				: selected ?
-					'#000'
-				:	'#ccc'
-			}
-			fill='transparent'
-			d={path}
-		/>
+		<>
+			<path
+				style={style}
+				stroke={
+					data.on ? '#6c6'
+					: data.on === false ?
+						'#ccc'
+					: selected ?
+						'#000'
+					:	'#ccc'
+				}
+				fill='transparent'
+				d={path}
+			/>
+			{DEBUG && (
+				<EdgeLabelRenderer>
+					<div
+						style={{
+							position: 'absolute',
+							transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+							fontSize: 4,
+						}}
+						className='nodrag nopan'
+					>
+						<span>{id}</span>
+					</div>
+				</EdgeLabelRenderer>
+			)}
+		</>
 	);
 }

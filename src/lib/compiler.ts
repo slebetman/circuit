@@ -154,26 +154,34 @@ export const compileWire: Compiler = (wire, opt) => {
 					case 'not':
 						return `!(${comp(inputs[0])})`;
 					case 'module': {
-						if (processedModules.check(source.id)) {
-							if (!processedLoops.check(w.id)) {
-								processedLoops.set(w.id);
-								loops.push(w.id);
-							}
-							return varName(`${w.id}`, {
-								withThis: opt.useThis || opt.forModule,
-								prefix: opt.prefix,
-							});
-						}
+						console.log('processing module', source.id);
 
-						processedModules.set(source.id);
+						// if (processedModules.check(source.id)) {
+						// 	if (!processedLoops.check(w.id)) {
+						// 		processedLoops.set(w.id);
+						// 		loops.push(w.id);
+						// 	}
+						// 	return varName(w.id, {
+						// 		withThis: opt.useThis || opt.forModule,
+						// 		prefix: opt.prefix,
+						// 	});
+						// }
+
+						// processedModules.set(source.id);
 
 						const res = compileModule(
 							w.sourceHandle || w.source,
 							source,
 							opt,
 						);
+
+						console.log('module expr', res?.expr);
 						if (res) {
 							loopExpressions.push(...res.loops);
+							// loopExpressions.push(`${varName(w.id, {
+							// 	withThis: false,
+							// 	prefix: opt.prefix,
+							// })} = ${res.expr};`)
 						}
 						return `(${res?.expr || 'undefined'})`;
 					}
@@ -205,7 +213,7 @@ export const compileWire: Compiler = (wire, opt) => {
 
 				return `${varName(loopWire.id, {
 					prefix: opt.prefix,
-				})} = ${comp(loopWire)}`;
+				})} = ${comp(loopWire)};`;
 			} else {
 				return '';
 			}

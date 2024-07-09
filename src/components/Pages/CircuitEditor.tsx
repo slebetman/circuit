@@ -108,7 +108,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		console.log(moduleNodes);
 		if (currentModule) {
 			setModules((prevModules) => {
-				const m = prevModules.filter((m) => m.type !== currentModule.type);
+				const m = prevModules.filter(
+					(m) => m.type !== currentModule.type,
+				);
 				m.push({
 					type: currentModule.type,
 					label: currentModule.label,
@@ -367,12 +369,18 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			</div>
 			<NodesDialog
 				isOpen={nodesPaletteOpen}
-				onClick={handlers.handleCreateNode(mode === 'module' ? setModuleNodes : setNodes, instance)}
+				onClick={handlers.handleCreateNode(
+					mode === 'module' ? setModuleNodes : setNodes,
+					instance,
+				)}
 				onClose={() => setNodesPaletteOpen(false)}
 			/>
 			<ModulesDialog
 				isOpen={modulesPaletteOpen}
-				onClick={handlers.handleCreateNode(mode === 'module' ? setModuleNodes : setNodes, instance)}
+				onClick={handlers.handleCreateNode(
+					mode === 'module' ? setModuleNodes : setNodes,
+					instance,
+				)}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
 				createModule={handleCreateModule}
