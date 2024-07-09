@@ -49,11 +49,16 @@ export const handleOpenFolder = (setMode: Setter<any>) => () => {
 };
 
 export const handleSelectFile =
-	(stopSim: Function, setMode: Setter<any>, router: NextRouter) =>
+	(stopSim: Function, setMode: Setter<any>, router: NextRouter, fileName: string, chart: any) =>
 	(f: string) => {
 		stopSim();
 		setMode('chart');
-		router.replace(`/${f}`);
+		if(f === fileName) {
+			chart.load(fileName);
+		}
+		else {
+			router.replace(`/${f}`);
+		}
 	};
 
 export const handleCompile = (setCodeOpen: Setter<any>) => () => {

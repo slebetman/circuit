@@ -286,7 +286,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			<FilePicker
 				title='Open File'
 				isOpen={mode === 'open'}
-				onSelect={handlers.handleSelectFile(stopSim, setMode, router)}
+				onSelect={handlers.handleSelectFile(stopSim, setMode, router, fileName, chart)}
 				onClose={() => setMode('chart')}
 			/>
 			<FilePicker
