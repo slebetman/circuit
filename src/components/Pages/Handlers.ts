@@ -1,3 +1,4 @@
+import { Module } from 'hooks/useChart';
 import generateId from 'lib/generateId';
 import { NextRouter } from 'next/router';
 import { SetStateAction } from 'react';
@@ -5,7 +6,7 @@ import { Edge, Node, ReactFlowInstance } from 'reactflow';
 
 type Setter<t> = (v: SetStateAction<t>) => void;
 
-const handleNew =
+export const handleNew =
 	(
 		stopSim: Function,
 		setNodes: Setter<any>,
@@ -21,11 +22,11 @@ const handleNew =
 		router.replace('/');
 	};
 
-const handleSaveDialog = (setMode: Setter<any>) => () => {
+export const handleSaveDialog = (setMode: Setter<any>) => () => {
 	setMode('save');
 };
 
-const handleSave =
+export const handleSave =
 	(
 		chart: any,
 		router: NextRouter,
@@ -43,11 +44,11 @@ const handleSave =
 		setMode('chart');
 	};
 
-const handleOpenFolder = (setMode: Setter<any>) => () => {
+export const handleOpenFolder = (setMode: Setter<any>) => () => {
 	setMode('open');
 };
 
-const handleSelectFile =
+export const handleSelectFile =
 	(stopSim: Function, setMode: Setter<any>, router: NextRouter) =>
 	(f: string) => {
 		stopSim();
@@ -55,11 +56,11 @@ const handleSelectFile =
 		router.replace(`/${f}`);
 	};
 
-const handleCompile = (setCodeOpen: Setter<any>) => () => {
+export const handleCompile = (setCodeOpen: Setter<any>) => () => {
 	setCodeOpen(true);
 };
 
-const handleSim =
+export const handleSim =
 	(startSim: Function, stopSim: Function) => (active: boolean) => {
 		if (active) {
 			startSim();
@@ -68,7 +69,7 @@ const handleSim =
 		}
 	};
 
-const handleCreateNode =
+export const handleCreateNode =
 	(
 		setNodes: Setter<Node<any, string | undefined>[]>,
 		instance: ReactFlowInstance | null
@@ -106,7 +107,7 @@ const handleCreateNode =
 		});
 	};
 
-const handleTools =
+export const handleTools =
 	(setNodesPaletteOpen: Setter<any>, setModulesPaletteOpen: Setter<any>) =>
 	(toolType: string) => {
 		switch (toolType) {
@@ -117,16 +118,20 @@ const handleTools =
 		}
 	};
 
-const handlers = {
-	handleCompile,
-	handleNew,
-	handleOpenFolder,
-	handleSave,
-	handleSaveDialog,
-	handleSelectFile,
-	handleSim,
-	handleCreateNode,
-	handleTools,
-};
-
-export default handlers;
+export const handleDeleteModule =
+	(
+		setModules: Setter<Module[]>,
+		instance: ReactFlowInstance | null,
+		nodes: Node[]
+	) =>
+	(type: string) => {
+		setModules((prevModules) => {
+			const newModules = prevModules.filter((x) => x.type !== type);
+			return newModules;
+		});
+		instance?.deleteElements({
+			nodes: nodes.filter(
+				(x) => x.type === 'module' && x.data.type === type
+			),
+		});
+	};

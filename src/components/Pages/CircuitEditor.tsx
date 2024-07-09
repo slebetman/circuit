@@ -23,7 +23,7 @@ import varName from 'lib/normaliseVarName';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import { setChartRef } from 'lib/chartRefs';
 import ModulesDialog from 'components/Dialogs/ModulesDialog';
-import handlers from './Handlers';
+import * as handlers from './Handlers';
 
 type EditorProps = {
 	fileName?: string;
@@ -145,18 +145,6 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			);
 		}
 	}, [codeOpen, nodes, edges]);
-
-	const handleDeleteModule = (type: string) => {
-		setModules((prevModules) => {
-			const newModules = prevModules.filter((x) => x.type !== type);
-			return newModules;
-		});
-		instance?.deleteElements({
-			nodes: nodes.filter(
-				(x) => x.type === 'module' && x.data.type === type
-			),
-		});
-	};
 
 	useEffect(() => {
 		if (chart.chart) {
@@ -283,7 +271,11 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				onClick={handlers.handleCreateNode(setNodes, instance)}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
-				deleteModule={handleDeleteModule}
+				deleteModule={handlers.handleDeleteModule(
+					setModules,
+					instance,
+					nodes
+				)}
 				modules={modules}
 			/>
 			<CodeDialog
