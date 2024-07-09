@@ -2,9 +2,11 @@ import { Edge, Node } from 'reactflow';
 import varName from './normaliseVarName';
 import { getChartRef } from './chartRefs';
 import tracker from './tracker';
+import cache from './cache';
 
 const processedModules = tracker();
 const processedLoops = tracker();
+const moduleCache = cache<string>();
 
 type CompilerOptions = {
 	nodes: Node[];
@@ -156,18 +158,15 @@ export const compileWire: Compiler = (wire, opt) => {
 					case 'module': {
 						console.log('processing module', source.id);
 
-						// if (processedModules.check(source.id)) {
-						// 	if (!processedLoops.check(w.id)) {
-						// 		processedLoops.set(w.id);
-						// 		loops.push(w.id);
-						// 	}
-						// 	return varName(w.id, {
-						// 		withThis: opt.useThis || opt.forModule,
-						// 		prefix: opt.prefix,
-						// 	});
-						// }
+						if (processedModules.check(source.id)) {
+							if (!processedLoops.check(w.id)) {
+								processedLoops.set(w.id);
+								loops.push(w.id);
+							}
+							return moduleCache.get(source.id);
+						}
 
-						// processedModules.set(source.id);
+						processedModules.set(source.id);
 
 						const res = compileModule(
 							w.sourceHandle || w.source,
@@ -175,13 +174,9 @@ export const compileWire: Compiler = (wire, opt) => {
 							opt,
 						);
 
-						console.log('module expr', res?.expr);
 						if (res) {
+							moduleCache.set(source.id, res.expr);
 							loopExpressions.push(...res.loops);
-							// loopExpressions.push(`${varName(w.id, {
-							// 	withThis: false,
-							// 	prefix: opt.prefix,
-							// })} = ${res.expr};`)
 						}
 						return `(${res?.expr || 'undefined'})`;
 					}
