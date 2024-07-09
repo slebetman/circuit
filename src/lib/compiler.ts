@@ -1,6 +1,10 @@
 import { Edge, Node } from 'reactflow';
 import varName from './normaliseVarName';
 import { getChartRef } from './chartRefs';
+import tracker from './tracker';
+
+const processedModules = tracker();
+const processedLoops = tracker();
 
 type CompilerOptions = {
 	nodes: Node[];
@@ -83,6 +87,9 @@ export const compileModule = (
 export const compile = (opt: CompilerOptions) => {
 	const outputs = opt.nodes.filter((x) => x.type === 'out');
 
+	processedModules.clear();
+	processedLoops.clear();
+
 	const expressions: string[] = [];
 	const neededEdges: string[] = [];
 
@@ -110,7 +117,7 @@ export const compile = (opt: CompilerOptions) => {
 };
 
 export const compileWire: Compiler = (wire, opt) => {
-	const processedEdges: Record<string, boolean> = {};
+	const processedEdges = tracker();
 	const loops: string[] = [];
 	const loopExpressions: string[] = [];
 
@@ -121,15 +128,18 @@ export const compileWire: Compiler = (wire, opt) => {
 
 		const source = opt.nodes.find((x) => x.id === w.source);
 
-		if (processedEdges[w.id]) {
-			loops.push(w.id);
+		if (processedEdges.check(w.id)) {
+			if (!processedLoops.check(w.id)) {
+				processedLoops.set(w.id);
+				loops.push(w.id);
+			}
 			return varName(`${w.id}`, {
 				withThis: opt.useThis || opt.forModule,
 				prefix: opt.prefix,
 			});
 		}
 
-		processedEdges[w.id] = true;
+		processedEdges.set(w.id);
 
 		if (source) {
 			const inputs = opt.edges.filter((x) => x.target === source?.id);
@@ -143,7 +153,20 @@ export const compileWire: Compiler = (wire, opt) => {
 						return `(${comp(inputs[0])} !== ${comp(inputs[1])})`;
 					case 'not':
 						return `!(${comp(inputs[0])})`;
-					case 'module':
+					case 'module':{
+						if (processedModules.check(source.id)) {
+							if (!processedLoops.check(w.id)) {
+								processedLoops.set(w.id);
+								loops.push(w.id);
+							}
+							return varName(`${w.id}`, {
+								withThis: opt.useThis || opt.forModule,
+								prefix: opt.prefix,
+							});
+						}
+
+						processedModules.set(source.id);
+
 						const res = compileModule(
 							w.sourceHandle || w.source,
 							source,
@@ -152,7 +175,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						if (res) {
 							loopExpressions.push(...res.loops);
 						}
-						return `(${res?.expr || 'undefined'})`;
+						return `(${res?.expr || 'undefined'})`;}
 					default:
 						throw new Error('Unsupported node type!');
 				}
@@ -177,9 +200,7 @@ export const compileWire: Compiler = (wire, opt) => {
 	loopExpressions.push(
 		...neededEdges.map((loopWire) => {
 			if (loopWire) {
-				for (const k in processedEdges) {
-					delete processedEdges[k];
-				}
+				processedEdges.clear();
 
 				return `${varName(loopWire.id, {
 					prefix: opt.prefix,
