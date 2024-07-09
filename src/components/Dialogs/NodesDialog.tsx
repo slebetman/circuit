@@ -1,4 +1,5 @@
 import And from 'components/Icons/And';
+import Comment from 'components/Icons/Comment';
 import Not from 'components/Icons/Not';
 import Or from 'components/Icons/Or';
 import Xor from 'components/Icons/Xor';
@@ -32,16 +33,47 @@ const NodesDialog = ({ onClick, onClose, isOpen }: NodesDialogProps) => {
 					flexWrap: 'wrap',
 				}}
 			>
-				<ToolButton icon={And} onClick={onClick} actionType='and' />
-				<ToolButton icon={Or} onClick={onClick} actionType='or' />
-				<ToolButton icon={Xor} onClick={onClick} actionType='xor' />
-				<ToolButton icon={Not} onClick={onClick} actionType='not' />
-				<ToolButton label='Input' onClick={onClick} actionType='in' />
-				<ToolButton label='Output' onClick={onClick} actionType='out' />
 				<ToolButton
-					label='Comment'
+					icon={And}
+					onClick={onClick}
+					actionType='and'
+					title='And'
+				/>
+				<ToolButton
+					icon={Or}
+					onClick={onClick}
+					actionType='or'
+					title='Or'
+				/>
+				<ToolButton
+					icon={Xor}
+					onClick={onClick}
+					actionType='xor'
+					title='Xor'
+				/>
+				<ToolButton
+					icon={Not}
+					onClick={onClick}
+					actionType='not'
+					title='Not'
+				/>
+				<ToolButton
+					label='Input'
+					onClick={onClick}
+					actionType='in'
+					title='Input'
+				/>
+				<ToolButton
+					label='Output'
+					onClick={onClick}
+					actionType='out'
+					title='Output'
+				/>
+				<ToolButton
+					icon={Comment}
 					onClick={onClick}
 					actionType='comment'
+					title='Comment'
 				/>
 			</div>
 		</Popup>
