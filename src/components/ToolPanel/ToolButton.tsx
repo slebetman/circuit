@@ -35,7 +35,7 @@ const ToolButton: FC<ToolButtonProp> = ({
 				alignItems: 'center',
 				justifyContent: 'center',
 				cursor: 'pointer',
-				boxShadow: '1px 3px 10px #ccc',
+				boxShadow: '1px 3px 5px #00000033',
 				fontSize: '10px',
 				...style,
 			}}
