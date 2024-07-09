@@ -1,5 +1,5 @@
 const tracker = () => {
-	const items: Record<string,boolean> = {};
+	const items: Record<string, boolean> = {};
 
 	return {
 		clear: () => {
@@ -7,9 +7,9 @@ const tracker = () => {
 				delete items[key];
 			}
 		},
-		set: (key:string) => items[key] = true,
-		check: (key:string) => items[key],
-	}
-}
+		set: (key: string) => (items[key] = true),
+		check: (key: string) => items[key],
+	};
+};
 
 export default tracker;

@@ -12,7 +12,7 @@ export const handleNew =
 		setNodes: Setter<any>,
 		setEdges: Setter<any>,
 		setModules: Setter<any>,
-		router: NextRouter
+		router: NextRouter,
 	) =>
 	() => {
 		stopSim();
@@ -33,7 +33,7 @@ export const handleSave =
 		setMode: Setter<any>,
 		nodes: Node[],
 		edges: Edge[],
-		modules: any[]
+		modules: any[],
 	) =>
 	async (name: string) => {
 		if (name) {
@@ -49,14 +49,19 @@ export const handleOpenFolder = (setMode: Setter<any>) => () => {
 };
 
 export const handleSelectFile =
-	(stopSim: Function, setMode: Setter<any>, router: NextRouter, fileName: string, chart: any) =>
+	(
+		stopSim: Function,
+		setMode: Setter<any>,
+		router: NextRouter,
+		fileName: string | undefined,
+		chart: any,
+	) =>
 	(f: string) => {
 		stopSim();
 		setMode('chart');
-		if(f === fileName) {
+		if (f === fileName) {
 			chart.load(fileName);
-		}
-		else {
+		} else {
 			router.replace(`/${f}`);
 		}
 	};
@@ -77,7 +82,7 @@ export const handleSim =
 export const handleCreateNode =
 	(
 		setNodes: Setter<Node<any, string | undefined>[]>,
-		instance: ReactFlowInstance | null
+		instance: ReactFlowInstance | null,
 	) =>
 	(actionType: string) => {
 		const [type, moduleLabel, moduleType] = actionType.split(':');
@@ -127,7 +132,7 @@ export const handleDeleteModule =
 	(
 		setModules: Setter<Module[]>,
 		instance: ReactFlowInstance | null,
-		nodes: Node[]
+		nodes: Node[],
 	) =>
 	(type: string) => {
 		setModules((prevModules) => {
@@ -136,7 +141,7 @@ export const handleDeleteModule =
 		});
 		instance?.deleteElements({
 			nodes: nodes.filter(
-				(x) => x.type === 'module' && x.data.type === type
+				(x) => x.type === 'module' && x.data.type === type,
 			),
 		});
 	};

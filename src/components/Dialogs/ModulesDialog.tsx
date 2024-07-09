@@ -12,6 +12,7 @@ type ModulesDialogProps = {
 	importModule?: () => void;
 	editModule?: (type: string) => void;
 	deleteModule?: (type: string) => void;
+	visible?: boolean;
 	isOpen: boolean;
 };
 
@@ -24,6 +25,7 @@ const ModulesDialog = ({
 	importModule,
 	editModule,
 	deleteModule,
+	visible,
 }: ModulesDialogProps) => {
 	return (
 		<Popup
@@ -34,6 +36,7 @@ const ModulesDialog = ({
 				width: 'fit-content',
 				top: '16px',
 				left: '80px',
+				display: visible === false ? 'none' : 'block',
 			}}
 		>
 			<div

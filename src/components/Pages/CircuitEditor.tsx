@@ -33,12 +33,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[]
+		[],
 	);
 	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[]
+		[],
 	);
 	const [modules, setModules] = useState<Module[]>([]);
+	const [currentModule, setCurrentModule] = useState<Module | null>(null);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
 	const [mode, setMode] = useState<
 		'open' | 'import' | 'save' | 'chart' | 'module'
@@ -51,12 +52,56 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [editable, setEditable] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const onConnect = useCallback(
-		(params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-		[setEdges]
+		(params: Connection | Edge) => {
+			if (mode === 'module') {
+				setModuleEdges((eds) => addEdge(params, eds));
+			} else {
+				setEdges((eds) => addEdge(params, eds));
+			}
+		},
+		[setEdges, setModuleEdges],
 	);
 	const chart = useChart();
 	const mod = useChart();
 	const router = useRouter();
+
+	const handleEditModule = (type: string) => {
+		const m = modules.find((x) => x.type === type);
+
+		if (m) {
+			setCurrentModule(m);
+			setModuleEdges(m.edges);
+			setModuleNodes(m.nodes);
+			setMode('module');
+			setTimeout(() => {
+				instance?.fitView({
+					padding: 0.25,
+				});
+			}, 50);
+		}
+	};
+
+	const handleSaveModule = () => {
+		if (currentModule) {
+			setModules((prevModules) => prevModules.map(m => {
+				if (m.type === currentModule.type) {
+					return {
+						type: currentModule.type,
+						label: currentModule.label,
+						edges: [...moduleEdges],
+						nodes: [...moduleNodes],
+					};
+				}
+				return m;
+			}))
+			setMode('chart');
+			setTimeout(() => {
+				instance?.fitView({
+					padding: 0.25,
+				});
+			}, 50);
+		}
+	}
 
 	const startSim = () => {
 		setEditable(false);
@@ -74,7 +119,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					};
 				}
 				return n;
-			})
+			}),
 		);
 
 		const updater = (state: SimState) => {
@@ -87,7 +132,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
@@ -95,7 +140,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						on: state[varName(e.id)],
 					};
 					return e;
-				})
+				}),
 			);
 		};
 
@@ -119,13 +164,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
 					e.data = {};
 					return e;
-				})
+				}),
 			);
 
 			setSim(null);
@@ -141,7 +186,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compile({
 					nodes: n,
 					edges: e,
-				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1'))
+				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
 			);
 		}
 	}, [codeOpen, nodes, edges]);
@@ -221,11 +266,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				}}
 			>
 				<Flow
-					nodes={nodes}
-					edges={edges}
+					nodes={mode === 'module' ? moduleNodes : nodes}
+					edges={mode === 'module' ? moduleEdges : edges}
 					onConnect={onConnect}
-					onNodesChange={onNodesChange}
-					onEdgesChange={onEdgesChange}
+					onNodesChange={
+						mode === 'module' ? onModuleNodesChange : onNodesChange
+					}
+					onEdgesChange={
+						mode === 'module' ? onModuleEdgesChange : onEdgesChange
+					}
 					onInit={(i) => setInstance(i)}
 					editable={editable}
 				>
@@ -246,17 +295,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 								setNodes,
 								setEdges,
 								setModules,
-								router
+								router,
 							),
 							compile: handlers.handleCompile(setCodeOpen),
 							run: handlers.handleSim(startSim, stopSim),
 							tools: handlers.handleTools(
 								setNodesPaletteOpen,
-								setModulesPaletteOpen
+								setModulesPaletteOpen,
 							),
-							backToChart: () => {
-								setMode('chart');
-							},
+							backToChart: handleSaveModule
 						}}
 					/>
 				</Flow>
@@ -271,12 +318,14 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				onClick={handlers.handleCreateNode(setNodes, instance)}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
+				editModule={handleEditModule}
 				deleteModule={handlers.handleDeleteModule(
 					setModules,
 					instance,
-					nodes
+					nodes,
 				)}
 				modules={modules}
+				visible={mode !== 'module'}
 			/>
 			<CodeDialog
 				isOpen={codeOpen}
@@ -286,7 +335,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			<FilePicker
 				title='Open File'
 				isOpen={mode === 'open'}
-				onSelect={handlers.handleSelectFile(stopSim, setMode, router, fileName, chart)}
+				onSelect={handlers.handleSelectFile(
+					stopSim,
+					setMode,
+					router,
+					fileName,
+					chart,
+				)}
 				onClose={() => setMode('chart')}
 			/>
 			<FilePicker
@@ -307,7 +362,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					setMode,
 					nodes,
 					edges,
-					modules
+					modules,
 				)}
 				onClose={() => setMode('chart')}
 			/>

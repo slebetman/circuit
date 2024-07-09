@@ -24,7 +24,7 @@ type InternalCompiler = (wire: Edge) => string;
 export const compileModule = (
 	sourceId: string,
 	moduleNode: Node,
-	opt: CompilerOptions
+	opt: CompilerOptions,
 ) => {
 	const chartRef = getChartRef();
 
@@ -39,7 +39,7 @@ export const compileModule = (
 			output = outputs[0];
 		} else {
 			output = outputs.find(
-				(x) => `${moduleNode.id}_${x.id}` === sourceId
+				(x) => `${moduleNode.id}_${x.id}` === sourceId,
 			);
 		}
 
@@ -62,12 +62,12 @@ export const compileModule = (
 								(x) =>
 									x.target === moduleNode.id &&
 									x.targetHandle ===
-										`${moduleNode.id}_${n.id}`
+										`${moduleNode.id}_${n.id}`,
 							);
 							if (sourceWire) {
 								const [expr, loops] = compileWire(
 									sourceWire,
-									opt
+									opt,
 								);
 								loopExpressions.push(...loops);
 								return expr;
@@ -153,7 +153,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						return `(${comp(inputs[0])} !== ${comp(inputs[1])})`;
 					case 'not':
 						return `!(${comp(inputs[0])})`;
-					case 'module':{
+					case 'module': {
 						if (processedModules.check(source.id)) {
 							if (!processedLoops.check(w.id)) {
 								processedLoops.set(w.id);
@@ -170,12 +170,13 @@ export const compileWire: Compiler = (wire, opt) => {
 						const res = compileModule(
 							w.sourceHandle || w.source,
 							source,
-							opt
+							opt,
 						);
 						if (res) {
 							loopExpressions.push(...res.loops);
 						}
-						return `(${res?.expr || 'undefined'})`;}
+						return `(${res?.expr || 'undefined'})`;
+					}
 					default:
 						throw new Error('Unsupported node type!');
 				}
@@ -208,7 +209,7 @@ export const compileWire: Compiler = (wire, opt) => {
 			} else {
 				return '';
 			}
-		})
+		}),
 	);
 
 	return [expression, loopExpressions.filter((x) => x !== '')];
