@@ -158,15 +158,15 @@ export const compileWire: Compiler = (wire, opt) => {
 					case 'module': {
 						console.log('processing module', source.id);
 
-						if (processedModules.check(source.id)) {
-							if (!processedLoops.check(w.id)) {
-								processedLoops.set(w.id);
-								loops.push(w.id);
-							}
-							return moduleCache.get(source.id);
-						}
+						// if (processedModules.check(source.id)) {
+						// 	if (!processedLoops.check(w.id)) {
+						// 		processedLoops.set(w.id);
+						// 		loops.push(w.id);
+						// 	}
+						// 	return moduleCache.get(source.id);
+						// }
 
-						processedModules.set(source.id);
+						// processedModules.set(source.id);
 
 						const res = compileModule(
 							w.sourceHandle || w.source,
