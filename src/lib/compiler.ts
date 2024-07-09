@@ -10,6 +10,7 @@ type CompilerOptions = {
 	useThis?: boolean;
 	getId?: (n: Node) => string;
 	all?: boolean;
+	forModule?: boolean;
 };
 
 type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
@@ -19,18 +20,14 @@ type InternalCompiler = (wire: Edge) => string;
 export const compileModule = (
 	sourceId: string,
 	moduleNode: Node,
-	inputs: Edge[],
-	opt: CompilerOptions,
+	opt: CompilerOptions
 ) => {
 	const chartRef = getChartRef();
 
-	const module = chartRef?.modules?.find(
-		(x) => x.type === moduleNode.data.type,
-	);
+	const mod = chartRef?.modules?.find((x) => x.type === moduleNode.data.type);
 
-	if (module) {
-		const outputs = module.nodes.filter((x) => x.type === 'out');
-		const inputs = module.nodes.filter((x) => x.type === 'in');
+	if (mod) {
+		const outputs = mod.nodes.filter((x) => x.type === 'out');
 
 		let output: Node | undefined;
 
@@ -38,20 +35,21 @@ export const compileModule = (
 			output = outputs[0];
 		} else {
 			output = outputs.find(
-				(x) => `${moduleNode.id}_${x.id}` === sourceId,
+				(x) => `${moduleNode.id}_${x.id}` === sourceId
 			);
 		}
 
 		if (output) {
-			const wire = module.edges.find((x) => x.target === output.id);
+			const wire = mod.edges.find((x) => x.target === output.id);
 
 			if (wire) {
-				const [expr] = compileWire(wire, {
+				const [expr, loops] = compileWire(wire, {
 					...opt,
-					nodes: module.nodes,
-					edges: module.edges,
+					nodes: mod.nodes,
+					edges: mod.edges,
 					useThis: false,
 					prefix: moduleNode.id,
+					forModule: true,
 					all: false,
 					getId: (n) => {
 						if (n.type === 'in') {
@@ -59,7 +57,7 @@ export const compileModule = (
 								(x) =>
 									x.target === moduleNode.id &&
 									x.targetHandle ===
-										`${moduleNode.id}_${n.id}`,
+										`${moduleNode.id}_${n.id}`
 							);
 							if (sourceWire) {
 								const [expr] = compileWire(sourceWire, opt);
@@ -70,7 +68,7 @@ export const compileModule = (
 						return opt.getId ? opt.getId(n) : n.data?.label || n.id;
 					},
 				});
-				return expr;
+				return { expr, loops };
 			}
 		}
 	}
@@ -93,19 +91,12 @@ export const compile = (opt: CompilerOptions) => {
 		}
 	}
 
+	expressions.push(...neededEdges);
+
 	if (opt.all) {
 		for (const wire of opt.edges) {
 			const [expr] = compileWire(wire, opt);
 			expressions.push(`${varName(wire.id)} = ${expr};`);
-		}
-	} else {
-		for (const w of neededEdges) {
-			const wire = opt.edges.find((x) => x.id === w);
-
-			if (wire) {
-				const [expr] = compileWire(wire, opt);
-				expressions.push(`${varName(w)} = ${expr};`);
-			}
 		}
 	}
 
@@ -115,6 +106,7 @@ export const compile = (opt: CompilerOptions) => {
 export const compileWire: Compiler = (wire, opt) => {
 	const processedEdges: Record<string, boolean> = {};
 	const loops: string[] = [];
+	const loopExpressions: string[] = [];
 
 	const comp: InternalCompiler = (w: Edge) => {
 		if (!w) {
@@ -125,8 +117,8 @@ export const compileWire: Compiler = (wire, opt) => {
 
 		if (processedEdges[w.id]) {
 			loops.push(w.id);
-			return varName(w.id, {
-				withThis: opt.useThis,
+			return varName(`${w.id}`, {
+				withThis: opt.useThis || opt.forModule,
 				prefix: opt.prefix,
 			});
 		}
@@ -146,7 +138,15 @@ export const compileWire: Compiler = (wire, opt) => {
 					case 'not':
 						return `!(${comp(inputs[0])})`;
 					case 'module':
-						return `(${compileModule(w.sourceHandle || w.source, source, inputs, opt)})`;
+						const res = compileModule(
+							w.sourceHandle || w.source,
+							source,
+							opt
+						);
+						if (res) {
+							loopExpressions.push(...res.loops);
+						}
+						return `(${res?.expr || 'undefined'})`;
 					default:
 						throw new Error('Unsupported node type!');
 				}
@@ -162,5 +162,27 @@ export const compileWire: Compiler = (wire, opt) => {
 		throw new Error('Not supposed to get here');
 	};
 
-	return [comp(wire), loops];
+	const expression = comp(wire);
+
+	const neededEdges = loops
+		.map((w) => opt.edges.find((x) => x.id === w))
+		.filter((w) => w);
+
+	loopExpressions.push(
+		...neededEdges.map((loopWire) => {
+			if (loopWire) {
+				for (const k in processedEdges) {
+					delete processedEdges[k];
+				}
+
+				return `${varName(loopWire.id, {
+					prefix: opt.prefix,
+				})} = ${comp(loopWire)}`;
+			} else {
+				return '';
+			}
+		})
+	);
+
+	return [expression, loopExpressions.filter((x) => x !== '')];
 };

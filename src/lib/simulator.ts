@@ -37,6 +37,8 @@ export const compileForSim = (opt: ComilerOptions) => {
 		all: true,
 	});
 
+	console.log(expressions);
+
 	let ret = {
 		inputs,
 		outputs,
