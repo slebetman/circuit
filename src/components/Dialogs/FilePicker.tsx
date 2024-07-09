@@ -4,12 +4,13 @@ import useChartList from 'hooks/useChartList';
 import { useEffect, useState } from 'react';
 
 type FilePickerProps = {
+	title: string;
 	onSelect: (file: string) => void;
 	onClose: () => void;
 	isOpen: boolean;
 };
 
-const FilePicker = ({ onSelect, onClose, isOpen }: FilePickerProps) => {
+const FilePicker = ({ title, onSelect, onClose, isOpen }: FilePickerProps) => {
 	const chartList = useChartList();
 
 	useEffect(() => {
@@ -17,7 +18,7 @@ const FilePicker = ({ onSelect, onClose, isOpen }: FilePickerProps) => {
 	}, []);
 
 	return (
-		<Popup title='Open File' onClose={onClose} isOpen={isOpen}>
+		<Popup title={title} onClose={onClose} isOpen={isOpen}>
 			<div
 				style={{
 					maxHeight: '210px',

@@ -40,20 +40,22 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
-	const [mode, setMode] = useState<'open' | 'save' | 'chart' | 'module'>(
-		'chart'
-	);
+	const [mode, setMode] = useState<
+		'open' | 'import' | 'save' | 'chart' | 'module'
+	>('chart');
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
 	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
 	const [codeOpen, setCodeOpen] = useState(false);
 	const [code, setCode] = useState<string[]>([]);
 	const [sim, setSim] = useState<SimObject | null>(null);
 	const [editable, setEditable] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const onConnect = useCallback(
 		(params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
 		[setEdges]
 	);
 	const chart = useChart();
+	const mod = useChart();
 	const router = useRouter();
 
 	const startSim = () => {
@@ -144,6 +146,18 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		}
 	}, [codeOpen, nodes, edges]);
 
+	const handleDeleteModule = (type: string) => {
+		setModules((prevModules) => {
+			const newModules = prevModules.filter((x) => x.type !== type);
+			return newModules;
+		});
+		instance?.deleteElements({
+			nodes: nodes.filter(
+				(x) => x.type === 'module' && x.data.type === type
+			),
+		});
+	};
+
 	useEffect(() => {
 		if (chart.chart) {
 			// HACK: Not sure why but need some delay to set nodes
@@ -163,6 +177,32 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	}, [chart.chart]);
 
 	useEffect(() => {
+		const name = mod.name;
+		const found = modules.find((x) => x.label === name);
+
+		if (found) {
+			return setError('Module has already been imported!');
+		}
+
+		if (mod.chart?.modules && mod.chart.modules.length > 0) {
+			return setError('Cannot import modules containing modules!');
+		}
+
+		setModules((prevModules) => {
+			const m = [
+				...prevModules,
+				{
+					label: mod.name,
+					type: mod.name,
+					nodes: mod.chart?.nodes,
+					edges: mod.chart?.edges,
+				} as Module,
+			];
+			return m;
+		});
+	}, [mod.chart]);
+
+	useEffect(() => {
 		if (fileName) {
 			chart.load(fileName);
 		}
@@ -171,6 +211,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	useEffect(() => {
 		setChartRef({ nodes, edges, modules });
 	}, [nodes, edges, modules]);
+
+	useEffect(() => {
+		if (chart.error) {
+			setError(chart.error.message);
+		}
+		if (mod.error) {
+			setError(mod.error.message);
+		}
+	}, [chart.error, mod.error]);
 
 	return (
 		<>
@@ -227,8 +276,11 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			/>
 			<ModulesDialog
 				isOpen={modulesPaletteOpen}
-				onClick={(x) => console.log(x)}
+				onClick={handlers.handleCreateNode(setNodes, instance)}
 				onClose={() => setModulesPaletteOpen(false)}
+				importModule={() => setMode('import')}
+				deleteModule={handleDeleteModule}
+				modules={modules}
 			/>
 			<CodeDialog
 				isOpen={codeOpen}
@@ -236,8 +288,18 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				code={code}
 			/>
 			<FilePicker
+				title='Open File'
 				isOpen={mode === 'open'}
 				onSelect={handlers.handleSelectFile(stopSim, setMode, router)}
+				onClose={() => setMode('chart')}
+			/>
+			<FilePicker
+				title='Import Module'
+				isOpen={mode === 'import'}
+				onSelect={(fileName) => {
+					setMode('chart');
+					mod.load(fileName);
+				}}
 				onClose={() => setMode('chart')}
 			/>
 			<SaveDialog
@@ -254,9 +316,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				onClose={() => setMode('chart')}
 			/>
 			<ErrorDialog
-				isOpen={chart.error != null}
-				onClose={() => chart.clearError()}
-				error={chart.error?.message || ''}
+				isOpen={error != null}
+				onClose={() => setError(null)}
+				error={error || ''}
 			/>
 		</>
 	);

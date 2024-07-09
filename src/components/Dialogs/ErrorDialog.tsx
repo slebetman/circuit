@@ -7,7 +7,7 @@ type ErrorDialogProps = {
 };
 
 const ErrorDialog: FC<ErrorDialogProps> = ({ onClose, isOpen, error }) =>
-	isOpen ?
+	isOpen ? (
 		<div
 			style={{
 				position: 'absolute',
@@ -19,14 +19,17 @@ const ErrorDialog: FC<ErrorDialogProps> = ({ onClose, isOpen, error }) =>
 		>
 			<span
 				style={{
-					padding: '10px',
+					padding: '20px',
+					borderRadius: '10px',
+					border: '1px solid #c00',
 					backgroundColor: '#f66',
+					boxShadow: '3px 3px 15px #00000066',
 				}}
 			>
-				Error: {error} &nbsp;
-				<button onClick={() => onClose()}>x</button>
+				Error: {error} &nbsp;&nbsp;
+				<button onClick={() => onClose()}>OK</button>
 			</span>
 		</div>
-	:	null;
+	) : null;
 
 export default ErrorDialog;

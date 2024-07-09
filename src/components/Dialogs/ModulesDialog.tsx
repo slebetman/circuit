@@ -1,9 +1,11 @@
 import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
 import ToolButton from 'components/ToolPanel/ToolButton';
+import { Module } from 'hooks/useChart';
 import { getChartRef } from 'lib/chartRefs';
 
 type ModulesDialogProps = {
+	modules: Module[];
 	onClick: (actionType: string) => void;
 	onClose: () => void;
 	createModule?: () => void;
@@ -14,6 +16,7 @@ type ModulesDialogProps = {
 };
 
 const ModulesDialog = ({
+	modules,
 	onClick,
 	onClose,
 	isOpen,
@@ -22,8 +25,6 @@ const ModulesDialog = ({
 	editModule,
 	deleteModule,
 }: ModulesDialogProps) => {
-	const chartRef = getChartRef();
-
 	return (
 		<Popup
 			title='Modules'
@@ -55,7 +56,7 @@ const ModulesDialog = ({
 					flexDirection: 'column',
 				}}
 			>
-				{chartRef?.modules?.map((module, idx) => (
+				{modules?.map((module, idx) => (
 					<div
 						key={`${module.type}${idx}`}
 						style={{
@@ -68,7 +69,7 @@ const ModulesDialog = ({
 							icon={Box}
 							label={module.label}
 							onClick={onClick}
-							actionType={module.type}
+							actionType={`module:${module.label}:${module.type}`}
 							style={{
 								height: '60px',
 								width: '100px',

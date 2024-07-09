@@ -73,14 +73,20 @@ const handleCreateNode =
 		instance: ReactFlowInstance | null
 	) =>
 	(actionType: string) => {
+		const [type, moduleLabel, moduleType] = actionType.split(':');
+
 		setNodes((prev) => {
 			let data: Record<string, any> = {};
 
-			switch (actionType) {
+			switch (type) {
 				case 'comment':
 				case 'in':
 				case 'out':
-					data.label = actionType;
+					data.label = type;
+					break;
+				case 'module':
+					data.label = moduleLabel;
+					data.type = moduleType;
 					break;
 			}
 
@@ -88,7 +94,7 @@ const handleCreateNode =
 				...prev,
 				{
 					id: `${generateId(instance)}`,
-					type: actionType,
+					type,
 					data,
 					position: {
 						x: 0,
