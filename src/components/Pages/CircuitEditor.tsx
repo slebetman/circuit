@@ -24,6 +24,7 @@ import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import { setChartRef } from 'lib/chartRefs';
 import ModulesDialog from 'components/Dialogs/ModulesDialog';
 import * as handlers from './Handlers';
+import generateId from 'lib/generateId';
 
 type EditorProps = {
 	fileName?: string;
@@ -63,11 +64,28 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				setEdges((eds) => addEdge(params, eds));
 			}
 		},
-		[setEdges, setModuleEdges],
+		[setEdges, setModuleEdges, mode],
 	);
 	const chart = useChart();
 	const mod = useChart();
 	const router = useRouter();
+
+	const handleCreateModule = () => {
+		setCurrentModule({
+			type: `${generateId(instance)}`,
+			label: '',
+			nodes: [],
+			edges: [],
+		});
+		setModuleEdges([]);
+		setModuleNodes([]);
+		setMode('module');
+		setTimeout(() => {
+			instance?.fitView({
+				padding: 0.25,
+			});
+		}, 50);
+	};
 
 	const handleEditModule = (type: string) => {
 		const m = modules.find((x) => x.type === type);
@@ -86,22 +104,19 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	};
 
 	const handleSaveModule = () => {
-		console.log('currentModule', JSON.stringify(currentModule, null, 2));
+		console.log('currentModule', currentModule?.label, currentModule?.type);
+		console.log(moduleNodes);
 		if (currentModule) {
-			setModules((prevModules) =>
-				prevModules.map((m) => {
-					if (m.type === currentModule.type) {
-						console.log('returning new module', currentModule.label);
-						return {
-							type: currentModule.type,
-							label: currentModule.label,
-							edges: [...moduleEdges],
-							nodes: [...moduleNodes],
-						};
-					}
-					return m;
-				}),
-			);
+			setModules((prevModules) => {
+				const m = prevModules.filter((m) => m.type !== currentModule.type);
+				m.push({
+					type: currentModule.type,
+					label: currentModule.label,
+					nodes: [...moduleNodes],
+					edges: [...moduleEdges],
+				});
+				return m;
+			});
 			setMode('chart');
 			setTimeout(() => {
 				instance?.fitView({
@@ -352,14 +367,15 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			</div>
 			<NodesDialog
 				isOpen={nodesPaletteOpen}
-				onClick={handlers.handleCreateNode(setNodes, instance)}
+				onClick={handlers.handleCreateNode(mode === 'module' ? setModuleNodes : setNodes, instance)}
 				onClose={() => setNodesPaletteOpen(false)}
 			/>
 			<ModulesDialog
 				isOpen={modulesPaletteOpen}
-				onClick={handlers.handleCreateNode(setNodes, instance)}
+				onClick={handlers.handleCreateNode(mode === 'module' ? setModuleNodes : setNodes, instance)}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
+				createModule={handleCreateModule}
 				editModule={handleEditModule}
 				deleteModule={handlers.handleDeleteModule(
 					setModules,
