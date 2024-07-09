@@ -21,6 +21,7 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 		targetY,
 		targetPosition,
 		borderRadius: 5,
+		offset: 5,
 	});
 
 	return (
