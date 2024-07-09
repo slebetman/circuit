@@ -31,6 +31,7 @@ const ToolButton: FC<ToolButtonProp> = ({
 				width: '50px',
 				height: '50px',
 				display: 'flex',
+				flexDirection: 'column',
 				alignItems: 'center',
 				justifyContent: 'center',
 				cursor: 'pointer',
@@ -45,9 +46,8 @@ const ToolButton: FC<ToolButtonProp> = ({
 			onMouseLeave={() => setHover(false)}
 			title={title}
 		>
-			{icon ?
-				createElement(icon)
-			:	<span style={{ userSelect: 'none' }}>{label}</span>}
+			{icon && createElement(icon)}
+			{label && <span style={{ userSelect: 'none' }}>{label}</span>}
 		</button>
 	);
 };

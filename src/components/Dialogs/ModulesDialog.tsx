@@ -1,3 +1,4 @@
+import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
 import ToolButton from 'components/ToolPanel/ToolButton';
 import { getChartRef } from 'lib/chartRefs';
@@ -5,9 +6,10 @@ import { getChartRef } from 'lib/chartRefs';
 type ModulesDialogProps = {
 	onClick: (actionType: string) => void;
 	onClose: () => void;
-	create?: () => void;
-	edit?: (type: string) => void;
-	del?: (type: string) => void;
+	createModule?: () => void;
+	importModule?: () => void;
+	editModule?: (type: string) => void;
+	deleteModule?: (type: string) => void;
 	isOpen: boolean;
 };
 
@@ -15,9 +17,10 @@ const ModulesDialog = ({
 	onClick,
 	onClose,
 	isOpen,
-	create,
-	edit,
-	del,
+	createModule,
+	importModule,
+	editModule,
+	deleteModule,
 }: ModulesDialogProps) => {
 	const chartRef = getChartRef();
 
@@ -38,9 +41,11 @@ const ModulesDialog = ({
 					borderBottom: '1px solid #ccc',
 					display: 'flex',
 					justifyContent: 'end',
+					gap: '2px',
 				}}
 			>
-				<button onClick={create}>+ New</button>
+				<button onClick={createModule}>New</button>
+				<button onClick={importModule}>Import</button>
 			</div>
 			<div
 				style={{
@@ -50,8 +55,9 @@ const ModulesDialog = ({
 					flexDirection: 'column',
 				}}
 			>
-				{chartRef?.modules?.map((module) => (
+				{chartRef?.modules?.map((module, idx) => (
 					<div
+						key={`${module.type}${idx}`}
 						style={{
 							display: 'flex',
 							flexDirection: 'row',
@@ -59,11 +65,13 @@ const ModulesDialog = ({
 						}}
 					>
 						<ToolButton
+							icon={Box}
 							label={module.label}
 							onClick={onClick}
 							actionType={module.type}
 							style={{
-								width: '80px',
+								height: '60px',
+								width: '100px',
 							}}
 						/>
 						<div
@@ -74,10 +82,10 @@ const ModulesDialog = ({
 								justifyContent: 'center',
 							}}
 						>
-							<button onClick={() => edit?.(module.type)}>
+							<button onClick={() => editModule?.(module.type)}>
 								Edit
 							</button>
-							<button onClick={() => del?.(module.type)}>
+							<button onClick={() => deleteModule?.(module.type)}>
 								Delete
 							</button>
 						</div>

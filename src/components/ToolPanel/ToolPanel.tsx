@@ -9,6 +9,8 @@ import Play from 'components/Icons/Play';
 import ToggleButton from './ToggleButton';
 import Pause from 'components/Icons/Pause';
 import ArrowBack from 'components/Icons/ArrowBack';
+import Box from 'components/Icons/Box';
+import Network from 'components/Icons/Network';
 
 type ActionType = 'nodes' | 'modules';
 
@@ -57,12 +59,14 @@ const ToolPanel: FC<ToolPanelProp> = ({
 				/>
 				<Divider />
 				<ToolButton
+					icon={Network}
 					label='Nodes'
 					onClick={handlers.tools}
 					actionType='nodes'
 					title='Nodes pallete'
 				/>
 				<ToolButton
+					icon={Box}
 					label='Modules'
 					onClick={handlers.tools}
 					actionType='modules'
