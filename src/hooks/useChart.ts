@@ -53,6 +53,12 @@ const useChart = () => {
 					delete x.data.sim;
 				}
 
+				if (x.type === 'module' && x.data) {
+					x.data = {
+						type: x.data.type,
+					};
+				}
+
 				return x;
 			}),
 			edges: c.edges.map((x) => {
