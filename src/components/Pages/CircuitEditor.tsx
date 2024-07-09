@@ -141,7 +141,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compile({
 					nodes: n,
 					edges: e,
-				}).map((x) => x.replace(/this\["(.+)"\]/g, '$1'))
+				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1'))
 			);
 		}
 	}, [codeOpen, nodes, edges]);

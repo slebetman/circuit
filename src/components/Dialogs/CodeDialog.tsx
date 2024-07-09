@@ -14,20 +14,30 @@ const CodeDialog = ({ code, onClose, isOpen }: CodeDialogProps) => {
 			isOpen={isOpen}
 			style={{
 				width: '800px',
-				minHeight: '300px',
 				left: 'calc(50% - 400px)',
-				overflow: 'auto',
 			}}
 		>
-			<pre
+			<div
 				style={{
-					whiteSpace: 'pre-wrap',
-					padding: '5px 10px',
-					fontSize: '14px',
+					minHeight: '300px',
+					maxHeight: 'calc(100vh - 200px)',
+					overflow: 'auto',
 				}}
 			>
-				{code.join('\n\n')}
-			</pre>
+				{code.map((c, i) => (
+					<pre
+						key={`i${i}`}
+						style={{
+							whiteSpace: 'pre-wrap',
+							padding: '0px 5px 10px 45px',
+							fontSize: '14px',
+							textIndent: '-40px',
+						}}
+					>
+						{c}
+					</pre>
+				))}
+			</div>
 		</Popup>
 	);
 };

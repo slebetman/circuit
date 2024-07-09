@@ -43,6 +43,7 @@ export const compileModule = (
 			const wire = mod.edges.find((x) => x.target === output.id);
 
 			if (wire) {
+				const loopExpressions: string[] = [];
 				const [expr, loops] = compileWire(wire, {
 					...opt,
 					nodes: mod.nodes,
@@ -60,7 +61,11 @@ export const compileModule = (
 										`${moduleNode.id}_${n.id}`
 							);
 							if (sourceWire) {
-								const [expr] = compileWire(sourceWire, opt);
+								const [expr, loops] = compileWire(
+									sourceWire,
+									opt
+								);
+								loopExpressions.push(...loops);
 								return expr;
 							}
 							return 'undefined';
@@ -68,7 +73,8 @@ export const compileModule = (
 						return opt.getId ? opt.getId(n) : n.data?.label || n.id;
 					},
 				});
-				return { expr, loops };
+				loopExpressions.push(...loops);
+				return { expr, loops: loopExpressions };
 			}
 		}
 	}
