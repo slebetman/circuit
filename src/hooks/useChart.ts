@@ -33,8 +33,14 @@ const useChart = () => {
 		}
 	};
 
-	const save = async (c: Chart) => {
-		setChart({
+	const save = async (filename: string, c: Chart) => {
+		if (!c) return;
+		if (isBusy) {
+			setIsBusy(false);
+			return;
+		}
+		setIsBusy(true);
+		const chartToSave = {
 			nodes: c.nodes.map((x) => {
 				delete x.positionAbsolute;
 				delete x.width;
@@ -71,35 +77,29 @@ const useChart = () => {
 				return x;
 			}),
 			modules: c.modules,
-		});
+		};
+		try {
+			if (!filename) {
+				throw new Error('Chart has no name!');
+			}
+
+			await fetch(`/api/charts/${filename}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(chartToSave),
+			});
+		} catch (err) {
+			setError(err as Error);
+		}
+		setName(filename);
+		setChart(chartToSave);
+		setIsBusy(false);
 	};
 
 	useEffect(() => {
-		(async () => {
-			if (isBusy) {
-				setIsBusy(false);
-				return;
-			}
-			setIsBusy(true);
-			if (!chart) return;
-			try {
-				if (!name) {
-					throw new Error('Chart has no name!');
-				}
-
-				await fetch(`/api/charts/${name}`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(chart),
-				});
-			} catch (err) {
-				setError(err as Error);
-			}
-
-			setIsBusy(false);
-		})();
+		(async () => {})();
 	}, [chart]);
 
 	const clearError = () => {

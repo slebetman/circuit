@@ -1,5 +1,9 @@
-import { nanoid } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 import { ReactFlowInstance } from 'reactflow';
+
+const nanoid = customAlphabet(
+	'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+);
 
 const generateId = (instance: ReactFlowInstance | null) => {
 	let ok = false;

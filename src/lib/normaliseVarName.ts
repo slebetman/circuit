@@ -4,6 +4,11 @@ export type VarNameOptions = {
 };
 
 const varName = (name: string, opt?: VarNameOptions) => {
+	// Skip if var name is an expression:
+	if (name.match(/^!?\(.+\)$/)) {
+		return name;
+	}
+
 	let normalised = name.replace(/[- ]+/g, '_');
 
 	if (opt?.prefix) {

@@ -163,6 +163,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			// HACK: Not sure why but need some delay to set nodes
 			setNodes([]);
 			setEdges([]);
+			setModules([]);
 			setTimeout(() => {
 				setNodes(chart.chart?.nodes || []);
 				setEdges(chart.chart?.edges || []);
@@ -188,18 +189,20 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			return setError('Cannot import modules containing modules!');
 		}
 
-		setModules((prevModules) => {
-			const m = [
-				...prevModules,
-				{
-					label: mod.name,
-					type: mod.name,
-					nodes: mod.chart?.nodes,
-					edges: mod.chart?.edges,
-				} as Module,
-			];
-			return m;
-		});
+		if (mod.chart) {
+			setModules((prevModules) => {
+				const m = [
+					...prevModules,
+					{
+						label: mod.name,
+						type: mod.name,
+						nodes: mod.chart?.nodes,
+						edges: mod.chart?.edges,
+					} as Module,
+				];
+				return m;
+			});
+		}
 	}, [mod.chart]);
 
 	useEffect(() => {
@@ -254,6 +257,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 								stopSim,
 								setNodes,
 								setEdges,
+								setModules,
 								router
 							),
 							compile: handlers.handleCompile(setCodeOpen),

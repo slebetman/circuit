@@ -10,12 +10,14 @@ const handleNew =
 		stopSim: Function,
 		setNodes: Setter<any>,
 		setEdges: Setter<any>,
+		setModules: Setter<any>,
 		router: NextRouter
 	) =>
 	() => {
 		stopSim();
 		setNodes([]);
 		setEdges([]);
+		setModules([]);
 		router.replace('/');
 	};
 
@@ -32,10 +34,9 @@ const handleSave =
 		edges: Edge[],
 		modules: any[]
 	) =>
-	(name: string) => {
+	async (name: string) => {
 		if (name) {
-			chart.setName(name);
-			chart.save({ nodes, edges, modules });
+			await chart.save(name, { nodes, edges, modules });
 			router.replace(`/${name}`);
 		}
 
