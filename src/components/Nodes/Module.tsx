@@ -59,6 +59,7 @@ type IO = {
 };
 
 const Module: FC<ModuleProps> = ({ id, data, selected }) => {
+	const [label, setLabel] = useState('');
 	const [inputs, setInputs] = useState<IO[]>([]);
 	const [outputs, setOutputs] = useState<IO[]>([]);
 
@@ -87,6 +88,7 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 							id: x.id,
 						})),
 				);
+				setLabel(m.label);
 			}
 		}, 1);
 	}, [chart, data.type]);
@@ -111,7 +113,7 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 					marginLeft: selected ? '-1px' : '0px',
 				}}
 			>
-				<div style={nodeLabelStyle}>{data.label}</div>
+				<div style={nodeLabelStyle}>{label}</div>
 				<div style={ioContainerStyle}>
 					<div style={ioGroupStyle}>
 						{inputs.map((i) => (

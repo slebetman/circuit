@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { CSSProperties, FC, useCallback, useEffect, useState } from 'react';
 import Flow from 'components/Flow/Flow';
 
 import useChart, { Module } from 'hooks/useChart';
@@ -27,6 +27,10 @@ import * as handlers from './Handlers';
 
 type EditorProps = {
 	fileName?: string;
+};
+
+const titlePanelStyle: CSSProperties = {
+	fontSize: '12px',
 };
 
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
@@ -82,18 +86,22 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	};
 
 	const handleSaveModule = () => {
+		console.log('currentModule', JSON.stringify(currentModule, null, 2));
 		if (currentModule) {
-			setModules((prevModules) => prevModules.map(m => {
-				if (m.type === currentModule.type) {
-					return {
-						type: currentModule.type,
-						label: currentModule.label,
-						edges: [...moduleEdges],
-						nodes: [...moduleNodes],
-					};
-				}
-				return m;
-			}))
+			setModules((prevModules) =>
+				prevModules.map((m) => {
+					if (m.type === currentModule.type) {
+						console.log('returning new module', currentModule.label);
+						return {
+							type: currentModule.type,
+							label: currentModule.label,
+							edges: [...moduleEdges],
+							nodes: [...moduleNodes],
+						};
+					}
+					return m;
+				}),
+			);
 			setMode('chart');
 			setTimeout(() => {
 				instance?.fitView({
@@ -101,7 +109,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				});
 			}, 50);
 		}
-	}
+	};
 
 	const startSim = () => {
 		setEditable(false);
@@ -277,10 +285,44 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					}
 					onInit={(i) => setInstance(i)}
 					editable={editable}
+					onNodeDoubleClick={(e, n) => {
+						if (n.type === 'module') {
+							handleEditModule(n.data.type);
+						}
+					}}
 				>
 					{sim && (
-						<Panel position='top-center'>
+						<Panel position='top-center' style={titlePanelStyle}>
 							Simulation running..
+						</Panel>
+					)}
+					{mode === 'module' && (
+						<Panel position='top-center' style={titlePanelStyle}>
+							Edit Module:{' '}
+							<input
+								style={{
+									padding: '5px 10px',
+									borderRadius: '5px',
+									border: '1px solid #999',
+								}}
+								type='text'
+								value={currentModule?.label}
+								onChange={(e) => {
+									const val = e.currentTarget?.value;
+
+									if (val !== undefined) {
+										setCurrentModule((prevModule) => {
+											if (prevModule) {
+												return {
+													...prevModule,
+													label: val,
+												};
+											}
+											return null;
+										});
+									}
+								}}
+							/>
 						</Panel>
 					)}
 					<ToolPanel
@@ -303,7 +345,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 								setNodesPaletteOpen,
 								setModulesPaletteOpen,
 							),
-							backToChart: handleSaveModule
+							backToChart: handleSaveModule,
 						}}
 					/>
 				</Flow>
