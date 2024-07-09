@@ -31,14 +31,12 @@ const useChart = () => {
 		} catch (err) {
 			setError(err as Error);
 		}
+
+		setIsBusy(false);
 	};
 
 	const save = async (filename: string, c: Chart) => {
 		if (!c) return;
-		if (isBusy) {
-			setIsBusy(false);
-			return;
-		}
 		setIsBusy(true);
 		const chartToSave = {
 			nodes: c.nodes.map((x) => {
