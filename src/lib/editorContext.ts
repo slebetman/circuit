@@ -37,6 +37,7 @@ export type EditorContextType = {
 	startSim?: Function;
 	stopSim?: Function;
 	chart?: any;
+	mod?: any;
 	setEditable?: Dispatch<SetStateAction<boolean>>;
 	setSim?: Dispatch<SetStateAction<SimObject | null>>;
 	sim?: SimObject | null;

@@ -9,11 +9,7 @@ import {
 import Flow from 'components/Flow/Flow';
 
 import useChart, { Module } from 'hooks/useChart';
-import FilePicker from 'components/Dialogs/FilePicker';
-import SaveDialog from 'components/Dialogs/SaveDialog';
-import NodesDialog from 'components/Dialogs/NodesDialog';
 import { compile } from 'lib/compiler';
-import CodeDialog from 'components/Dialogs/CodeDialog';
 import { useRouter } from 'next/router';
 import {
 	addEdge,
@@ -25,14 +21,12 @@ import {
 	useNodesState,
 } from 'reactflow';
 import ToolPanel from 'components/ToolPanel/ToolPanel';
-import { SimObject, SimState, simulator } from 'lib/simulator';
-import varName from 'lib/normaliseVarName';
+import { SimObject } from 'lib/simulator';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import { setChartRef } from 'lib/chartRefs';
-import ModulesDialog from 'components/Dialogs/ModulesDialog';
 import * as handlers from './Handlers';
-import generateId from 'lib/generateId';
-import { setEditorContext } from 'lib/editorContext';
+import { EditorMode, setEditorContext } from 'lib/editorContext';
+import Dialogs from './Dialogs';
 
 type EditorProps = {
 	fileName?: string;
@@ -61,9 +55,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [modules, setModules] = useState<Module[]>([]);
 	const [currentModule, setCurrentModule] = useState<Module | null>(null);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
-	const [mode, setMode] = useState<
-		'open' | 'import' | 'save' | 'chart' | 'module'
-	>('chart');
+	const [mode, setMode] = useState<EditorMode>('chart');
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
 	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
 	const [codeOpen, setCodeOpen] = useState(false);
@@ -191,6 +183,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		instance,
 		setEditable,
 		chart,
+		mod,
 		setSim,
 		sim,
 	});
@@ -276,47 +269,19 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					/>
 				</Flow>
 			</div>
-			<NodesDialog
-				isOpen={nodesPaletteOpen}
-				onClick={handlers.handleCreateNode}
-				onClose={() => setNodesPaletteOpen(false)}
-			/>
-			<ModulesDialog
-				isOpen={modulesPaletteOpen}
-				onClick={handlers.handleCreateNode}
-				onClose={() => setModulesPaletteOpen(false)}
-				importModule={() => setMode('import')}
-				createModule={handlers.handleCreateModule}
-				editModule={handlers.handleEditModule}
-				deleteModule={handlers.handleDeleteModule}
-				modules={modules}
-				visible={mode !== 'module'}
-			/>
-			<CodeDialog
-				isOpen={codeOpen}
-				onClose={() => setCodeOpen(false)}
+			<Dialogs
+				fileName={fileName || ''}
 				code={code}
-			/>
-			<FilePicker
-				title='Open File'
-				isOpen={mode === 'open'}
-				onSelect={handlers.handleSelectFile(fileName)}
-				onClose={() => setMode('chart')}
-			/>
-			<FilePicker
-				title='Import Module'
-				isOpen={mode === 'import'}
-				onSelect={(fileName) => {
-					setMode('chart');
-					mod.load(fileName);
+				isOpen={{
+					nodes: nodesPaletteOpen,
+					modules: modulesPaletteOpen,
+					code: codeOpen,
 				}}
-				onClose={() => setMode('chart')}
-			/>
-			<SaveDialog
-				isOpen={mode === 'save'}
-				name={chart.name}
-				onSubmit={handlers.handleSave}
-				onClose={() => setMode('chart')}
+				onClose={{
+					nodes: () => setNodesPaletteOpen(false),
+					modules: () => setModulesPaletteOpen(false),
+					code: () => setCodeOpen(false),
+				}}
 			/>
 			<ErrorDialog
 				isOpen={error != null}

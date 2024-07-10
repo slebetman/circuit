@@ -1,14 +1,9 @@
 import { FC } from 'react';
 import ReactFlow, {
-	Connection,
-	Edge,
 	ConnectionLineType,
 	Controls,
 	DefaultEdgeOptions,
-	Node,
 	ReactFlowInstance,
-	OnNodesChange,
-	OnEdgesChange,
 	ReactFlowProps,
 } from 'reactflow';
 
