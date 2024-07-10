@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import {
 	EdgeLabelRenderer,
 	getSmoothStepPath,
-	SmoothStepEdgeProps,
+	EdgeProps,
+	useReactFlow,
+	XYPosition,
 } from 'reactflow';
 
 const DEBUG = false;
 
-export function SimulatableEdge(props: SmoothStepEdgeProps) {
+export function SimulatableEdge(props: EdgeProps) {
 	const {
 		sourcePosition,
 		targetPosition,
@@ -20,6 +23,12 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 		id,
 	} = props;
 
+	const flow = useReactFlow();
+
+	const [drag, setDrag] = useState<XYPosition|null>(null);
+	const [offsetX, setOffsetX] = useState<number>(0);
+	const [offsetY, setOffsetY] = useState<number>(0);
+
 	const [path, labelX, labelY] = getSmoothStepPath({
 		sourceX,
 		sourceY,
@@ -29,6 +38,8 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 		targetPosition,
 		borderRadius: 5,
 		offset: 5,
+		centerX: ((sourceX+targetX)/2)+offsetX,
+		centerY: ((sourceY+targetY)/2)+offsetY,
 	});
 
 	return (
@@ -46,6 +57,44 @@ export function SimulatableEdge(props: SmoothStepEdgeProps) {
 				fill='transparent'
 				d={path}
 			/>
+			{selected &&
+				<EdgeLabelRenderer>
+					<div
+						style={{
+							position: 'absolute',
+							transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+							pointerEvents: 'all',
+							fontSize: '12px',
+							zIndex: '9999999',
+						}}
+						onPointerDown={(e) => {
+							const {x,y} = flow.project({
+								x: e.clientX,
+								y: e.clientY,
+							});
+							setDrag({
+								x: x-offsetX,
+								y: y-offsetY
+							});
+						}}
+						onPointerUp={() => setDrag(null)}
+						onPointerOut={() => setDrag(null)}
+						onPointerMove={(e) => {
+							if (drag !== null) {
+								const {x,y} = flow.project({
+									x: e.clientX,
+									y: e.clientY,
+								});
+								setOffsetX(o => (x-drag.x));
+								setOffsetY(o => (y-drag.y));
+							}
+						}}
+						className='nodrag nopan'
+					>
+						⦿
+					</div>
+				</EdgeLabelRenderer>
+			}
 			{DEBUG && (
 				<EdgeLabelRenderer>
 					<div
