@@ -1,4 +1,11 @@
-import { CSSProperties, FC, useCallback, useEffect, useState } from 'react';
+import {
+	CSSProperties,
+	FC,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import Flow from 'components/Flow/Flow';
 
 import useChart, { Module } from 'hooks/useChart';
@@ -25,6 +32,7 @@ import { setChartRef } from 'lib/chartRefs';
 import ModulesDialog from 'components/Dialogs/ModulesDialog';
 import * as handlers from './Handlers';
 import generateId from 'lib/generateId';
+import { setEditorContext } from 'lib/editorContext';
 
 type EditorProps = {
 	fileName?: string;
@@ -77,137 +85,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const mod = useChart();
 	const router = useRouter();
 
-	const handleCreateModule = () => {
-		setCurrentModule({
-			type: `${generateId(instance)}`,
-			label: '',
-			nodes: [],
-			edges: [],
-		});
-		setModuleEdges([]);
-		setModuleNodes([]);
-		setMode('module');
-		setTimeout(() => {
-			instance?.fitView({
-				padding: 0.25,
-			});
-		}, 50);
-	};
-
-	const handleEditModule = (type: string) => {
-		const m = modules.find((x) => x.type === type);
-
-		if (m) {
-			setCurrentModule(m);
-			setModuleEdges(m.edges);
-			setModuleNodes(m.nodes);
-			setMode('module');
-			setTimeout(() => {
-				instance?.fitView({
-					padding: 0.25,
-				});
-			}, 50);
-		}
-	};
-
-	const handleSaveModule = () => {
-		console.log('currentModule', currentModule?.label, currentModule?.type);
-		console.log(moduleNodes);
-		if (currentModule) {
-			setModules((prevModules) => {
-				const m = prevModules.filter(
-					(m) => m.type !== currentModule.type,
-				);
-				m.push({
-					type: currentModule.type,
-					label: currentModule.label,
-					nodes: [...moduleNodes],
-					edges: [...moduleEdges],
-				});
-				return m;
-			});
-			setMode('chart');
-			setTimeout(() => {
-				instance?.fitView({
-					padding: 0.25,
-				});
-			}, 50);
-		}
-	};
-
-	const startSim = () => {
-		setEditable(false);
-		const s = simulator({
-			nodes,
-			edges,
-		});
-
-		setNodes((nodes) =>
-			nodes.map((n) => {
-				if (n.data) {
-					n.data = {
-						...n.data,
-						sim: (state: boolean) => s.set(n.id, state),
-					};
-				}
-				return n;
-			}),
-		);
-
-		const updater = (state: SimState) => {
-			setNodes((prevNodes) =>
-				prevNodes.map((n) => {
-					if (state[n.id] !== undefined) {
-						n.data = {
-							...n.data,
-							on: state[n.id],
-						};
-					}
-					return n;
-				}),
-			);
-			setEdges((prevEdges) =>
-				prevEdges.map((e) => {
-					e.data = {
-						on: state[varName(e.id)],
-					};
-					return e;
-				}),
-			);
-		};
-
-		s.start(updater);
-		setSim(s);
-	};
-
-	const stopSim = () => {
-		setEditable(true);
-
-		if (sim) {
-			sim.stop();
-
-			setNodes((prevNodes) =>
-				prevNodes.map((n) => {
-					if (n.data) {
-						delete n.data.on;
-						delete n.data.sim;
-						n.data = {
-							...n.data,
-						};
-					}
-					return n;
-				}),
-			);
-			setEdges((prevEdges) =>
-				prevEdges.map((e) => {
-					e.data = {};
-					return e;
-				}),
-			);
-
-			setSim(null);
-		}
-	};
+	const chartContainerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		if (instance && codeOpen) {
@@ -289,9 +167,38 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		}
 	}, [chart.error, mod.error]);
 
+	setEditorContext({
+		chartContainerRef,
+		currentModule,
+		setCurrentModule,
+		modules,
+		setModules,
+		nodes,
+		setNodes,
+		onNodesChange,
+		edges,
+		setEdges,
+		onEdgesChange,
+		mode,
+		setMode,
+		moduleNodes,
+		setModuleNodes,
+		onModuleNodesChange,
+		moduleEdges,
+		setModuleEdges,
+		onModuleEdgesChange,
+		router,
+		instance,
+		setEditable,
+		chart,
+		setSim,
+		sim,
+	});
+
 	return (
 		<>
 			<div
+				ref={chartContainerRef}
 				style={{
 					flexGrow: 1,
 					fontSize: '12px',
@@ -311,7 +218,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					editable={editable}
 					onNodeDoubleClick={(e, n) => {
 						if (n.type === 'module') {
-							handleEditModule(n.data.type);
+							handlers.handleEditModule(n.data.type);
 						}
 					}}
 				>
@@ -355,49 +262,33 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						position='top-left'
 						simRunning={sim !== null}
 						handlers={{
-							open: handlers.handleOpenFolder(setMode),
-							save: handlers.handleSaveDialog(setMode),
-							new: handlers.handleNew(
-								stopSim,
-								setNodes,
-								setEdges,
-								setModules,
-								router,
-							),
+							open: handlers.handleOpenFolder,
+							save: handlers.handleSaveDialog,
+							new: handlers.handleNew,
 							compile: handlers.handleCompile(setCodeOpen),
-							run: handlers.handleSim(startSim, stopSim),
+							run: handlers.handleSim,
 							tools: handlers.handleTools(
 								setNodesPaletteOpen,
 								setModulesPaletteOpen,
 							),
-							backToChart: handleSaveModule,
+							backToChart: handlers.handleSaveModule,
 						}}
 					/>
 				</Flow>
 			</div>
 			<NodesDialog
 				isOpen={nodesPaletteOpen}
-				onClick={handlers.handleCreateNode(
-					mode === 'module' ? setModuleNodes : setNodes,
-					instance,
-				)}
+				onClick={handlers.handleCreateNode}
 				onClose={() => setNodesPaletteOpen(false)}
 			/>
 			<ModulesDialog
 				isOpen={modulesPaletteOpen}
-				onClick={handlers.handleCreateNode(
-					mode === 'module' ? setModuleNodes : setNodes,
-					instance,
-				)}
+				onClick={handlers.handleCreateNode}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
-				createModule={handleCreateModule}
-				editModule={handleEditModule}
-				deleteModule={handlers.handleDeleteModule(
-					setModules,
-					instance,
-					nodes,
-				)}
+				createModule={handlers.handleCreateModule}
+				editModule={handlers.handleEditModule}
+				deleteModule={handlers.handleDeleteModule}
 				modules={modules}
 				visible={mode !== 'module'}
 			/>
@@ -409,13 +300,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			<FilePicker
 				title='Open File'
 				isOpen={mode === 'open'}
-				onSelect={handlers.handleSelectFile(
-					stopSim,
-					setMode,
-					router,
-					fileName,
-					chart,
-				)}
+				onSelect={handlers.handleSelectFile(fileName)}
 				onClose={() => setMode('chart')}
 			/>
 			<FilePicker
@@ -430,14 +315,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			<SaveDialog
 				isOpen={mode === 'save'}
 				name={chart.name}
-				onSubmit={handlers.handleSave(
-					chart,
-					router,
-					setMode,
-					nodes,
-					edges,
-					modules,
-				)}
+				onSubmit={handlers.handleSave}
 				onClose={() => setMode('chart')}
 			/>
 			<ErrorDialog
