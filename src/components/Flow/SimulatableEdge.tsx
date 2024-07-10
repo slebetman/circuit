@@ -72,6 +72,9 @@ export function SimulatableEdge(props: EdgeProps) {
 							transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
 							pointerEvents: 'all',
 							fontSize: '12px',
+							// border: '1px solid red',
+							padding: drag ? '100px' : 0,
+							borderRadius: drag ? '200px' : 0,
 							zIndex: '9999999',
 						}}
 						onPointerDown={(e) => {
