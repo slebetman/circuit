@@ -17,6 +17,6 @@ export const loadChart = async (name: string) => {
 export const saveChart = async (name: string, chart: any) => {
 	return await fs.writeFile(
 		chartFileName(name),
-		JSON.stringify(chart, null, 2)
+		JSON.stringify(chart, null, 2),
 	);
 };

@@ -45,10 +45,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[]
+		[],
 	);
 	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[]
+		[],
 	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [currentModule, setCurrentModule] = useState<Module | null>(null);
@@ -71,7 +71,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				setEdges((eds) => addEdge(params, eds));
 			}
 		},
-		[setEdges, setModuleEdges, mode]
+		[setEdges, setModuleEdges, mode],
 	);
 	const chart = useChart();
 	const mod = useChart();
@@ -116,7 +116,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		if (currentModule) {
 			setModules((prevModules) => {
 				const m = prevModules.filter(
-					(m) => m.type !== currentModule.type
+					(m) => m.type !== currentModule.type,
 				);
 				m.push({
 					type: currentModule.type,
@@ -151,7 +151,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					};
 				}
 				return n;
-			})
+			}),
 		);
 
 		const updater = (state: SimState) => {
@@ -164,7 +164,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
@@ -172,7 +172,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						on: state[varName(e.id)],
 					};
 					return e;
-				})
+				}),
 			);
 		};
 
@@ -196,13 +196,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			setEdges((prevEdges) =>
 				prevEdges.map((e) => {
 					e.data = {};
 					return e;
-				})
+				}),
 			);
 
 			setSim(null);
@@ -218,7 +218,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compile({
 					nodes: n,
 					edges: e,
-				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1'))
+				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
 			);
 		}
 	}, [codeOpen, nodes, edges]);
@@ -362,13 +362,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 								setNodes,
 								setEdges,
 								setModules,
-								router
+								router,
 							),
 							compile: handlers.handleCompile(setCodeOpen),
 							run: handlers.handleSim(startSim, stopSim),
 							tools: handlers.handleTools(
 								setNodesPaletteOpen,
-								setModulesPaletteOpen
+								setModulesPaletteOpen,
 							),
 							backToChart: handleSaveModule,
 						}}
@@ -379,7 +379,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				isOpen={nodesPaletteOpen}
 				onClick={handlers.handleCreateNode(
 					mode === 'module' ? setModuleNodes : setNodes,
-					instance
+					instance,
 				)}
 				onClose={() => setNodesPaletteOpen(false)}
 			/>
@@ -387,7 +387,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				isOpen={modulesPaletteOpen}
 				onClick={handlers.handleCreateNode(
 					mode === 'module' ? setModuleNodes : setNodes,
-					instance
+					instance,
 				)}
 				onClose={() => setModulesPaletteOpen(false)}
 				importModule={() => setMode('import')}
@@ -396,7 +396,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				deleteModule={handlers.handleDeleteModule(
 					setModules,
 					instance,
-					nodes
+					nodes,
 				)}
 				modules={modules}
 				visible={mode !== 'module'}
@@ -414,7 +414,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					setMode,
 					router,
 					fileName,
-					chart
+					chart,
 				)}
 				onClose={() => setMode('chart')}
 			/>
@@ -436,7 +436,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					setMode,
 					nodes,
 					edges,
-					modules
+					modules,
 				)}
 				onClose={() => setMode('chart')}
 			/>

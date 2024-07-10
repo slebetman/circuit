@@ -25,11 +25,11 @@ export function SimulatableEdge(props: EdgeProps) {
 
 	const flow = useReactFlow();
 
-	const [drag, setDrag] = useState<XYPosition|null>(null);
+	const [drag, setDrag] = useState<XYPosition | null>(null);
 	const [offset, setOffset] = useState<XYPosition>({
 		x: data.offsetX || 0,
 		y: data.offsetY || 0,
-	})
+	});
 
 	const [path, labelX, labelY] = getSmoothStepPath({
 		sourceX,
@@ -40,14 +40,14 @@ export function SimulatableEdge(props: EdgeProps) {
 		targetPosition,
 		borderRadius: 3,
 		offset: 5,
-		centerX: ((sourceX+targetX)/2)+offset.x,
-		centerY: ((sourceY+targetY)/2)+offset.y,
+		centerX: (sourceX + targetX) / 2 + offset.x,
+		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
 
 	useEffect(() => {
 		data.offsetX = offset.x;
 		data.offsetY = offset.y;
-	},[offset])
+	}, [offset]);
 
 	return (
 		<>
@@ -64,7 +64,7 @@ export function SimulatableEdge(props: EdgeProps) {
 				fill='transparent'
 				d={path}
 			/>
-			{selected && data.on === undefined &&
+			{selected && data.on === undefined && (
 				<EdgeLabelRenderer>
 					<div
 						style={{
@@ -75,26 +75,26 @@ export function SimulatableEdge(props: EdgeProps) {
 							zIndex: '9999999',
 						}}
 						onPointerDown={(e) => {
-							const {x,y} = flow.project({
+							const { x, y } = flow.project({
 								x: e.clientX,
 								y: e.clientY,
 							});
 							setDrag({
-								x: x-offset.x,
-								y: y-offset.y,
+								x: x - offset.x,
+								y: y - offset.y,
 							});
 						}}
 						onPointerUp={() => setDrag(null)}
 						onPointerOut={() => setDrag(null)}
 						onPointerMove={(e) => {
 							if (drag !== null) {
-								const {x,y} = flow.project({
+								const { x, y } = flow.project({
 									x: e.clientX,
 									y: e.clientY,
 								});
-								setOffset(o => ({
-									x: x-drag.x,
-									y: y-drag.y,
+								setOffset((o) => ({
+									x: x - drag.x,
+									y: y - drag.y,
 								}));
 							}
 						}}
@@ -103,7 +103,7 @@ export function SimulatableEdge(props: EdgeProps) {
 						⦿
 					</div>
 				</EdgeLabelRenderer>
-			}
+			)}
 			{DEBUG && (
 				<EdgeLabelRenderer>
 					<div
