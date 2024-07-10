@@ -1,11 +1,11 @@
-import CodeDialog from "components/Dialogs/CodeDialog";
-import FilePicker from "components/Dialogs/FilePicker";
-import ModulesDialog from "components/Dialogs/ModulesDialog";
-import NodesDialog from "components/Dialogs/NodesDialog";
-import SaveDialog from "components/Dialogs/SaveDialog";
-import { FC } from "react";
-import * as handlers from "./Handlers";
-import { getEditorContext } from "lib/editorContext";
+import CodeDialog from 'components/Dialogs/CodeDialog';
+import FilePicker from 'components/Dialogs/FilePicker';
+import ModulesDialog from 'components/Dialogs/ModulesDialog';
+import NodesDialog from 'components/Dialogs/NodesDialog';
+import SaveDialog from 'components/Dialogs/SaveDialog';
+import { FC } from 'react';
+import * as handlers from './Handlers';
+import { getEditorContext } from 'lib/editorContext';
 
 const ctx = getEditorContext();
 
@@ -13,22 +13,22 @@ type DialogStates = {
 	nodes: boolean;
 	modules: boolean;
 	code: boolean;
-}
+};
 
-type DialogCloseActions ={
+type DialogCloseActions = {
 	nodes: () => void;
 	modules: () => void;
 	code: () => void;
-}
+};
 
 type DialogsProps = {
 	fileName: string;
 	isOpen: DialogStates;
 	onClose: DialogCloseActions;
 	code: string[];
-}
+};
 
-const Dialogs:FC<DialogsProps> = ({fileName, isOpen, onClose, code}) => {
+const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose, code }) => {
 	return (
 		<>
 			<NodesDialog
@@ -74,7 +74,7 @@ const Dialogs:FC<DialogsProps> = ({fileName, isOpen, onClose, code}) => {
 				onClose={() => ctx.setMode?.('chart')}
 			/>
 		</>
-	)
-}
+	);
+};
 
 export default Dialogs;
