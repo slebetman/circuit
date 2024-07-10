@@ -5,9 +5,9 @@ import path from 'path';
 const chartFileName = (name: string) => path.join(chartsdir(), `${name}.json`);
 
 export const listCharts = async () => {
-	return (await fs.readdir(chartsdir())).map((x) =>
-		path.basename(x, '.json'),
-	);
+	return (await fs.readdir(chartsdir()))
+		.filter((x) => x.match(/\.json$/))
+		.map((x) => path.basename(x, '.json'));
 };
 
 export const loadChart = async (name: string) => {
@@ -17,6 +17,6 @@ export const loadChart = async (name: string) => {
 export const saveChart = async (name: string, chart: any) => {
 	return await fs.writeFile(
 		chartFileName(name),
-		JSON.stringify(chart, null, 2),
+		JSON.stringify(chart, null, 2)
 	);
 };
