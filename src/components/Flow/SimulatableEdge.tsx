@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	EdgeLabelRenderer,
 	getSmoothStepPath,
@@ -7,7 +7,7 @@ import {
 	XYPosition,
 } from 'reactflow';
 
-const DEBUG = false;
+const DEBUG = true;
 
 export function SimulatableEdge(props: EdgeProps) {
 	const {
@@ -42,6 +42,11 @@ export function SimulatableEdge(props: EdgeProps) {
 		centerY: ((sourceY+targetY)/2)+offsetY,
 	});
 
+	useEffect(() => {
+		data.offsetX = offsetX;
+		data.offsetY = offsetY;
+	},[offsetX])
+
 	return (
 		<>
 			<path
@@ -57,7 +62,7 @@ export function SimulatableEdge(props: EdgeProps) {
 				fill='transparent'
 				d={path}
 			/>
-			{selected &&
+			{selected && data.on === undefined &&
 				<EdgeLabelRenderer>
 					<div
 						style={{
@@ -101,7 +106,7 @@ export function SimulatableEdge(props: EdgeProps) {
 						style={{
 							position: 'absolute',
 							transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-							fontSize: 4,
+							fontSize: 3,
 						}}
 						className='nodrag nopan'
 					>

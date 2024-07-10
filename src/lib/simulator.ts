@@ -57,9 +57,6 @@ export const compileForSim = (opt: ComilerOptions) => {
 		ret.state[`func_${key}`] = new Function(functionBody);
 	});
 
-	//@ts-ignore
-	window.sim = ret;
-
 	return ret;
 };
 

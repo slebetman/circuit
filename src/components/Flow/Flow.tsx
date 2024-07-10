@@ -28,15 +28,10 @@ const edgeTypes = {
 	simulated: SimulatableEdge,
 };
 
-type FlowProps = {
-	nodes: Node[];
-	edges: Edge[];
-	onNodesChange: OnNodesChange;
-	onEdgesChange: OnEdgesChange;
-	onConnect: (p: Connection | Edge) => any;
+type FlowProps = ReactFlowProps<Node,Edge> & {
 	onInit: (instance: ReactFlowInstance) => void;
 	editable: boolean;
-} & ReactFlowProps;
+};
 
 const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
 	return (

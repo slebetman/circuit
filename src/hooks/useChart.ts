@@ -62,6 +62,7 @@ const useChart = () => {
 				return x;
 			}),
 			edges: c.edges.map((x) => {
+				console.log(x);
 				delete x.type;
 				if (x.sourceHandle === null) {
 					delete x.sourceHandle;
@@ -70,13 +71,13 @@ const useChart = () => {
 					delete x.targetHandle;
 				}
 
-				if (x.data) {
-					delete x.data;
-				}
+				x.data = {
+					offsetX: x.data?.offsetX || 0,
+					offsetY: x.data?.offsetY || 0,
+				};
 
-				if (x.style) {
-					delete x.style;
-				}
+				delete x.selected;
+				delete x.style;
 
 				return x;
 			}),
