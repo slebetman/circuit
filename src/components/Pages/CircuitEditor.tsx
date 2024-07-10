@@ -176,15 +176,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			);
 		};
 
-		// s.start(updater);
-
-		// @ts-ignore
-		window.sim = {
-			...s,
-			step: () => s.step(updater),
-			update: () => updater(s.state),
-		}
-
+		s.start(updater);
 		setSim(s);
 	};
 

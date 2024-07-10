@@ -28,7 +28,7 @@ const edgeTypes = {
 	simulated: SimulatableEdge,
 };
 
-type FlowProps = ReactFlowProps<Node,Edge> & {
+type FlowProps = ReactFlowProps & {
 	onInit: (instance: ReactFlowInstance) => void;
 	editable: boolean;
 };

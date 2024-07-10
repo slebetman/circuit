@@ -7,7 +7,7 @@ import {
 	XYPosition,
 } from 'reactflow';
 
-const DEBUG = true;
+const DEBUG = false;
 
 export function SimulatableEdge(props: EdgeProps) {
 	const {
@@ -26,8 +26,10 @@ export function SimulatableEdge(props: EdgeProps) {
 	const flow = useReactFlow();
 
 	const [drag, setDrag] = useState<XYPosition|null>(null);
-	const [offsetX, setOffsetX] = useState<number>(0);
-	const [offsetY, setOffsetY] = useState<number>(0);
+	const [offset, setOffset] = useState<XYPosition>({
+		x: data.offsetX || 0,
+		y: data.offsetY || 0,
+	})
 
 	const [path, labelX, labelY] = getSmoothStepPath({
 		sourceX,
@@ -36,16 +38,16 @@ export function SimulatableEdge(props: EdgeProps) {
 		targetX,
 		targetY,
 		targetPosition,
-		borderRadius: 5,
+		borderRadius: 3,
 		offset: 5,
-		centerX: ((sourceX+targetX)/2)+offsetX,
-		centerY: ((sourceY+targetY)/2)+offsetY,
+		centerX: ((sourceX+targetX)/2)+offset.x,
+		centerY: ((sourceY+targetY)/2)+offset.y,
 	});
 
 	useEffect(() => {
-		data.offsetX = offsetX;
-		data.offsetY = offsetY;
-	},[offsetX])
+		data.offsetX = offset.x;
+		data.offsetY = offset.y;
+	},[offset])
 
 	return (
 		<>
@@ -78,8 +80,8 @@ export function SimulatableEdge(props: EdgeProps) {
 								y: e.clientY,
 							});
 							setDrag({
-								x: x-offsetX,
-								y: y-offsetY
+								x: x-offset.x,
+								y: y-offset.y,
 							});
 						}}
 						onPointerUp={() => setDrag(null)}
@@ -90,8 +92,10 @@ export function SimulatableEdge(props: EdgeProps) {
 									x: e.clientX,
 									y: e.clientY,
 								});
-								setOffsetX(o => (x-drag.x));
-								setOffsetY(o => (y-drag.y));
+								setOffset(o => ({
+									x: x-drag.x,
+									y: y-drag.y,
+								}));
 							}
 						}}
 						className='nodrag nopan'

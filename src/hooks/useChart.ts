@@ -62,7 +62,6 @@ const useChart = () => {
 				return x;
 			}),
 			edges: c.edges.map((x) => {
-				console.log(x);
 				delete x.type;
 				if (x.sourceHandle === null) {
 					delete x.sourceHandle;
