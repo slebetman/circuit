@@ -19,37 +19,6 @@ type SimulatableEdgeData = {
 	on?: boolean;
 };
 
-const checkMidHandle = (
-	mid: XYPosition,
-	source: XYPosition,
-	target: XYPosition,
-	handleOffset: HandleOffset,
-) => {
-	const sourceHandle: XYPosition = {
-		x: source.x + defaultHandleOffset + handleOffset.source,
-		y: source.y,
-	};
-
-	const targetHandle: XYPosition = {
-		x: target.x - defaultHandleOffset - handleOffset.target,
-		y: target.y,
-	};
-
-	let x = mid.x;
-	let y = mid.y;
-
-	if (mid.x > targetHandle.x && mid.x > sourceHandle.x) {
-		x = Math.max(targetHandle.x, sourceHandle.x);
-	} else if (mid.x < targetHandle.x && mid.x < sourceHandle.x) {
-		x = Math.min(targetHandle.x, sourceHandle.x);
-	}
-
-	return {
-		x: x - mid.x,
-		y: 0,
-	} as XYPosition;
-};
-
 export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 	sourcePosition,
 	targetPosition,
@@ -85,6 +54,34 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		centerX: (sourceX + targetX) / 2 + offset.x,
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
+
+	const checkMidHandle = (
+		mid: XYPosition
+	) => {
+		const sourceHandle: XYPosition = {
+			x: sourceX + defaultHandleOffset + handleOffset.source,
+			y: sourceY,
+		};
+	
+		const targetHandle: XYPosition = {
+			x: targetX - defaultHandleOffset - handleOffset.target,
+			y: targetY,
+		};
+	
+		let x = mid.x;
+		let y = mid.y;
+	
+		if (mid.x > targetHandle.x && mid.x > sourceHandle.x) {
+			x = Math.max(targetHandle.x, sourceHandle.x);
+		} else if (mid.x < targetHandle.x && mid.x < sourceHandle.x) {
+			x = Math.min(targetHandle.x, sourceHandle.x);
+		}
+	
+		return {
+			x: x - mid.x,
+			y: 0,
+		} as XYPosition;
+	};
 
 	useEffect(() => {
 		if (data) {
@@ -138,13 +135,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 							const mid = checkMidHandle({
 								x: (sourceX + targetX) / 2 + offset.x,
 								y: labelY
-							}, {
-								x: sourceX,
-								y: sourceY,
-							}, {
-								x: targetX,
-								y: targetY
-							}, handleOffset);
+							});
 							setOffset((o) => ({
 								x: o.x + mid.x,
 								y: o.y + mid.y,
@@ -162,13 +153,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 							const mid = checkMidHandle({
 								x: (sourceX + targetX) / 2 + midOffset.x,
 								y: midOffset.y
-							}, {
-								x: sourceX,
-								y: sourceY,
-							}, {
-								x: targetX,
-								y: targetY
-							}, handleOffset);
+							});
 							setOffset((o) => ({
 								x: midOffset.x + mid.x,
 								y: midOffset.y + mid.y,
@@ -201,13 +186,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 							const mid = checkMidHandle({
 								x: (sourceX + targetX) / 2 + offset.x,
 								y: labelY
-							}, {
-								x: sourceX,
-								y: sourceY,
-							}, {
-								x: targetX,
-								y: targetY
-							}, handleOffset);
+							});
 							setOffset((o) => ({
 								x: o.x + mid.x,
 								y: o.y + mid.y,
