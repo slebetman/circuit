@@ -14,6 +14,57 @@ export type Chart = {
 	modules?: Module[];
 };
 
+const nodesFilter = (x: Node) => {
+	delete x.positionAbsolute;
+	delete x.width;
+	delete x.height;
+	delete x.selected;
+	delete x.dragging;
+
+	if (x.data && Object.keys(x.data).length === 0) {
+		delete x.data;
+	} else if (x.data) {
+		delete x.data.on;
+		delete x.data.sim;
+	}
+
+	if (x.type === 'module' && x.data) {
+		x.data = {
+			type: x.data.type,
+		};
+	}
+
+	return x;
+}
+
+const edgesFilter = (x:Edge) => {
+	delete x.type;
+	if (x.sourceHandle === null) {
+		delete x.sourceHandle;
+	}
+	if (x.targetHandle === null) {
+		delete x.targetHandle;
+	}
+
+	x.data = {
+		...(x.data?.offsetX && {offsetX: x.data?.offsetX}),
+		...(x.data?.offsetY && {offsetY: x.data?.offsetY}),
+		...(x.data?.sourceOffset && {sourceOffset: x.data?.sourceOffset}),
+		...(x.data?.targetOffset && {targetOffset: x.data?.targetOffset}),
+	};
+
+	delete x.selected;
+	delete x.style;
+
+	return x;
+}
+
+const modulesFilter = (x:Module) => {
+	x.edges = x.edges.map(edgesFilter);
+	x.nodes = x.nodes.map(nodesFilter);
+	return x;
+}
+
 const useChart = () => {
 	const [name, setName] = useState<string>('');
 	const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -39,50 +90,9 @@ const useChart = () => {
 		if (!c) return;
 		setIsBusy(true);
 		const chartToSave = {
-			nodes: c.nodes.map((x) => {
-				delete x.positionAbsolute;
-				delete x.width;
-				delete x.height;
-				delete x.selected;
-				delete x.dragging;
-
-				if (x.data && Object.keys(x.data).length === 0) {
-					delete x.data;
-				} else if (x.data) {
-					delete x.data.on;
-					delete x.data.sim;
-				}
-
-				if (x.type === 'module' && x.data) {
-					x.data = {
-						type: x.data.type,
-					};
-				}
-
-				return x;
-			}),
-			edges: c.edges.map((x) => {
-				delete x.type;
-				if (x.sourceHandle === null) {
-					delete x.sourceHandle;
-				}
-				if (x.targetHandle === null) {
-					delete x.targetHandle;
-				}
-
-				x.data = {
-					offsetX: x.data?.offsetX || 0,
-					offsetY: x.data?.offsetY || 0,
-					sourceOffset: x.data?.sourceOffset || 0,
-					targetOffset: x.data?.targetOffset || 0,
-				};
-
-				delete x.selected;
-				delete x.style;
-
-				return x;
-			}),
-			modules: c.modules,
+			nodes: c.nodes.map(nodesFilter),
+			edges: c.edges.map(edgesFilter),
+			modules: c.modules?.map(modulesFilter),
 		};
 		try {
 			if (!filename) {
