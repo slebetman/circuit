@@ -1,12 +1,8 @@
-# React Flow Example App - Next.js
+# Circuit
 
-This app was bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app)
+A simple digital circuit editor/simulator built with [reactflow](https://reactflow.dev/)
 
-## Installation
-
-```sh
-npm install
-```
+![screenshot](./screenshot.png)
 
 ### Start Dev Server
 
@@ -21,7 +17,3 @@ Runs the app in development mode. Open [http://localhost:3000](http://localhost:
 ```sh
 npm run build
 ```
-
-## Next.js Docs
-
-Please refer to the [Next.js docs](https://nextjs.org/docs) for more information.
