@@ -1,11 +1,11 @@
-import { CSSProperties, Dispatch, FC, SetStateAction, useState } from 'react';
+import { CSSProperties, FC, useState } from 'react';
 import { useReactFlow, XYPosition } from 'reactflow';
 
 export type DragHandleProps = {
 	pos: XYPosition;
 	debugBorderColor?: string;
 	offset: XYPosition;
-	char?: string;
+	char?: string | JSX.Element;
 	onMove: (mousePos: XYPosition, dragPos: XYPosition) => void;
 };
 

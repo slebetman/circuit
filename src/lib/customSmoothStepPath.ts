@@ -158,16 +158,14 @@ function getPoints({
 			if (diff <= sourceOffset || diff < targetOffset) {
 				if (sourceDir[dirAccessor] === currDir) {
 					sourceGapOffset[dirAccessor] =
-						(sourceGapped[dirAccessor] > source[dirAccessor]
-							? -1
-							: 1) *
-						Math.min(sourceOffset - 1, sourceOffset - diff);
+						(sourceGapped[dirAccessor] > source[dirAccessor] ?
+							-1
+						:	1) * Math.min(sourceOffset - 1, sourceOffset - diff);
 				} else {
 					targetGapOffset[dirAccessor] =
-						(targetGapped[dirAccessor] > target[dirAccessor]
-							? -1
-							: 1) *
-						Math.min(targetOffset - 1, targetOffset - diff);
+						(targetGapped[dirAccessor] > target[dirAccessor] ?
+							-1
+						:	1) * Math.min(targetOffset - 1, targetOffset - diff);
 				}
 			}
 		}
@@ -206,11 +204,11 @@ function getPoints({
 		};
 		const maxXDistance = Math.max(
 			Math.abs(sourceGapPoint.x - points[0].x),
-			Math.abs(targetGapPoint.x - points[0].x)
+			Math.abs(targetGapPoint.x - points[0].x),
 		);
 		const maxYDistance = Math.max(
 			Math.abs(sourceGapPoint.y - points[0].y),
-			Math.abs(targetGapPoint.y - points[0].y)
+			Math.abs(targetGapPoint.y - points[0].y),
 		);
 
 		// we want to place the label on the longest segment of the edge
@@ -244,7 +242,7 @@ function getBend(
 	a: XYPosition,
 	b: XYPosition,
 	c: XYPosition,
-	size: number
+	size: number,
 ): string {
 	const bendSize = Math.min(distance(a, b) / 2, distance(b, c) / 2, size);
 	const { x, y } = b;
@@ -309,7 +307,7 @@ export function getCustomSmoothStepPath({
 	labelX: number,
 	labelY: number,
 	offsetX: number,
-	offsetY: number
+	offsetY: number,
 ] {
 	const [points, labelX, labelY, offsetX, offsetY] = getPoints({
 		source: { x: sourceX, y: sourceY },

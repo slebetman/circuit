@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
 	EdgeLabelRenderer,
-	getSmoothStepPath,
 	EdgeProps,
 	XYPosition,
 } from 'reactflow';
@@ -66,13 +65,12 @@ export function SimulatableEdge(props: EdgeProps) {
 			<path
 				style={style}
 				stroke={
-					data.on
-						? '#6c6'
-						: data.on === false
-						? '#ccc'
-						: selected
-						? '#000'
-						: '#ccc'
+					data.on ? '#6c6'
+					: data.on === false ?
+						'#ccc'
+					: selected ?
+						'#000'
+					:	'#ccc'
 				}
 				fill='transparent'
 				d={path}
@@ -80,7 +78,6 @@ export function SimulatableEdge(props: EdgeProps) {
 			{selected && data.on === undefined && (
 				<EdgeLabelRenderer>
 					<DragHandle
-						char='◆'
 						pos={{
 							x:
 								sourceX +
@@ -97,9 +94,9 @@ export function SimulatableEdge(props: EdgeProps) {
 								const val = mouse.x - drag.x;
 								return {
 									source:
-										val > -defaultHandleOffset
-											? val
-											: -defaultHandleOffset,
+										val > -defaultHandleOffset ? val : (
+											-defaultHandleOffset
+										),
 									target: o.target,
 								};
 							});
@@ -116,7 +113,6 @@ export function SimulatableEdge(props: EdgeProps) {
 						}}
 					/>
 					<DragHandle
-						char='◆'
 						pos={{
 							x:
 								targetX -
@@ -133,9 +129,9 @@ export function SimulatableEdge(props: EdgeProps) {
 								const val = drag.x - mouse.x;
 								return {
 									target:
-										val > -defaultHandleOffset
-											? val
-											: -defaultHandleOffset,
+										val > -defaultHandleOffset ? val : (
+											-defaultHandleOffset
+										),
 									source: o.source,
 								};
 							});
