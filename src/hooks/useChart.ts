@@ -35,9 +35,9 @@ const nodesFilter = (x: Node) => {
 	}
 
 	return x;
-}
+};
 
-const edgesFilter = (x:Edge) => {
+const edgesFilter = (x: Edge) => {
 	delete x.type;
 	if (x.sourceHandle === null) {
 		delete x.sourceHandle;
@@ -47,23 +47,23 @@ const edgesFilter = (x:Edge) => {
 	}
 
 	x.data = {
-		...(x.data?.offsetX && {offsetX: x.data?.offsetX}),
-		...(x.data?.offsetY && {offsetY: x.data?.offsetY}),
-		...(x.data?.sourceOffset && {sourceOffset: x.data?.sourceOffset}),
-		...(x.data?.targetOffset && {targetOffset: x.data?.targetOffset}),
+		...(x.data?.offsetX && { offsetX: x.data?.offsetX }),
+		...(x.data?.offsetY && { offsetY: x.data?.offsetY }),
+		...(x.data?.sourceOffset && { sourceOffset: x.data?.sourceOffset }),
+		...(x.data?.targetOffset && { targetOffset: x.data?.targetOffset }),
 	};
 
 	delete x.selected;
 	delete x.style;
 
 	return x;
-}
+};
 
-const modulesFilter = (x:Module) => {
+const modulesFilter = (x: Module) => {
 	x.edges = x.edges.map(edgesFilter);
 	x.nodes = x.nodes.map(nodesFilter);
 	return x;
-}
+};
 
 const useChart = () => {
 	const [name, setName] = useState<string>('');
