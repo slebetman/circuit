@@ -57,7 +57,8 @@ export function SimulatableEdge(props: EdgeProps) {
 	useEffect(() => {
 		data.offsetX = offset.x;
 		data.offsetY = offset.y;
-		data.handleOffset = handleOffset;
+		data.sourceOffset = handleOffset.source;
+		data.targetOffset = handleOffset.target;
 	}, [offset, handleOffset]);
 
 	return (

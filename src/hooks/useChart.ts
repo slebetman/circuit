@@ -73,7 +73,8 @@ const useChart = () => {
 				x.data = {
 					offsetX: x.data?.offsetX || 0,
 					offsetY: x.data?.offsetY || 0,
-					// handleOffset: x.data?.handleOffset || 0,
+					sourceOffset: x.data?.sourceOffset || 0,
+					targetOffset: x.data?.targetOffset || 0,
 				};
 
 				delete x.selected;
