@@ -1,9 +1,5 @@
-import { useEffect, useState } from 'react';
-import {
-	EdgeLabelRenderer,
-	EdgeProps,
-	XYPosition,
-} from 'reactflow';
+import { FC, useEffect, useState } from 'react';
+import { EdgeLabelRenderer, EdgeProps, XYPosition } from 'reactflow';
 import DragHandle from './DragHandle';
 import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
 
@@ -15,28 +11,34 @@ type HandleOffset = {
 	target: number;
 };
 
-export function SimulatableEdge(props: EdgeProps) {
-	const {
-		sourcePosition,
-		targetPosition,
-		sourceX,
-		sourceY,
-		targetX,
-		targetY,
-		style,
-		data,
-		selected,
-		id,
-	} = props;
+type SimulatableEdgeData = {		
+	offsetX: number;
+	offsetY: number;
+	sourceOffset: number;
+	targetOffset: number;
+	on?: boolean;
+}
 
+export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
+	sourcePosition,
+	targetPosition,
+	sourceX,
+	sourceY,
+	targetX,
+	targetY,
+	style,
+	data,
+	selected,
+	id,
+}) => {
 	const [offset, setOffset] = useState<XYPosition>({
-		x: data.offsetX || 0,
-		y: data.offsetY || 0,
+		x: data?.offsetX || 0,
+		y: data?.offsetY || 0,
 	});
 
 	const [handleOffset, setHandleOffset] = useState<HandleOffset>({
-		source: data.sourceOffset || 0,
-		target: data.targetOffset || 0,
+		source: data?.sourceOffset || 0,
+		target: data?.targetOffset || 0,
 	});
 
 	const [path, labelX, labelY] = getCustomSmoothStepPath({
@@ -54,10 +56,12 @@ export function SimulatableEdge(props: EdgeProps) {
 	});
 
 	useEffect(() => {
-		data.offsetX = offset.x;
-		data.offsetY = offset.y;
-		data.sourceOffset = handleOffset.source;
-		data.targetOffset = handleOffset.target;
+		if (data) {
+			data.offsetX = offset.x;
+			data.offsetY = offset.y;
+			data.sourceOffset = handleOffset.source;
+			data.targetOffset = handleOffset.target;
+		}
 	}, [offset, handleOffset]);
 
 	return (
@@ -65,8 +69,8 @@ export function SimulatableEdge(props: EdgeProps) {
 			<path
 				style={style}
 				stroke={
-					data.on ? '#6c6'
-					: data.on === false ?
+					data?.on ? '#6c6'
+					: data?.on === false ?
 						'#ccc'
 					: selected ?
 						'#000'
@@ -75,7 +79,7 @@ export function SimulatableEdge(props: EdgeProps) {
 				fill='transparent'
 				d={path}
 			/>
-			{selected && data.on === undefined && (
+			{selected && data?.on === undefined && (
 				<EdgeLabelRenderer>
 					<DragHandle
 						pos={{
@@ -106,10 +110,10 @@ export function SimulatableEdge(props: EdgeProps) {
 						pos={{ x: labelX, y: labelY }}
 						offset={offset}
 						onMove={(mouse, drag) => {
-							setOffset((o) => ({
+							setOffset({
 								x: mouse.x - drag.x,
 								y: mouse.y - drag.y,
-							}));
+							});
 						}}
 					/>
 					<DragHandle
@@ -155,4 +159,4 @@ export function SimulatableEdge(props: EdgeProps) {
 			)}
 		</>
 	);
-}
+};
