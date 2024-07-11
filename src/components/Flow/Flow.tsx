@@ -20,7 +20,6 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 };
 
 const edgeTypes = {
-	smart: CustomSmartBezierEdge,
 	simulated: SimulatableEdge,
 };
 
