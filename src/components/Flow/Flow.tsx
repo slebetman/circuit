@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import ReactFlow, {
+	Connection,
 	ConnectionLineType,
 	Controls,
 	DefaultEdgeOptions,
+	Edge,
 	ReactFlowInstance,
 	ReactFlowProps,
 } from 'reactflow';
@@ -28,6 +30,16 @@ type FlowProps = ReactFlowProps & {
 	editable: boolean;
 };
 
+const onlyOneConnectionPerInput =
+	(edges: Edge[]) => (connection: Connection) => {
+		const target = connection.target;
+		const targetHandle = connection.targetHandle;
+
+		return !edges?.find(
+			(e) => e.target === target && e.targetHandle === targetHandle
+		);
+	};
+
 const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
 	return (
 		<ReactFlow
@@ -42,6 +54,7 @@ const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
 			nodesDraggable={editable}
 			edgesUpdatable={editable}
 			fitView
+			isValidConnection={onlyOneConnectionPerInput(props.edges || [])}
 			{...props}
 		>
 			{children}
