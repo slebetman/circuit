@@ -3,11 +3,12 @@ import {
 	EdgeLabelRenderer,
 	getSmoothStepPath,
 	EdgeProps,
-	useReactFlow,
 	XYPosition,
 } from 'reactflow';
+import DragHandle from './DragHandle';
 
 const DEBUG = false;
+const defaultHandleOffset = 5;
 
 export function SimulatableEdge(props: EdgeProps) {
 	const {
@@ -23,13 +24,11 @@ export function SimulatableEdge(props: EdgeProps) {
 		id,
 	} = props;
 
-	const flow = useReactFlow();
-
-	const [drag, setDrag] = useState<XYPosition | null>(null);
 	const [offset, setOffset] = useState<XYPosition>({
 		x: data.offsetX || 0,
 		y: data.offsetY || 0,
 	});
+	const [handleOffset, setHandleOffset] = useState(0);
 
 	const [path, labelX, labelY] = getSmoothStepPath({
 		sourceX,
@@ -39,7 +38,7 @@ export function SimulatableEdge(props: EdgeProps) {
 		targetY,
 		targetPosition,
 		borderRadius: 3,
-		offset: 5,
+		offset: defaultHandleOffset + handleOffset,
 		centerX: (sourceX + targetX) / 2 + offset.x,
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
@@ -54,57 +53,67 @@ export function SimulatableEdge(props: EdgeProps) {
 			<path
 				style={style}
 				stroke={
-					data.on ? '#6c6'
-					: data.on === false ?
-						'#ccc'
-					: selected ?
-						'#000'
-					:	'#ccc'
+					data.on
+						? '#6c6'
+						: data.on === false
+						? '#ccc'
+						: selected
+						? '#000'
+						: '#ccc'
 				}
 				fill='transparent'
 				d={path}
 			/>
 			{selected && data.on === undefined && (
 				<EdgeLabelRenderer>
-					<div
-						style={{
-							position: 'absolute',
-							transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-							pointerEvents: 'all',
-							fontSize: '12px',
-							// border: '1px solid red',
-							padding: drag ? '100px' : 0,
-							borderRadius: drag ? '200px' : 0,
-							zIndex: '9999999',
+					<DragHandle
+						char='◆'
+						pos={{
+							x: sourceX + handleOffset + defaultHandleOffset,
+							y: sourceY,
 						}}
-						onPointerDown={(e) => {
-							const { x, y } = flow.project({
-								x: e.clientX,
-								y: e.clientY,
-							});
-							setDrag({
-								x: x - offset.x,
-								y: y - offset.y,
+						offset={{
+							x: handleOffset,
+							y: 0,
+						}}
+						onMove={(mouse, drag) => {
+							setHandleOffset((o) => {
+								const val = mouse.x - drag.x;
+								return val > -defaultHandleOffset
+									? val
+									: -defaultHandleOffset;
 							});
 						}}
-						onPointerUp={() => setDrag(null)}
-						onPointerOut={() => setDrag(null)}
-						onPointerMove={(e) => {
-							if (drag !== null) {
-								const { x, y } = flow.project({
-									x: e.clientX,
-									y: e.clientY,
-								});
-								setOffset((o) => ({
-									x: x - drag.x,
-									y: y - drag.y,
-								}));
-							}
+					/>
+					<DragHandle
+						pos={{ x: labelX, y: labelY }}
+						offset={offset}
+						onMove={(mouse, drag) => {
+							setOffset((o) => ({
+								x: mouse.x - drag.x,
+								y: mouse.y - drag.y,
+							}));
 						}}
-						className='nodrag nopan'
-					>
-						⦿
-					</div>
+					/>
+					<DragHandle
+						char='◆'
+						pos={{
+							x: targetX - handleOffset - defaultHandleOffset,
+							y: targetY,
+						}}
+						offset={{
+							x: -handleOffset,
+							y: 0,
+						}}
+						onMove={(mouse, drag) => {
+							setHandleOffset((o) => {
+								const val = drag.x - mouse.x;
+								return val > -defaultHandleOffset
+									? val
+									: -defaultHandleOffset;
+							});
+						}}
+					/>
 				</EdgeLabelRenderer>
 			)}
 			{DEBUG && (
