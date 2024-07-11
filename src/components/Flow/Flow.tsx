@@ -10,7 +10,6 @@ import ReactFlow, {
 } from 'reactflow';
 
 import nodeTypes from 'components/Nodes';
-import { CustomSmartBezierEdge } from './CustomSmartBezierEdge';
 import { SimulatableEdge } from './SimulatableEdge';
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
