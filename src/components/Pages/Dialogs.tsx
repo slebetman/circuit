@@ -12,23 +12,20 @@ const ctx = getEditorContext();
 type DialogStates = {
 	nodes: boolean;
 	modules: boolean;
-	code: boolean;
 };
 
 type DialogCloseActions = {
 	nodes: () => void;
 	modules: () => void;
-	code: () => void;
 };
 
 type DialogsProps = {
 	fileName: string;
 	isOpen: DialogStates;
 	onClose: DialogCloseActions;
-	code: string[];
 };
 
-const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose, code }) => {
+const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose }) => {
 	return (
 		<>
 			<NodesDialog
@@ -48,9 +45,9 @@ const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose, code }) => {
 				visible={ctx.mode !== 'module'}
 			/>
 			<CodeDialog
-				isOpen={isOpen.code}
-				onClose={onClose.code}
-				code={code}
+				isOpen={ctx.codeOpen || false}
+				onClose={() => ctx.setCodeOpen?.(false)}
+				code={ctx.code || []}
 			/>
 			<FilePicker
 				title='Open File'

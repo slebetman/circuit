@@ -41,6 +41,9 @@ export type EditorContextType = {
 	setEditable?: Dispatch<SetStateAction<boolean>>;
 	setSim?: Dispatch<SetStateAction<SimObject | null>>;
 	sim?: SimObject | null;
+	code?: string[];
+	codeOpen?: boolean;
+	setCodeOpen?: Dispatch<SetStateAction<boolean>>;
 } & Record<string, any>;
 
 const context: EditorContextType = {};

@@ -47,10 +47,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[],
+		[]
 	);
 	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[],
+		[]
 	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [currentModule, setCurrentModule] = useState<Module | null>(null);
@@ -71,7 +71,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				setEdges((eds) => addEdge(params, eds));
 			}
 		},
-		[setEdges, setModuleEdges, mode],
+		[setEdges, setModuleEdges, mode]
 	);
 	const chart = useChart();
 	const mod = useChart();
@@ -88,7 +88,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compile({
 					nodes: n,
 					edges: e,
-				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
+				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1'))
 			);
 		}
 	}, [codeOpen, nodes, edges]);
@@ -186,6 +186,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 		mod,
 		setSim,
 		sim,
+		code,
+		codeOpen,
+		setCodeOpen,
 	});
 
 	return (
@@ -222,7 +225,9 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					)}
 					{mode === 'module' && (
 						<Panel position='top-center' style={titlePanelStyle}>
-							Edit Module:{' '}
+							<span style={{ marginRight: '5px' }}>
+								Edit Module:
+							</span>
 							<input
 								style={{
 									...titleFont,
@@ -262,7 +267,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 							run: handlers.handleSim,
 							tools: handlers.handleTools(
 								setNodesPaletteOpen,
-								setModulesPaletteOpen,
+								setModulesPaletteOpen
 							),
 							backToChart: handlers.handleSaveModule,
 						}}
@@ -271,16 +276,13 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			</div>
 			<Dialogs
 				fileName={fileName || ''}
-				code={code}
 				isOpen={{
 					nodes: nodesPaletteOpen,
 					modules: modulesPaletteOpen,
-					code: codeOpen,
 				}}
 				onClose={{
 					nodes: () => setNodesPaletteOpen(false),
 					modules: () => setModulesPaletteOpen(false),
-					code: () => setCodeOpen(false),
 				}}
 			/>
 			<ErrorDialog
