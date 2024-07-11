@@ -15,8 +15,6 @@ import { SimulatableEdge } from './SimulatableEdge';
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
 	type: 'simulated',
-	// type: "smoothstep",
-	// type: "smart",
 	data: {},
 };
 
