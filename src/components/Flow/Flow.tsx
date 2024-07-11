@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import ReactFlow, {
 	Connection,
 	ConnectionLineType,
@@ -7,6 +7,7 @@ import ReactFlow, {
 	Edge,
 	ReactFlowInstance,
 	ReactFlowProps,
+	ReactFlowProvider,
 } from 'reactflow';
 
 import nodeTypes from 'components/Nodes';
@@ -39,25 +40,32 @@ const onlyOneConnectionPerInput =
 	};
 
 const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
+	const [nodeHover, setNodeHover] = useState(false);
+
 	return (
-		<ReactFlow
-			nodeTypes={nodeTypes}
-			defaultEdgeOptions={defaultEdgeOptions}
-			connectionLineType={ConnectionLineType.SmoothStep}
-			minZoom={0.1}
-			maxZoom={10}
-			edgeTypes={edgeTypes}
-			zoomOnDoubleClick={editable}
-			nodesConnectable={editable}
-			nodesDraggable={editable}
-			edgesUpdatable={editable}
-			fitView
-			isValidConnection={onlyOneConnectionPerInput(props.edges || [])}
-			{...props}
-		>
-			{children}
-			<Controls showInteractive={false} />
-		</ReactFlow>
+		<ReactFlowProvider>
+			<ReactFlow
+				onNodeMouseEnter={() => setNodeHover(true)}
+				onNodeMouseLeave={() => setNodeHover(false)}
+				nodeTypes={nodeTypes}
+				defaultEdgeOptions={defaultEdgeOptions}
+				connectionLineType={ConnectionLineType.SmoothStep}
+				minZoom={0.1}
+				maxZoom={10}
+				edgeTypes={edgeTypes}
+				panOnDrag={nodeHover ? [1] : true}
+				zoomOnDoubleClick={false}
+				nodesConnectable={editable}
+				nodesDraggable={editable}
+				edgesUpdatable={editable}
+				fitView
+				isValidConnection={onlyOneConnectionPerInput(props.edges || [])}
+				{...props}
+			>
+				{children}
+				<Controls showInteractive={false} />
+			</ReactFlow>
+		</ReactFlowProvider>
 	);
 };
 
