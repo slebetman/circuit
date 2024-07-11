@@ -11,13 +11,13 @@ type HandleOffset = {
 	target: number;
 };
 
-type SimulatableEdgeData = {		
+type SimulatableEdgeData = {
 	offsetX: number;
 	offsetY: number;
 	sourceOffset: number;
 	targetOffset: number;
 	on?: boolean;
-}
+};
 
 export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 	sourcePosition,

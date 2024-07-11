@@ -39,7 +39,7 @@ const onlyOneConnectionPerInput =
 		);
 	};
 
-const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
+const Flow: FC<FlowProps> = ({ editable, children, edges, ...props }) => {
 	const [nodeHover, setNodeHover] = useState(false);
 
 	return (
@@ -59,7 +59,7 @@ const Flow: FC<FlowProps> = ({ editable, children, ...props }) => {
 				nodesDraggable={editable}
 				edgesUpdatable={editable}
 				fitView
-				isValidConnection={onlyOneConnectionPerInput(props.edges || [])}
+				isValidConnection={onlyOneConnectionPerInput(edges || [])}
 				{...props}
 			>
 				{children}
