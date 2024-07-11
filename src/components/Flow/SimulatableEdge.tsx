@@ -36,8 +36,8 @@ export function SimulatableEdge(props: EdgeProps) {
 	});
 
 	const [handleOffset, setHandleOffset] = useState<HandleOffset>({
-		source: 0,
-		target: 0,
+		source: data.sourceOffset || 0,
+		target: data.targetOffset || 0,
 	});
 
 	const [path, labelX, labelY] = getCustomSmoothStepPath({
