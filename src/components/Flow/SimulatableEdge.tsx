@@ -6,9 +6,15 @@ import {
 	XYPosition,
 } from 'reactflow';
 import DragHandle from './DragHandle';
+import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
 
 const DEBUG = false;
 const defaultHandleOffset = 5;
+
+type HandleOffset = {
+	source: number;
+	target: number;
+};
 
 export function SimulatableEdge(props: EdgeProps) {
 	const {
@@ -28,9 +34,13 @@ export function SimulatableEdge(props: EdgeProps) {
 		x: data.offsetX || 0,
 		y: data.offsetY || 0,
 	});
-	const [handleOffset, setHandleOffset] = useState(0);
 
-	const [path, labelX, labelY] = getSmoothStepPath({
+	const [handleOffset, setHandleOffset] = useState<HandleOffset>({
+		source: 0,
+		target: 0,
+	});
+
+	const [path, labelX, labelY] = getCustomSmoothStepPath({
 		sourceX,
 		sourceY,
 		sourcePosition,
@@ -38,7 +48,8 @@ export function SimulatableEdge(props: EdgeProps) {
 		targetY,
 		targetPosition,
 		borderRadius: 3,
-		offset: defaultHandleOffset + handleOffset,
+		sourceOffset: defaultHandleOffset + handleOffset.source,
+		targetOffset: defaultHandleOffset + handleOffset.target,
 		centerX: (sourceX + targetX) / 2 + offset.x,
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
@@ -46,7 +57,8 @@ export function SimulatableEdge(props: EdgeProps) {
 	useEffect(() => {
 		data.offsetX = offset.x;
 		data.offsetY = offset.y;
-	}, [offset]);
+		data.handleOffset = handleOffset;
+	}, [offset, handleOffset]);
 
 	return (
 		<>
@@ -69,19 +81,26 @@ export function SimulatableEdge(props: EdgeProps) {
 					<DragHandle
 						char='◆'
 						pos={{
-							x: sourceX + handleOffset + defaultHandleOffset,
+							x:
+								sourceX +
+								handleOffset.source +
+								defaultHandleOffset,
 							y: sourceY,
 						}}
 						offset={{
-							x: handleOffset,
+							x: handleOffset.source,
 							y: 0,
 						}}
 						onMove={(mouse, drag) => {
 							setHandleOffset((o) => {
 								const val = mouse.x - drag.x;
-								return val > -defaultHandleOffset
-									? val
-									: -defaultHandleOffset;
+								return {
+									source:
+										val > -defaultHandleOffset
+											? val
+											: -defaultHandleOffset,
+									target: o.target,
+								};
 							});
 						}}
 					/>
@@ -98,19 +117,26 @@ export function SimulatableEdge(props: EdgeProps) {
 					<DragHandle
 						char='◆'
 						pos={{
-							x: targetX - handleOffset - defaultHandleOffset,
+							x:
+								targetX -
+								handleOffset.target -
+								defaultHandleOffset,
 							y: targetY,
 						}}
 						offset={{
-							x: -handleOffset,
+							x: -handleOffset.target,
 							y: 0,
 						}}
 						onMove={(mouse, drag) => {
 							setHandleOffset((o) => {
 								const val = drag.x - mouse.x;
-								return val > -defaultHandleOffset
-									? val
-									: -defaultHandleOffset;
+								return {
+									target:
+										val > -defaultHandleOffset
+											? val
+											: -defaultHandleOffset,
+									source: o.source,
+								};
 							});
 						}}
 					/>
