@@ -75,16 +75,16 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 				setInputs(
 					m.nodes
 						.filter((x) => x.type === 'in')
-						.toSorted((a,b) => a.position.y - b.position.y)
+						.toSorted((a, b) => a.position.y - b.position.y)
 						.map((x) => ({
 							label: x.data.label,
 							id: x.id,
-						}))
+						})),
 				);
 				setOutputs(
 					m.nodes
 						.filter((x) => x.type === 'out')
-						.toSorted((a,b) => a.position.y - b.position.y)
+						.toSorted((a, b) => a.position.y - b.position.y)
 						.map((x) => ({
 							label: x.data.label,
 							id: x.id,
