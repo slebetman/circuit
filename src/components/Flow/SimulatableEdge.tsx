@@ -73,6 +73,30 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		} as XYPosition;
 	};
 
+	const midHandleLineY = () => {
+		let y = 0;
+		if (labelY < sourceY && labelY < targetY) {
+			y = Math.min(sourceY, targetY);
+		} else if (labelY > sourceY && labelY > targetY) {
+			y = Math.max(sourceY, targetY);
+		} else {
+			y = (sourceY + targetY) / 2;
+		}
+		return y;
+	};
+
+	const drawMidHandleLine = () => {
+		return (
+			drawDragHandles() &&
+			labelX >= sourceX + handleOffset.source + defaultHandleOffset - 1 &&
+			labelX <= targetX - handleOffset.target - defaultHandleOffset + 1
+		);
+	};
+
+	const drawDragHandles = () => {
+		return selected && data?.on === undefined;
+	}
+
 	useEffect(() => {
 		if (data) {
 			data.offsetX = offset.x;
@@ -84,12 +108,12 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 
 	return (
 		<>
-			{selected && data?.on === undefined && (
+			{drawMidHandleLine() && (
 				<line
 					x1={labelX}
 					x2={labelX}
 					y1={labelY}
-					y2={(sourceY + targetY) / 2}
+					y2={midHandleLineY()}
 					stroke='#999'
 					strokeDasharray={2}
 				/>
@@ -107,7 +131,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 				fill='transparent'
 				d={path}
 			/>
-			{selected && data?.on === undefined && (
+			{drawDragHandles() && (
 				<EdgeLabelRenderer>
 					<DragHandle
 						pos={{
