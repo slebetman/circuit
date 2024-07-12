@@ -156,6 +156,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						const a = comp(inputs[0]);
 						const b = comp(inputs[1]);
 
+						// simplifying step in case one of the values never changes
 						switch (a) {
 							case undefined:
 							case 'false':
@@ -177,6 +178,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						const a = comp(inputs[0]);
 						const b = comp(inputs[1]);
 
+						// simplifying step in case one of the values never changes
 						switch (a) {
 							case undefined:
 							case 'false':
@@ -198,6 +200,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						const a = comp(inputs[0]);
 						const b = comp(inputs[1]);
 
+						// simplifying step in case the values never change
 						if (a === b) {
 							return 'false';
 						}
@@ -207,6 +210,7 @@ export const compileWire: Compiler = (wire, opt) => {
 					case 'not': {
 						const a = comp(inputs[0]);
 
+						// simplifying step in case the value never changes
 						if (a === undefined) {
 							return 'true';
 						}

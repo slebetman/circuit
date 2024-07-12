@@ -95,7 +95,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 
 	const drawDragHandles = () => {
 		return selected && data?.on === undefined;
-	}
+	};
 
 	useEffect(() => {
 		if (data) {
