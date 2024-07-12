@@ -214,24 +214,27 @@ export const compileWire: Compiler = (wire, opt) => {
 						return `!(${a})`;
 					}
 					case 'module': {
-						if (processedModules.check(source.id) > 0) {
+						const outputs = opt.edges.filter((x) => x.source === source?.id);
+						const moduleHandle = w.sourceHandle || w.source;
+
+						if (processedModules.check(source.id) > outputs.length - 1) {
 							if (!processedLoops.check(w.id)) {
 								processedLoops.set(w.id);
 								loops.push(w.id);
 							}
-							return moduleCache.get(source.id);
+							return moduleCache.get(`${source.id}:${moduleHandle}`);
 						}
 
 						processedModules.set(source.id);
 
 						const res = compileModule(
-							w.sourceHandle || w.source,
+							moduleHandle,
 							source,
 							opt,
 						);
 
 						if (res) {
-							moduleCache.set(source.id, res.expr);
+							moduleCache.set(`${source.id}:${moduleHandle}`, res.expr);
 							loopExpressions.push(...res.loops);
 						}
 						return `(${res?.expr})`;
