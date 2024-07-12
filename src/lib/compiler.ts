@@ -21,7 +21,7 @@ type CompilerOptions = {
 
 type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
 
-type InternalCompiler = (wire: Edge) => string|undefined;
+type InternalCompiler = (wire: Edge) => string | undefined;
 
 export const compileModule = (
 	sourceId: string,
@@ -206,7 +206,7 @@ export const compileWire: Compiler = (wire, opt) => {
 					}
 					case 'not': {
 						const a = comp(inputs[0]);
-						
+
 						if (a === undefined) {
 							return 'true';
 						}
@@ -214,27 +214,33 @@ export const compileWire: Compiler = (wire, opt) => {
 						return `!(${a})`;
 					}
 					case 'module': {
-						const outputs = opt.edges.filter((x) => x.source === source?.id);
+						const outputs = opt.edges.filter(
+							(x) => x.source === source?.id,
+						);
 						const moduleHandle = w.sourceHandle || w.source;
 
-						if (processedModules.check(source.id) > outputs.length - 1) {
+						if (
+							processedModules.check(source.id) >
+							outputs.length - 1
+						) {
 							if (!processedLoops.check(w.id)) {
 								processedLoops.set(w.id);
 								loops.push(w.id);
 							}
-							return moduleCache.get(`${source.id}:${moduleHandle}`);
+							return moduleCache.get(
+								`${source.id}:${moduleHandle}`,
+							);
 						}
 
 						processedModules.set(source.id);
 
-						const res = compileModule(
-							moduleHandle,
-							source,
-							opt,
-						);
+						const res = compileModule(moduleHandle, source, opt);
 
 						if (res) {
-							moduleCache.set(`${source.id}:${moduleHandle}`, res.expr);
+							moduleCache.set(
+								`${source.id}:${moduleHandle}`,
+								res.expr,
+							);
 							loopExpressions.push(...res.loops);
 						}
 						return `(${res?.expr})`;

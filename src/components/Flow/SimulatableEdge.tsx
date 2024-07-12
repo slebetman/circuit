@@ -55,7 +55,7 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
 
-	const checkMidHandle = (mid: XYPosition) => {
+	const checkMidHandle = (mid: XYPosition, midOffset: XYPosition) => {
 		const shX = sourceX + defaultHandleOffset + handleOffset.source;
 		const thX = targetX - defaultHandleOffset - handleOffset.target;
 
@@ -67,7 +67,10 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 			x = Math.min(thX, shX);
 		}
 
-		return x - mid.x;
+		return {
+			x: midOffset.x + (x - mid.x),
+			y: midOffset.y,
+		} as XYPosition;
 	};
 
 	useEffect(() => {
@@ -119,15 +122,15 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 									target: o.target,
 								};
 							});
-							setOffset((o) => ({
-								x:
-									o.x +
-									checkMidHandle({
+							setOffset((o) =>
+								checkMidHandle(
+									{
 										x: (sourceX + targetX) / 2 + offset.x,
 										y: labelY,
-									}),
-								y: o.y,
-							}));
+									},
+									o,
+								),
+							);
 						}}
 					/>
 					<DragHandle
@@ -138,17 +141,17 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 								x: mouse.x - drag.x,
 								y: mouse.y - drag.y,
 							};
-							setOffset((o) => ({
-								x:
-									midOffset.x +
-									checkMidHandle({
+							setOffset((o) =>
+								checkMidHandle(
+									{
 										x:
 											(sourceX + targetX) / 2 +
 											midOffset.x,
 										y: midOffset.y,
-									}),
-								y: midOffset.y,
-							}));
+									},
+									midOffset,
+								),
+							);
 						}}
 					/>
 					<DragHandle
@@ -174,15 +177,15 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 									source: o.source,
 								};
 							});
-							setOffset((o) => ({
-								x:
-									o.x +
-									checkMidHandle({
+							setOffset((o) =>
+								checkMidHandle(
+									{
 										x: (sourceX + targetX) / 2 + offset.x,
 										y: labelY,
-									}),
-								y: o.y,
-							}));
+									},
+									o,
+								),
+							);
 						}}
 					/>
 				</EdgeLabelRenderer>
