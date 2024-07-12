@@ -84,6 +84,16 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 
 	return (
 		<>
+			{selected && data?.on === undefined && (
+				<line
+					x1={labelX}
+					x2={labelX}
+					y1={labelY}
+					y2={(sourceY + targetY) / 2}
+					stroke='#999'
+					strokeDasharray={2}
+				/>
+			)}
 			<path
 				style={style}
 				stroke={
