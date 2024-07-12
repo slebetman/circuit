@@ -63,7 +63,9 @@ export const handleSim = (active: boolean) => {
 export const handleCreateNode = (actionType: string) => {
 	const [type, moduleLabel, moduleType] = actionType.split(':');
 
-	ctx.setNodes?.((prev) => {
+	const setter = ctx.mode === 'module' ? ctx.setModuleNodes : ctx.setNodes;
+
+	setter?.((prev) => {
 		let data: Record<string, any> = {};
 
 		switch (type) {
