@@ -21,7 +21,7 @@ type CompilerOptions = {
 
 type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
 
-type InternalCompiler = (wire: Edge) => string;
+type InternalCompiler = (wire: Edge) => string|undefined;
 
 export const compileModule = (
 	sourceId: string,
@@ -74,7 +74,7 @@ export const compileModule = (
 								loopExpressions.push(...loops);
 								return expr;
 							}
-							return 'undefined';
+							return undefined;
 						}
 						return opt.getId ? opt.getId(n) : n.data?.label || n.id;
 					},
@@ -91,6 +91,7 @@ export const compile = (opt: CompilerOptions) => {
 
 	processedModules.clear();
 	processedLoops.clear();
+	moduleCache.clear();
 
 	const expressions: string[] = [];
 	const neededEdges: string[] = [];
@@ -101,7 +102,9 @@ export const compile = (opt: CompilerOptions) => {
 		if (wire) {
 			const [expr, loops] = compileWire(wire, opt);
 			let varId = opt.getId ? opt.getId(o) : o.data.label;
-			expressions.push(`${varName(varId)} = ${expr};`);
+			if (expr !== undefined) {
+				expressions.push(`${varName(varId)} = ${expr};`);
+			}
 			neededEdges.push(...loops);
 		}
 	}
@@ -111,7 +114,9 @@ export const compile = (opt: CompilerOptions) => {
 	if (opt.all) {
 		for (const wire of opt.edges) {
 			const [expr] = compileWire(wire, opt);
-			expressions.push(`${varName(wire.id)} = ${expr};`);
+			if (expr !== undefined) {
+				expressions.push(`${varName(wire.id)} = ${expr};`);
+			}
 		}
 	}
 
@@ -125,7 +130,7 @@ export const compileWire: Compiler = (wire, opt) => {
 
 	const comp: InternalCompiler = (w: Edge) => {
 		if (!w) {
-			return 'undefined';
+			return undefined;
 		}
 
 		const source = opt.nodes.find((x) => x.id === w.source);
@@ -147,26 +152,77 @@ export const compileWire: Compiler = (wire, opt) => {
 			const inputs = opt.edges.filter((x) => x.target === source?.id);
 			if (inputs?.length) {
 				switch (source.type) {
-					case 'and':
-						return `(${comp(inputs[0])} && ${comp(inputs[1])})`;
-					case 'or':
-						return `(${comp(inputs[0])} || ${comp(inputs[1])})`;
-					case 'xor':
-						return `(${comp(inputs[0])} !== ${comp(inputs[1])})`;
-					case 'not':
-						return `!(${comp(inputs[0])})`;
+					case 'and': {
+						const a = comp(inputs[0]);
+						const b = comp(inputs[1]);
+
+						switch (a) {
+							case undefined:
+							case 'false':
+								return undefined;
+							case 'true':
+								return b;
+						}
+						switch (b) {
+							case undefined:
+							case 'false':
+								return undefined;
+							case 'true':
+								return a;
+						}
+
+						return `(${a} && ${b})`;
+					}
+					case 'or': {
+						const a = comp(inputs[0]);
+						const b = comp(inputs[1]);
+
+						switch (a) {
+							case undefined:
+							case 'false':
+								return b;
+							case 'true':
+								return 'true';
+						}
+						switch (b) {
+							case undefined:
+							case 'false':
+								return b;
+							case 'true':
+								return 'true';
+						}
+
+						return `(${a} || ${b})`;
+					}
+					case 'xor': {
+						const a = comp(inputs[0]);
+						const b = comp(inputs[1]);
+
+						if (a === b) {
+							return 'false';
+						}
+
+						return `(${a} !== ${b})`;
+					}
+					case 'not': {
+						const a = comp(inputs[0]);
+						
+						if (a === undefined) {
+							return 'true';
+						}
+
+						return `!(${a})`;
+					}
 					case 'module': {
-						console.log('processing module', source.id);
+						if (processedModules.check(source.id) > 0) {
+							if (!processedLoops.check(w.id)) {
+								processedLoops.set(w.id);
+								loops.push(w.id);
+							}
+							return moduleCache.get(source.id);
+						}
 
-						// if (processedModules.check(source.id)) {
-						// 	if (!processedLoops.check(w.id)) {
-						// 		processedLoops.set(w.id);
-						// 		loops.push(w.id);
-						// 	}
-						// 	return moduleCache.get(source.id);
-						// }
-
-						// processedModules.set(source.id);
+						processedModules.set(source.id);
 
 						const res = compileModule(
 							w.sourceHandle || w.source,
@@ -178,7 +234,7 @@ export const compileWire: Compiler = (wire, opt) => {
 							moduleCache.set(source.id, res.expr);
 							loopExpressions.push(...res.loops);
 						}
-						return `(${res?.expr || 'undefined'})`;
+						return `(${res?.expr})`;
 					}
 					default:
 						throw new Error('Unsupported node type!');
@@ -195,7 +251,7 @@ export const compileWire: Compiler = (wire, opt) => {
 		throw new Error('Not supposed to get here');
 	};
 
-	const expression = comp(wire);
+	const expression = comp(wire) || 'undefined';
 
 	const neededEdges = loops
 		.map((w) => opt.edges.find((x) => x.id === w))
@@ -206,12 +262,15 @@ export const compileWire: Compiler = (wire, opt) => {
 			if (loopWire) {
 				processedEdges.clear();
 
-				return `${varName(loopWire.id, {
-					prefix: opt.prefix,
-				})} = ${comp(loopWire)};`;
-			} else {
-				return '';
+				const ex = comp(loopWire);
+
+				if (ex !== undefined) {
+					return `${varName(loopWire.id, {
+						prefix: opt.prefix,
+					})} = ${ex};`;
+				}
 			}
+			return '';
 		}),
 	);
 
