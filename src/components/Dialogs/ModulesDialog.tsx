@@ -2,7 +2,6 @@ import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
 import ToolButton from 'components/ToolPanel/ToolButton';
 import { Module } from 'hooks/useChart';
-import { getChartRef } from 'lib/chartRefs';
 
 type ModulesDialogProps = {
 	modules: Module[];
@@ -74,7 +73,7 @@ const ModulesDialog = ({
 							onClick={onClick}
 							actionType={`module:${module.label}:${module.type}`}
 							style={{
-								height: '60px',
+								height: '50px',
 								width: '100px',
 							}}
 						/>
@@ -82,7 +81,7 @@ const ModulesDialog = ({
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
-								gap: '4px',
+								gap: '2px',
 								justifyContent: 'center',
 							}}
 						>
