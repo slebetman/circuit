@@ -3,7 +3,7 @@ import { EdgeLabelRenderer, EdgeProps, XYPosition } from 'reactflow';
 import DragHandle from './DragHandle';
 import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
 
-const DEBUG = false;
+const DEBUG = true;
 const defaultHandleOffset = 5;
 
 type HandleOffset = {
@@ -55,32 +55,19 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
 
-	const checkMidHandle = (
-		mid: XYPosition
-	) => {
-		const sourceHandle: XYPosition = {
-			x: sourceX + defaultHandleOffset + handleOffset.source,
-			y: sourceY,
-		};
-	
-		const targetHandle: XYPosition = {
-			x: targetX - defaultHandleOffset - handleOffset.target,
-			y: targetY,
-		};
-	
+	const checkMidHandle = (mid: XYPosition) => {
+		const shX = sourceX + defaultHandleOffset + handleOffset.source;
+		const thX = targetX - defaultHandleOffset - handleOffset.target;
+
 		let x = mid.x;
-		let y = mid.y;
-	
-		if (mid.x > targetHandle.x && mid.x > sourceHandle.x) {
-			x = Math.max(targetHandle.x, sourceHandle.x);
-		} else if (mid.x < targetHandle.x && mid.x < sourceHandle.x) {
-			x = Math.min(targetHandle.x, sourceHandle.x);
+
+		if (mid.x > thX && mid.x > shX) {
+			x = Math.max(thX, shX);
+		} else if (mid.x < thX && mid.x < shX) {
+			x = Math.min(thX, shX);
 		}
-	
-		return {
-			x: x - mid.x,
-			y: 0,
-		} as XYPosition;
+
+		return x - mid.x;
 	};
 
 	useEffect(() => {
@@ -132,13 +119,14 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 									target: o.target,
 								};
 							});
-							const mid = checkMidHandle({
-								x: (sourceX + targetX) / 2 + offset.x,
-								y: labelY
-							});
 							setOffset((o) => ({
-								x: o.x + mid.x,
-								y: o.y + mid.y,
+								x:
+									o.x +
+									checkMidHandle({
+										x: (sourceX + targetX) / 2 + offset.x,
+										y: labelY,
+									}),
+								y: o.y,
 							}));
 						}}
 					/>
@@ -149,14 +137,17 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 							const midOffset = {
 								x: mouse.x - drag.x,
 								y: mouse.y - drag.y,
-							}
-							const mid = checkMidHandle({
-								x: (sourceX + targetX) / 2 + midOffset.x,
-								y: midOffset.y
-							});
+							};
 							setOffset((o) => ({
-								x: midOffset.x + mid.x,
-								y: midOffset.y + mid.y,
+								x:
+									midOffset.x +
+									checkMidHandle({
+										x:
+											(sourceX + targetX) / 2 +
+											midOffset.x,
+										y: midOffset.y,
+									}),
+								y: midOffset.y,
 							}));
 						}}
 					/>
@@ -183,13 +174,14 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 									source: o.source,
 								};
 							});
-							const mid = checkMidHandle({
-								x: (sourceX + targetX) / 2 + offset.x,
-								y: labelY
-							});
 							setOffset((o) => ({
-								x: o.x + mid.x,
-								y: o.y + mid.y,
+								x:
+									o.x +
+									checkMidHandle({
+										x: (sourceX + targetX) / 2 + offset.x,
+										y: labelY,
+									}),
+								y: o.y,
 							}));
 						}}
 					/>
