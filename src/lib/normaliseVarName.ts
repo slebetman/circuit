@@ -3,7 +3,11 @@ export type VarNameOptions = {
 	withThis?: boolean;
 };
 
-const varName = (name: string, opt?: VarNameOptions) => {
+const varName = (name?: string, opt?: VarNameOptions) => {
+	if (name === undefined) {
+		return 'undefined';
+	}
+
 	// Skip if var name is an expression:
 	if (name.match(/^!?\(.+\)$/)) {
 		return name;
