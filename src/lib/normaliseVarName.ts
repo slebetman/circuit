@@ -1,6 +1,7 @@
 export type VarNameOptions = {
 	prefix?: string;
 	withThis?: boolean;
+	useThis?: boolean;
 };
 
 const varName = (name?: string, opt?: VarNameOptions) => {
@@ -19,7 +20,7 @@ const varName = (name?: string, opt?: VarNameOptions) => {
 		normalised = `${opt.prefix}_${normalised}`;
 	}
 
-	if (opt?.withThis) {
+	if (opt?.withThis || opt?.useThis) {
 		normalised = `this["${normalised}"]`;
 	}
 

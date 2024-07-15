@@ -319,11 +319,11 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 						exp(wire, not(id, inputs));
 						break;
 					case 'module': {
-						const moduleHandle = wire.sourceHandle || wire.source;
+						// const moduleHandle = wire.sourceHandle || wire.source;
 	
-						const res = compileModuleNonRecursive(moduleHandle, source, opt);
+						// const res = compileModuleNonRecursive(moduleHandle, source, opt);
 
-						exp(wire,res?.expr);
+						// exp(wire,res?.expr);
 						break;
 					}
 					default:
