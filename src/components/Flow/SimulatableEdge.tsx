@@ -3,7 +3,7 @@ import { EdgeLabelRenderer, EdgeProps, XYPosition } from 'reactflow';
 import DragHandle from './DragHandle';
 import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
 
-const DEBUG = false;
+const DEBUG = true;
 const defaultHandleOffset = 5;
 
 type HandleOffset = {

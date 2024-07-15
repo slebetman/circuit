@@ -6,7 +6,7 @@ export type CompilerOptions = {
 	prefix?: string;
 	inputPrefix?: string;
 	useThis?: boolean;
-	getId?: (n: Node) => string;
+	getId?: (o: Node|Edge) => string;
 	all?: boolean;
 	forModule?: boolean;
 };

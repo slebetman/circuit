@@ -232,3 +232,109 @@ export const compileWire: Compiler = (wire, opt) => {
 
 	return [expression, loopExpressions.filter((x) => x !== '')];
 };
+
+export const compileModuleNonRecursive = (
+	sourceId: string,
+	moduleNode: Node,
+	opt: CompilerOptions
+) => {
+	const chartRef = getChartRef();
+
+	const mod = chartRef?.modules?.find((x) => x.type === moduleNode.data.type);
+
+	if (mod) {
+		const outputs = mod.nodes.filter((x) => x.type === 'out');
+
+		let output: Node | undefined;
+
+		if (sourceId === moduleNode.id) {
+			output = outputs[0];
+		} else {
+			output = outputs.find(
+				(x) => `${moduleNode.id}_${x.id}` === sourceId
+			);
+		}
+
+		if (output) {
+			const wire = mod.edges.find((x) => x.target === output.id);
+
+			if (wire) {
+				const expr = compileNonRecursive({
+					...opt,
+					nodes: mod.nodes,
+					edges: mod.edges,
+					useThis: false,
+					prefix: moduleNode.id,
+				});
+				return expr;
+			}
+		}
+	}
+};
+
+export const compileNonRecursive = (opt: CompilerOptions) => {
+	const outputs = opt.nodes.filter((x) => x.type === 'out');
+
+	const expressions: string[] = [];
+	const neededEdges: string[] = [];
+
+	const exp = (o: Edge|Node, exp:string | undefined) => {
+		const varId = opt.getId ? opt.getId(o) : (o.data?.label || o.id);
+		expressions.push(`${varName(varId, opt)} = ${exp};`);
+	}
+
+	for (const o of outputs) {
+		const wire = opt.edges.find((x) => x.target === o.id);
+		if (wire) {
+			exp(o, varName(wire.id, opt));
+		}
+	}
+
+	expressions.push(...neededEdges);
+
+	const id = (w:Edge) => varName(w.id,opt);
+
+	for (const wire of opt.edges) {
+		const source = opt.nodes.find((x) => x.id === wire.source);
+		if (source) {
+			const inputs = opt.edges.filter((x) => x.target === source?.id);
+			if (inputs?.length) {
+				switch (source.type) {
+					case 'and':
+						exp(wire, and(id, inputs));
+						break;
+					case 'nand':
+						exp(wire, nand(id, inputs));
+						break;
+					case 'or':
+						exp(wire, or(id, inputs));
+						break;
+					case 'nor':
+						exp(wire, nor(id, inputs));
+						break;
+					case 'xor':
+						exp(wire, xor(id, inputs));
+						break;
+					case 'not':
+						exp(wire, not(id, inputs));
+						break;
+					case 'module': {
+						const moduleHandle = wire.sourceHandle || wire.source;
+	
+						const res = compileModuleNonRecursive(moduleHandle, source, opt);
+
+						exp(wire,res?.expr);
+						break;
+					}
+					default:
+						throw new Error('Unsupported node type!');
+				}
+			} else if (source.type === 'in') {
+				let varId = opt.getId ? opt.getId(source) : source.data.label;
+				exp(wire,`${varName(varId, opt)}`);
+			}
+		}
+	}
+
+	return expressions;
+};
