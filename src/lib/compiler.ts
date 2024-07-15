@@ -3,25 +3,17 @@ import varName from './normaliseVarName';
 import { getChartRef } from './chartRefs';
 import tracker from './tracker';
 import cache from './cache';
+import { Compiler, CompilerOptions, InternalCompiler } from './compiler/types';
+import { and } from './compiler/and';
+import { nand } from './compiler/nand';
+import { or } from './compiler/or';
+import { nor } from './compiler/nor';
+import { xor } from './compiler/xor';
+import { not } from './compiler/not';
 
 const processedModules = tracker();
 const processedLoops = tracker();
 const moduleCache = cache<string>();
-
-type CompilerOptions = {
-	nodes: Node[];
-	edges: Edge[];
-	prefix?: string;
-	inputPrefix?: string;
-	useThis?: boolean;
-	getId?: (n: Node) => string;
-	all?: boolean;
-	forModule?: boolean;
-};
-
-type Compiler = (wire: Edge, opt: CompilerOptions) => [string, string[]];
-
-type InternalCompiler = (wire: Edge) => string | undefined;
 
 export const compileModule = (
 	sourceId: string,
@@ -152,116 +144,18 @@ export const compileWire: Compiler = (wire, opt) => {
 			const inputs = opt.edges.filter((x) => x.target === source?.id);
 			if (inputs?.length) {
 				switch (source.type) {
-					case 'and': {
-						const a = comp(inputs[0]);
-						const b = comp(inputs[1]);
-
-						// simplifying step in case one of the values never changes
-						switch (a) {
-							case undefined:
-							case 'false':
-								return undefined;
-							case 'true':
-								return b;
-						}
-						switch (b) {
-							case undefined:
-							case 'false':
-								return undefined;
-							case 'true':
-								return a;
-						}
-
-						return `(${a} && ${b})`;
-					}
-					case 'nand': {
-						const a = comp(inputs[0]);
-						const b = comp(inputs[1]);
-
-						// simplifying step in case one of the values never changes
-						switch (a) {
-							case undefined:
-							case 'false':
-								return 'true';
-							case 'true':
-								return `!(${b})`;
-						}
-						switch (b) {
-							case undefined:
-							case 'false':
-								return 'true';
-							case 'true':
-								return `!(${a})`;
-						}
-
-						return `!(${a} && ${b})`;
-					}
-					case 'or': {
-						const a = comp(inputs[0]);
-						const b = comp(inputs[1]);
-
-						// simplifying step in case one of the values never changes
-						switch (a) {
-							case undefined:
-							case 'false':
-								return b;
-							case 'true':
-								return 'true';
-						}
-						switch (b) {
-							case undefined:
-							case 'false':
-								return a;
-							case 'true':
-								return 'true';
-						}
-
-						return `(${a} || ${b})`;
-					}
-
-					case 'nor': {
-						const a = comp(inputs[0]);
-						const b = comp(inputs[1]);
-
-						// simplifying step in case one of the values never changes
-						switch (a) {
-							case undefined:
-							case 'false':
-								return `!(${b})`;
-							case 'true':
-								return 'false';
-						}
-						switch (b) {
-							case undefined:
-							case 'false':
-								return `!(${a})`;
-							case 'true':
-								return 'false';
-						}
-
-						return `!(${a} || ${b})`;
-					}
-					case 'xor': {
-						const a = comp(inputs[0]);
-						const b = comp(inputs[1]);
-
-						// simplifying step in case the values never change
-						if (a === b) {
-							return 'false';
-						}
-
-						return `(${a} !== ${b})`;
-					}
-					case 'not': {
-						const a = comp(inputs[0]);
-
-						// simplifying step in case the value never changes
-						if (a === undefined) {
-							return 'true';
-						}
-
-						return `!(${a})`;
-					}
+					case 'and':
+						return and(comp, inputs);
+					case 'nand':
+						return nand(comp, inputs);
+					case 'or':
+						return or(comp, inputs);
+					case 'nor':
+						return nor(comp, inputs);
+					case 'xor':
+						return xor(comp, inputs);
+					case 'not':
+						return not(comp, inputs);
 					case 'module': {
 						const outputs = opt.edges.filter(
 							(x) => x.source === source?.id
