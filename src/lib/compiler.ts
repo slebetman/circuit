@@ -26,7 +26,7 @@ type InternalCompiler = (wire: Edge) => string | undefined;
 export const compileModule = (
 	sourceId: string,
 	moduleNode: Node,
-	opt: CompilerOptions,
+	opt: CompilerOptions
 ) => {
 	const chartRef = getChartRef();
 
@@ -41,7 +41,7 @@ export const compileModule = (
 			output = outputs[0];
 		} else {
 			output = outputs.find(
-				(x) => `${moduleNode.id}_${x.id}` === sourceId,
+				(x) => `${moduleNode.id}_${x.id}` === sourceId
 			);
 		}
 
@@ -64,12 +64,12 @@ export const compileModule = (
 								(x) =>
 									x.target === moduleNode.id &&
 									x.targetHandle ===
-										`${moduleNode.id}_${n.id}`,
+										`${moduleNode.id}_${n.id}`
 							);
 							if (sourceWire) {
 								const [expr, loops] = compileWire(
 									sourceWire,
-									opt,
+									opt
 								);
 								loopExpressions.push(...loops);
 								return expr;
@@ -174,6 +174,28 @@ export const compileWire: Compiler = (wire, opt) => {
 
 						return `(${a} && ${b})`;
 					}
+					case 'nand': {
+						const a = comp(inputs[0]);
+						const b = comp(inputs[1]);
+
+						// simplifying step in case one of the values never changes
+						switch (a) {
+							case undefined:
+							case 'false':
+								return 'true';
+							case 'true':
+								return `!(${b})`;
+						}
+						switch (b) {
+							case undefined:
+							case 'false':
+								return 'true';
+							case 'true':
+								return `!(${a})`;
+						}
+
+						return `!(${a} && ${b})`;
+					}
 					case 'or': {
 						const a = comp(inputs[0]);
 						const b = comp(inputs[1]);
@@ -189,12 +211,35 @@ export const compileWire: Compiler = (wire, opt) => {
 						switch (b) {
 							case undefined:
 							case 'false':
-								return b;
+								return a;
 							case 'true':
 								return 'true';
 						}
 
 						return `(${a} || ${b})`;
+					}
+
+					case 'nor': {
+						const a = comp(inputs[0]);
+						const b = comp(inputs[1]);
+
+						// simplifying step in case one of the values never changes
+						switch (a) {
+							case undefined:
+							case 'false':
+								return `!(${b})`;
+							case 'true':
+								return 'false';
+						}
+						switch (b) {
+							case undefined:
+							case 'false':
+								return `!(${a})`;
+							case 'true':
+								return 'false';
+						}
+
+						return `!(${a} || ${b})`;
 					}
 					case 'xor': {
 						const a = comp(inputs[0]);
@@ -219,7 +264,7 @@ export const compileWire: Compiler = (wire, opt) => {
 					}
 					case 'module': {
 						const outputs = opt.edges.filter(
-							(x) => x.source === source?.id,
+							(x) => x.source === source?.id
 						);
 						const moduleHandle = w.sourceHandle || w.source;
 
@@ -232,7 +277,7 @@ export const compileWire: Compiler = (wire, opt) => {
 								loops.push(w.id);
 							}
 							return moduleCache.get(
-								`${source.id}:${moduleHandle}`,
+								`${source.id}:${moduleHandle}`
 							);
 						}
 
@@ -243,7 +288,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						if (res) {
 							moduleCache.set(
 								`${source.id}:${moduleHandle}`,
-								res.expr,
+								res.expr
 							);
 							loopExpressions.push(...res.loops);
 						}
@@ -284,7 +329,7 @@ export const compileWire: Compiler = (wire, opt) => {
 				}
 			}
 			return '';
-		}),
+		})
 	);
 
 	return [expression, loopExpressions.filter((x) => x !== '')];
