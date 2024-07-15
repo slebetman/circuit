@@ -11,7 +11,7 @@ type HandleOffset = {
 	target: number;
 };
 
-type SimulatableEdgeData = {
+export type SimulatableEdgeData = {
 	offsetX: number;
 	offsetY: number;
 	sourceOffset: number;

@@ -65,10 +65,12 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [error, setError] = useState<string | null>(null);
 	const onConnect = useCallback(
 		(params: Connection | Edge) => {
+			const e = params as Edge<any>;
+			e.data = {};
 			if (mode === 'module') {
-				setModuleEdges((eds) => addEdge(params, eds));
+				setModuleEdges((eds) => addEdge(e, eds));
 			} else {
-				setEdges((eds) => addEdge(params, eds));
+				setEdges((eds) => addEdge(e, eds));
 			}
 		},
 		[setEdges, setModuleEdges, mode],
