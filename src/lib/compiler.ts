@@ -120,14 +120,18 @@ export const compileWire: Compiler = (wire, opt) => {
 	const loops: string[] = [];
 	const loopExpressions: string[] = [];
 
+	let recursionCount = 0;
+
 	const comp: InternalCompiler = (w: Edge) => {
+		recursionCount++;
+
 		if (!w) {
 			return undefined;
 		}
 
 		const source = opt.nodes.find((x) => x.id === w.source);
 
-		if (processedEdges.check(w.id)) {
+		if (processedEdges.check(w.id) || (opt.all && recursionCount > 1)) {
 			if (!processedLoops.check(w.id)) {
 				processedLoops.set(w.id);
 				loops.push(w.id);
