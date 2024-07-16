@@ -49,7 +49,7 @@ const OutputNode: FC<NodeProps> = ({ data, id, selected }) => {
 	return (
 		<>
 			<Handle type='target' id='c' position={Position.Left} />
-			{editmode ? (
+			{editmode ?
 				<div style={editStyle}>
 					<input
 						type='text'
@@ -61,22 +61,20 @@ const OutputNode: FC<NodeProps> = ({ data, id, selected }) => {
 					/>
 					<button onClick={() => setEditmode(false)}>OK</button>
 				</div>
-			) : (
-				<div
+			:	<div
 					onDoubleClick={handleEditMode}
 					style={{
 						...nodeStyle,
 						borderWidth: selected ? '2px' : '1px',
-						backgroundColor: data.on
-							? '#9f9'
-							: data.on === false
-							? '#aaa'
+						backgroundColor:
+							data.on ? '#9f9'
+							: data.on === false ? '#aaa'
 							: '#fff',
 					}}
 				>
 					{label}
 				</div>
-			)}
+			}
 		</>
 	);
 };

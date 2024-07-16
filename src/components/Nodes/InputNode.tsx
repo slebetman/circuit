@@ -48,7 +48,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 
 	return (
 		<>
-			{editmode ? (
+			{editmode ?
 				<div style={editStyle}>
 					<input
 						type='text'
@@ -60,8 +60,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 					/>
 					<button onClick={() => setEditmode(false)}>OK</button>
 				</div>
-			) : (
-				<div
+			:	<div
 					onClick={(e) => {
 						if (data.sim) {
 							data.sim(!data.on);
@@ -75,17 +74,16 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 						zIndex: '9999999',
 						borderWidth: selected ? '2px' : '1px',
 						marginLeft: selected ? '-2px' : '0px',
-						backgroundColor: data.on
-							? '#9f9'
-							: data.on === false
-							? '#aaa'
+						backgroundColor:
+							data.on ? '#9f9'
+							: data.on === false ? '#aaa'
 							: '#fff',
 						cursor: ctx.sim ? 'pointer' : 'grab',
 					}}
 				>
 					{label}
 				</div>
-			)}
+			}
 			<Handle type='source' id='c' position={Position.Right} />
 		</>
 	);

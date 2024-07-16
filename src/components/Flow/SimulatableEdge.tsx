@@ -4,7 +4,7 @@ import DragHandle from './DragHandle';
 import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
 import { getEditorContext } from 'lib/editorContext';
 
-const DEBUG = true;
+const DEBUG = false;
 const defaultHandleOffset = 5;
 
 type HandleOffset = {
