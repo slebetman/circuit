@@ -32,7 +32,7 @@ const onlyOneConnectionPerInput =
 		const targetHandle = connection.targetHandle;
 
 		return !edges?.find(
-			(e) => e.target === target && e.targetHandle === targetHandle,
+			(e) => e.target === target && e.targetHandle === targetHandle
 		);
 	};
 
@@ -55,6 +55,9 @@ const Flow: FC<FlowProps> = ({ editable, children, edges, ...props }) => {
 				nodesConnectable={editable}
 				nodesDraggable={editable}
 				edgesUpdatable={editable}
+				edgesFocusable={editable}
+				nodesFocusable={editable}
+				elementsSelectable={editable}
 				fitView
 				isValidConnection={onlyOneConnectionPerInput(edges || [])}
 				edges={edges}
