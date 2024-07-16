@@ -234,16 +234,20 @@ export const compileWire: Compiler = (wire, opt) => {
 };
 
 export const compileModuleNonRecursive = (
-	sourceId: string,
+	wire: Edge,
 	moduleNode: Node,
 	opt: CompilerOptions,
 ) => {
+	const expressions: string[] = [];
+	const inputs: Node[] = [];
 	const chartRef = getChartRef();
+	const sourceId = wire.sourceHandle || wire.source;
 
 	const mod = chartRef?.modules?.find((x) => x.type === moduleNode.data.type);
 
 	if (mod) {
 		const outputs = mod.nodes.filter((x) => x.type === 'out');
+		inputs.push(...mod.nodes.filter((x) => x.type === 'in'));
 
 		let output: Node | undefined;
 
@@ -256,20 +260,40 @@ export const compileModuleNonRecursive = (
 		}
 
 		if (output) {
-			const wire = mod.edges.find((x) => x.target === output.id);
+			const varId =
+				opt.getId ? opt.getId(output) : output.data?.label || output.id;
+			expressions.push(
+				`${varName(wire.id, opt)} = ${varName(varId, {
+					...opt,
+					prefix: moduleNode.id,
+				})};`,
+			);
 
-			if (wire) {
+			const w = mod.edges.find((x) => x.target === output.id);
+
+			if (w) {
 				const expr = compileNonRecursive({
 					...opt,
 					nodes: mod.nodes,
 					edges: mod.edges,
-					useThis: false,
 					prefix: moduleNode.id,
 				});
-				return expr;
+				expressions.push(...expr);
 			}
 		}
 	}
+
+	return { expressions, inputs };
+};
+
+const uniq = (x: string[]) => {
+	let y: Record<string, boolean> = {};
+
+	for (const z of x) {
+		y[z] = true;
+	}
+
+	return Object.keys(y);
 };
 
 export const compileNonRecursive = (opt: CompilerOptions) => {
@@ -278,9 +302,13 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 	const expressions: string[] = [];
 	const neededEdges: string[] = [];
 
-	const exp = (o: Edge | Node, exp: string | undefined) => {
+	const exp = (o: Edge | Node, exp: string | undefined, prefix?: string) => {
 		const varId = opt.getId ? opt.getId(o) : o.data?.label || o.id;
-		expressions.push(`${varName(varId, opt)} = ${exp};`);
+		const varOpt = { ...opt };
+		if (prefix) {
+			varOpt.prefix = prefix;
+		}
+		expressions.push(`${varName(varId, varOpt)} = ${exp};`);
 	};
 
 	for (const o of outputs) {
@@ -319,11 +347,26 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 						exp(wire, not(id, inputs));
 						break;
 					case 'module': {
-						// const moduleHandle = wire.sourceHandle || wire.source;
+						const res = compileModuleNonRecursive(
+							wire,
+							source,
+							opt,
+						);
 
-						// const res = compileModuleNonRecursive(moduleHandle, source, opt);
+						expressions.push(...res.expressions);
 
-						// exp(wire,res?.expr);
+						for (const i of res.inputs) {
+							const targetId = `${source.id}_${i.id}`;
+
+							const inputWire = opt.edges.find(
+								(w) => w.targetHandle === targetId,
+							);
+
+							if (inputWire) {
+								exp(i, varName(inputWire.id, opt), source.id);
+							}
+						}
+
 						break;
 					}
 					default:
@@ -336,5 +379,5 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 		}
 	}
 
-	return expressions;
+	return uniq(expressions);
 };

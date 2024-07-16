@@ -69,8 +69,6 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 		setTimeout(() => {
 			const m = chart?.modules?.find((x) => x.type === data.type);
 
-			console.log(chart);
-
 			if (m) {
 				setInputs(
 					m.nodes
@@ -119,14 +117,20 @@ const Module: FC<ModuleProps> = ({ id, data, selected }) => {
 				<div style={ioContainerStyle}>
 					<div style={ioGroupStyle}>
 						{inputs.map((i) => (
-							<div style={{ ...ioStyle, textAlign: 'left' }}>
+							<div
+								style={{ ...ioStyle, textAlign: 'left' }}
+								key={i.id}
+							>
 								{i.label}
 							</div>
 						))}
 					</div>
 					<div style={ioGroupStyle}>
 						{outputs.map((o) => (
-							<div style={{ ...ioStyle, textAlign: 'right' }}>
+							<div
+								style={{ ...ioStyle, textAlign: 'right' }}
+								key={o.id}
+							>
 								{o.label}
 							</div>
 						))}
