@@ -18,7 +18,7 @@ const moduleCache = cache<string>();
 export const compileModule = (
 	sourceId: string,
 	moduleNode: Node,
-	opt: CompilerOptions
+	opt: CompilerOptions,
 ) => {
 	const chartRef = getChartRef();
 
@@ -33,7 +33,7 @@ export const compileModule = (
 			output = outputs[0];
 		} else {
 			output = outputs.find(
-				(x) => `${moduleNode.id}_${x.id}` === sourceId
+				(x) => `${moduleNode.id}_${x.id}` === sourceId,
 			);
 		}
 
@@ -56,12 +56,12 @@ export const compileModule = (
 								(x) =>
 									x.target === moduleNode.id &&
 									x.targetHandle ===
-										`${moduleNode.id}_${n.id}`
+										`${moduleNode.id}_${n.id}`,
 							);
 							if (sourceWire) {
 								const [expr, loops] = compileWire(
 									sourceWire,
-									opt
+									opt,
 								);
 								loopExpressions.push(...loops);
 								return expr;
@@ -162,7 +162,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						return not(comp, inputs);
 					case 'module': {
 						const outputs = opt.edges.filter(
-							(x) => x.source === source?.id
+							(x) => x.source === source?.id,
 						);
 						const moduleHandle = w.sourceHandle || w.source;
 
@@ -175,7 +175,7 @@ export const compileWire: Compiler = (wire, opt) => {
 								loops.push(w.id);
 							}
 							return moduleCache.get(
-								`${source.id}:${moduleHandle}`
+								`${source.id}:${moduleHandle}`,
 							);
 						}
 
@@ -186,7 +186,7 @@ export const compileWire: Compiler = (wire, opt) => {
 						if (res) {
 							moduleCache.set(
 								`${source.id}:${moduleHandle}`,
-								res.expr
+								res.expr,
 							);
 							loopExpressions.push(...res.loops);
 						}
@@ -227,7 +227,7 @@ export const compileWire: Compiler = (wire, opt) => {
 				}
 			}
 			return '';
-		})
+		}),
 	);
 
 	return [expression, loopExpressions.filter((x) => x !== '')];
@@ -236,7 +236,7 @@ export const compileWire: Compiler = (wire, opt) => {
 export const compileModuleNonRecursive = (
 	sourceId: string,
 	moduleNode: Node,
-	opt: CompilerOptions
+	opt: CompilerOptions,
 ) => {
 	const chartRef = getChartRef();
 
@@ -251,7 +251,7 @@ export const compileModuleNonRecursive = (
 			output = outputs[0];
 		} else {
 			output = outputs.find(
-				(x) => `${moduleNode.id}_${x.id}` === sourceId
+				(x) => `${moduleNode.id}_${x.id}` === sourceId,
 			);
 		}
 
@@ -278,10 +278,10 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 	const expressions: string[] = [];
 	const neededEdges: string[] = [];
 
-	const exp = (o: Edge|Node, exp:string | undefined) => {
-		const varId = opt.getId ? opt.getId(o) : (o.data?.label || o.id);
+	const exp = (o: Edge | Node, exp: string | undefined) => {
+		const varId = opt.getId ? opt.getId(o) : o.data?.label || o.id;
 		expressions.push(`${varName(varId, opt)} = ${exp};`);
-	}
+	};
 
 	for (const o of outputs) {
 		const wire = opt.edges.find((x) => x.target === o.id);
@@ -292,7 +292,7 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 
 	expressions.push(...neededEdges);
 
-	const id = (w:Edge) => varName(w.id,opt);
+	const id = (w: Edge) => varName(w.id, opt);
 
 	for (const wire of opt.edges) {
 		const source = opt.nodes.find((x) => x.id === wire.source);
@@ -320,7 +320,7 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 						break;
 					case 'module': {
 						// const moduleHandle = wire.sourceHandle || wire.source;
-	
+
 						// const res = compileModuleNonRecursive(moduleHandle, source, opt);
 
 						// exp(wire,res?.expr);
@@ -331,7 +331,7 @@ export const compileNonRecursive = (opt: CompilerOptions) => {
 				}
 			} else if (source.type === 'in') {
 				let varId = opt.getId ? opt.getId(source) : source.data.label;
-				exp(wire,`${varName(varId, opt)}`);
+				exp(wire, `${varName(varId, opt)}`);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { EdgeLabelRenderer, EdgeProps, XYPosition } from 'reactflow';
 import DragHandle from './DragHandle';
 import { getCustomSmoothStepPath } from 'lib/customSmoothStepPath';
+import { getEditorContext } from 'lib/editorContext';
 
 const DEBUG = true;
 const defaultHandleOffset = 5;
@@ -54,6 +55,8 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		centerX: (sourceX + targetX) / 2 + offset.x,
 		centerY: (sourceY + targetY) / 2 + offset.y,
 	});
+
+	const ctx = getEditorContext();
 
 	const checkMidHandle = (mid: XYPosition, midOffset: XYPosition) => {
 		const shX = sourceX + defaultHandleOffset + handleOffset.source;
@@ -234,7 +237,12 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 						}}
 						className='nodrag nopan'
 					>
-						<span>{id}</span>
+						<span>
+							{ctx.currentModule ?
+								`${ctx.currentModule.id}_`
+							:	''}
+							{id}
+						</span>
 					</div>
 				</EdgeLabelRenderer>
 			)}

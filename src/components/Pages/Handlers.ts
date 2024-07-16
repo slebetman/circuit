@@ -3,6 +3,7 @@ import generateId from 'lib/generateId';
 import varName from 'lib/normaliseVarName';
 import { SimState, simulator } from 'lib/simulator';
 import { SetStateAction } from 'react';
+import { Node } from 'reactflow';
 
 type Setter<t> = (v: SetStateAction<t>) => void;
 
@@ -135,11 +136,15 @@ export const handleCreateModule = () => {
 	}, 50);
 };
 
-export const handleEditModule = (type: string) => {
+export const handleEditModule = (n: Node) => {
+	const type = n.data.type;
 	const m = ctx.modules?.find((x) => x.type === type);
 
 	if (m) {
-		ctx.setCurrentModule?.(m);
+		ctx.setCurrentModule?.({
+			...m,
+			id: n.id,
+		});
 		ctx.setModuleEdges?.(m.edges);
 		ctx.setModuleNodes?.(m.nodes);
 		ctx.setMode?.('module');

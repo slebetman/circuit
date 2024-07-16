@@ -6,6 +6,7 @@ export type Module = {
 	label: string;
 	nodes: Node<any>[];
 	edges: Edge<any>[];
+	id?: string;
 };
 
 export type Chart = {

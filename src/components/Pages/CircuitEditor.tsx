@@ -216,7 +216,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 					editable={editable}
 					onNodeDoubleClick={(e, n) => {
 						if (n.type === 'module') {
-							handlers.handleEditModule(n.data.type);
+							handlers.handleEditModule(n);
 						}
 					}}
 				>
