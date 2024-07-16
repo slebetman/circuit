@@ -47,10 +47,10 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[],
+		[]
 	);
 	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[],
+		[]
 	);
 	const [modules, setModules] = useState<Module[]>([]);
 	const [currentModule, setCurrentModule] = useState<Module | null>(null);
@@ -73,7 +73,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				setEdges((eds) => addEdge(e, eds));
 			}
 		},
-		[setEdges, setModuleEdges, mode],
+		[setEdges, setModuleEdges, mode]
 	);
 	const chart = useChart();
 	const mod = useChart();
@@ -90,7 +90,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				compileNonRecursive({
 					nodes: n,
 					edges: e,
-				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
+				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1'))
 			);
 		}
 	}, [codeOpen, nodes, edges]);
@@ -220,41 +220,52 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						}
 					}}
 				>
-					{sim && (
+					{sim && mode !== 'module' && (
 						<Panel position='top-center' style={titlePanelStyle}>
 							Simulation running..
 						</Panel>
 					)}
 					{mode === 'module' && (
 						<Panel position='top-center' style={titlePanelStyle}>
-							<span style={{ marginRight: '5px' }}>
-								Edit Module:
-							</span>
-							<input
-								style={{
-									...titleFont,
-									padding: '5px 10px',
-									borderRadius: '5px',
-									border: '1px solid #999',
-								}}
-								type='text'
-								value={currentModule?.label}
-								onChange={(e) => {
-									const val = e.currentTarget?.value;
+							{!sim ? (
+								<>
+									<span style={{ marginRight: '5px' }}>
+										Edit Module:
+									</span>
+									<input
+										style={{
+											...titleFont,
+											padding: '5px 10px',
+											borderRadius: '5px',
+											border: '1px solid #999',
+										}}
+										type='text'
+										value={currentModule?.label}
+										onChange={(e) => {
+											const val = e.currentTarget?.value;
 
-									if (val !== undefined) {
-										setCurrentModule((prevModule) => {
-											if (prevModule) {
-												return {
-													...prevModule,
-													label: val,
-												};
+											if (val !== undefined) {
+												setCurrentModule(
+													(prevModule) => {
+														if (prevModule) {
+															return {
+																...prevModule,
+																label: val,
+															};
+														}
+														return null;
+													}
+												);
 											}
-											return null;
-										});
-									}
-								}}
-							/>
+										}}
+									/>
+								</>
+							) : (
+								<span>
+									Simulation running.. Module:{' '}
+									{currentModule?.label}
+								</span>
+							)}
 						</Panel>
 					)}
 					<ToolPanel
@@ -269,7 +280,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 							run: handlers.handleSim,
 							tools: handlers.handleTools(
 								setNodesPaletteOpen,
-								setModulesPaletteOpen,
+								setModulesPaletteOpen
 							),
 							backToChart: handlers.handleSaveModule,
 						}}

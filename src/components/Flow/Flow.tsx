@@ -32,7 +32,7 @@ const onlyOneConnectionPerInput =
 		const targetHandle = connection.targetHandle;
 
 		return !edges?.find(
-			(e) => e.target === target && e.targetHandle === targetHandle,
+			(e) => e.target === target && e.targetHandle === targetHandle
 		);
 	};
 

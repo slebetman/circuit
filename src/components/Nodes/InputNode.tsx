@@ -1,3 +1,4 @@
+import { getEditorContext } from 'lib/editorContext';
 import { memo, FC, useState, FormEvent, CSSProperties, useEffect } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 
@@ -29,13 +30,15 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 	const [editmode, setEditmode] = useState(false);
 	const [label, setLabel] = useState(data.label);
 
-	const handleCommentClick = () => {
-		if (!data.sim) {
+	const ctx = getEditorContext();
+
+	const handleEditMode = () => {
+		if (!ctx.sim) {
 			setEditmode(true);
 		}
 	};
 
-	const handleCommentInput = (e: FormEvent<HTMLInputElement>) => {
+	const handleEditInput = (e: FormEvent<HTMLInputElement>) => {
 		setLabel(e.currentTarget.value);
 	};
 
@@ -45,19 +48,20 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 
 	return (
 		<>
-			{editmode ?
+			{editmode ? (
 				<div style={editStyle}>
 					<input
 						type='text'
 						value={label}
-						onChange={handleCommentInput}
+						onChange={handleEditInput}
 						onBlur={() => setEditmode(false)}
 						style={inputStyle}
 						size={label.length || 1}
 					/>
 					<button onClick={() => setEditmode(false)}>OK</button>
 				</div>
-			:	<div
+			) : (
+				<div
 					onClick={(e) => {
 						if (data.sim) {
 							data.sim(!data.on);
@@ -65,22 +69,23 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 							e.stopPropagation();
 						}
 					}}
-					onDoubleClick={handleCommentClick}
+					onDoubleClick={handleEditMode}
 					style={{
 						...nodeStyle,
 						zIndex: '9999999',
 						borderWidth: selected ? '2px' : '1px',
 						marginLeft: selected ? '-2px' : '0px',
-						backgroundColor:
-							data.on ? '#9f9'
-							: data.on === false ? '#aaa'
+						backgroundColor: data.on
+							? '#9f9'
+							: data.on === false
+							? '#aaa'
 							: '#fff',
-						cursor: data.sim ? 'pointer' : 'grab',
+						cursor: ctx.sim ? 'pointer' : 'grab',
 					}}
 				>
 					{label}
 				</div>
-			}
+			)}
 			<Handle type='source' id='c' position={Position.Right} />
 		</>
 	);
