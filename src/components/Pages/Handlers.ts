@@ -229,7 +229,7 @@ const startSim = () => {
 	);
 
 	const updater = (state: SimState) => {
-		if (!ctx.currentModule) {
+		if (!ctx.currentModule?.length) {
 			ctx.setNodes?.((prevNodes) =>
 				prevNodes.map((n) => {
 					if (state[n.id] !== undefined) {
