@@ -1,6 +1,6 @@
 import { Edge, Node } from 'reactflow';
 
-import { compile, compileNonRecursive } from './compiler';
+import { compileNonRecursive } from './compiler';
 import varName from './normaliseVarName';
 
 type ComilerOptions = {
@@ -20,45 +20,6 @@ export type SimObject = {
 };
 
 export type UpdaterFunction = (state: SimState) => void;
-
-export const compileForSim = (opt: ComilerOptions) => {
-	const inputs = opt.nodes
-		.filter((x) => x.type === 'in')
-		.map((x) => varName(x.id));
-
-	const outputs = opt.nodes
-		.filter((x) => x.type === 'out')
-		.map((x) => varName(x.id));
-
-	const expressions = compile({
-		...opt,
-		getId: (n) => n.id,
-		useThis: true,
-		all: true,
-	});
-
-	console.log(expressions);
-
-	let ret = {
-		inputs,
-		outputs,
-		state: {
-			...inputs.reduce((a, v) => {
-				a[v] = false;
-				return a;
-			}, {} as SimState),
-		},
-	};
-
-	expressions.forEach((v) => {
-		const [key, ...expr] = v.split('=').map((x) => x.trim());
-		ret.state[key] = undefined;
-		const functionBody = `this["${key}"] = ${expr.join('=')}`;
-		ret.state[`func_${key}`] = new Function(functionBody);
-	});
-
-	return ret;
-};
 
 export const compileForSimNonRecursive = (opt: ComilerOptions) => {
 	const inputs = opt.nodes
