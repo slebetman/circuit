@@ -62,8 +62,7 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 				</div>
 			:	<div
 					onClick={(e) => {
-						if (data.sim) {
-							data.sim(!data.on);
+						if (ctx.sim) {
 							e.preventDefault();
 							e.stopPropagation();
 						}
@@ -81,7 +80,26 @@ const InputNode: FC<NodeProps> = ({ data, id, selected }) => {
 						cursor: ctx.sim ? 'pointer' : 'grab',
 					}}
 				>
-					{label}
+					{data.sim ?
+						<button
+							onClick={(e) => {
+								data.sim(!data.on);
+								e.preventDefault();
+								e.stopPropagation();
+							}}
+							style={{
+								...labelFont,
+								position: 'relative',
+								top: '-3px',
+								height: '14px',
+								borderRadius: '6px',
+								padding: '2px',
+								borderWidth: '1px',
+							}}
+						>
+							{label}
+						</button>
+					:	label}
 				</div>
 			}
 			<Handle type='source' id='c' position={Position.Right} />

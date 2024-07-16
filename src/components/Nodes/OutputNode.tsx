@@ -62,6 +62,12 @@ const OutputNode: FC<NodeProps> = ({ data, id, selected }) => {
 					<button onClick={() => setEditmode(false)}>OK</button>
 				</div>
 			:	<div
+					onClick={(e) => {
+						if (ctx.sim) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+					}}
 					onDoubleClick={handleEditMode}
 					style={{
 						...nodeStyle,
