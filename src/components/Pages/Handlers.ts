@@ -114,7 +114,7 @@ export const handleDeleteModule = (type: string) => {
 	});
 	ctx.instance?.deleteElements({
 		nodes: ctx.nodes?.filter(
-			(x) => x.type === 'module' && x.data.type === type,
+			(x) => x.type === 'module' && x.data.type === type
 		),
 	});
 };
@@ -160,7 +160,7 @@ export const handleSaveModule = () => {
 	if (ctx.currentModule) {
 		ctx.setModules?.((prevModules) => {
 			const m = prevModules.filter(
-				(m) => m.type !== ctx.currentModule?.type,
+				(m) => m.type !== ctx.currentModule?.type
 			);
 			m.push({
 				type: ctx.currentModule?.type || '',
@@ -195,7 +195,7 @@ const startSim = () => {
 				};
 			}
 			return n;
-		}),
+		})
 	);
 
 	const updater = (state: SimState) => {
@@ -208,15 +208,16 @@ const startSim = () => {
 					};
 				}
 				return n;
-			}),
+			})
 		);
 		ctx.setEdges?.((prevEdges) =>
 			prevEdges.map((e) => {
 				e.data = {
+					...e.data,
 					on: state[varName(e.id)],
 				};
 				return e;
-			}),
+			})
 		);
 	};
 
@@ -240,13 +241,13 @@ const stopSim = () => {
 					};
 				}
 				return n;
-			}),
+			})
 		);
 		ctx.setEdges?.((prevEdges) =>
 			prevEdges.map((e) => {
 				e.data = {};
 				return e;
-			}),
+			})
 		);
 
 		ctx.setSim?.(null);
