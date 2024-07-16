@@ -238,8 +238,8 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 						className='nodrag nopan'
 					>
 						<span>
-							{ctx.currentModule ?
-								`${ctx.currentModule.id}_`
+							{ctx.currentModule?.length ?
+								`${ctx.currentModule[0].id}_`
 							:	''}
 							{id}
 						</span>
