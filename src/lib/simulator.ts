@@ -80,9 +80,12 @@ export const simulator = (opt: ComilerOptions) => {
 		return newState;
 	}
 
+	const SPEED = 1;// 19, 313, 1913, 2687
+	const DELAY = 0;
+
 	function start(updater?: UpdaterFunction) {
 		stop();
-		interval = setInterval(() => step(updater));
+		interval = setInterval(() => {for (let i=0; i<SPEED; i++) step(updater)}, DELAY);
 	}
 
 	function set(key: string, val: boolean) {
