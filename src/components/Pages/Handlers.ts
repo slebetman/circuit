@@ -200,26 +200,55 @@ const startSim = () => {
 	);
 
 	const updater = (state: SimState) => {
-		ctx.setNodes?.((prevNodes) =>
-			prevNodes.map((n) => {
-				if (state[n.id] !== undefined) {
-					n.data = {
-						...n.data,
-						on: state[n.id],
+		if (!ctx.currentModule) {
+			ctx.setNodes?.((prevNodes) =>
+				prevNodes.map((n) => {
+					if (state[n.id] !== undefined) {
+						n.data = {
+							...n.data,
+							on: state[n.id],
+						};
+					}
+					return n;
+				})
+			);
+			ctx.setEdges?.((prevEdges) =>
+				prevEdges.map((e) => {
+					e.data = {
+						...e.data,
+						on: state[varName(e.id)],
 					};
-				}
-				return n;
-			})
-		);
-		ctx.setEdges?.((prevEdges) =>
-			prevEdges.map((e) => {
-				e.data = {
-					...e.data,
-					on: state[varName(e.id)],
-				};
-				return e;
-			})
-		);
+					return e;
+				})
+			);
+		} else {
+			ctx.setModuleNodes?.((prevNodes) =>
+				prevNodes.map((n) => {
+					if (
+						state[`${ctx.currentModule?.id}_${n.id}`] !== undefined
+					) {
+						n.data = {
+							...n.data,
+							on: state[`${ctx.currentModule?.id}_${n.id}`],
+						};
+					}
+					return n;
+				})
+			);
+			ctx.setModuleEdges?.((prevEdges) =>
+				prevEdges.map((e) => {
+					const key = varName(e.id, {
+						prefix: ctx.currentModule?.id,
+					});
+					const val = state[key];
+					e.data = {
+						...e.data,
+						on: val,
+					};
+					return e;
+				})
+			);
+		}
 	};
 
 	s.start(updater);
