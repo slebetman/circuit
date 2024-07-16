@@ -168,7 +168,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						<Panel position='top-center' style={titlePanelStyle}>
 							Simulation running..
 							{ctx.mode === 'module' && (
-								<span style={{marginLeft:'10px'}}>
+								<span style={{ marginLeft: '10px' }}>
 									Module: {ctx.currentModule[0]?.label}
 								</span>
 							)}

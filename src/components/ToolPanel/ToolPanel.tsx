@@ -95,11 +95,20 @@ const ToolPanel: FC<ToolPanelProp> = ({
 					onClick={handlers.backToChart}
 					title='Back'
 				/>
+				<Divider />
 				<ToolButton
+					icon={Network}
 					label='Nodes'
 					onClick={handlers.tools}
 					actionType='nodes'
 					title='Nodes pallete'
+				/>
+				<ToolButton
+					icon={Box}
+					label='Modules'
+					onClick={handlers.tools}
+					actionType='modules'
+					title='Modules pallete'
 				/>
 				<Divider />
 				<ToolButton

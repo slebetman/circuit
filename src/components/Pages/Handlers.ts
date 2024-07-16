@@ -120,12 +120,15 @@ export const handleDeleteModule = (type: string) => {
 };
 
 export const handleCreateModule = () => {
-	ctx.setCurrentModule?.((prevModule) => ([{
-		type: `${generateId(ctx.instance || null)}`,
-		label: '',
-		nodes: [],
-		edges: [],
-	}, ...prevModule]));
+	ctx.setCurrentModule?.((prevModule) => [
+		{
+			type: `${generateId(ctx.instance || null)}`,
+			label: '',
+			nodes: [],
+			edges: [],
+		},
+		...prevModule,
+	]);
 	ctx.setModuleEdges?.([]);
 	ctx.setModuleNodes?.([]);
 	ctx.setMode?.('module');
@@ -142,10 +145,13 @@ export const handleEditModule = (n: Node | string) => {
 	const m = ctx.modules?.find((x) => x.type === type);
 
 	if (m) {
-		ctx.setCurrentModule?.((prevModule) => ([{
-			...m,
-			id,
-		}, ...prevModule]));
+		ctx.setCurrentModule?.((prevModule) => [
+			{
+				...m,
+				id,
+			},
+			...prevModule,
+		]);
 		ctx.setModuleEdges?.(m.edges);
 		ctx.setModuleNodes?.(m.nodes);
 		ctx.setMode?.('module');
@@ -157,7 +163,7 @@ export const handleEditModule = (n: Node | string) => {
 	}
 };
 
-const resetNodeData = (n:Node) => {
+const resetNodeData = (n: Node) => {
 	if (n.data) {
 		delete n.data.on;
 		delete n.data.sim;
@@ -166,14 +172,14 @@ const resetNodeData = (n:Node) => {
 		};
 	}
 	return n;
-}
+};
 
 const resetEdgeData = (e: Edge) => {
 	delete e.data.on;
 	delete e.data.sim;
 	e.data = { ...e.data };
 	return e;
-}
+};
 
 export const handleSaveModule = () => {
 	if (ctx.currentModule) {
@@ -191,9 +197,10 @@ export const handleSaveModule = () => {
 		});
 		if (ctx.currentModule?.length <= 1) {
 			ctx.setMode?.('chart');
-		}
-		else {
-			const m = ctx.modules?.find((x) => x.type === ctx.currentModule?.[1]?.type);
+		} else {
+			const m = ctx.modules?.find(
+				(x) => x.type === ctx.currentModule?.[1]?.type,
+			);
 
 			if (m) {
 				ctx.setModuleEdges?.(m.edges);
@@ -205,7 +212,7 @@ export const handleSaveModule = () => {
 				padding: 0.25,
 			});
 		}, 50);
-		ctx.setCurrentModule?.((prevModule) => ([...prevModule.slice(1)]));
+		ctx.setCurrentModule?.((prevModule) => [...prevModule.slice(1)]);
 	}
 };
 
@@ -254,7 +261,8 @@ const startSim = () => {
 			ctx.setModuleNodes?.((prevNodes) =>
 				prevNodes.map((n) => {
 					if (
-						state[`${ctx.currentModule?.[0]?.id}_${n.id}`] !== undefined
+						state[`${ctx.currentModule?.[0]?.id}_${n.id}`] !==
+						undefined
 					) {
 						n.data = {
 							...n.data,
@@ -290,12 +298,8 @@ const stopSim = () => {
 	if (ctx.sim) {
 		ctx.sim.stop();
 
-		ctx.setNodes?.((prevNodes) =>
-			prevNodes.map(resetNodeData),
-		);
-		ctx.setEdges?.((prevEdges) =>
-			prevEdges.map(resetEdgeData),
-		);
+		ctx.setNodes?.((prevNodes) => prevNodes.map(resetNodeData));
+		ctx.setEdges?.((prevEdges) => prevEdges.map(resetEdgeData));
 
 		ctx.setSim?.(null);
 	}

@@ -2,6 +2,7 @@ import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
 import ToolButton from 'components/ToolPanel/ToolButton';
 import { Module } from 'hooks/useChart';
+import { getEditorContext } from 'lib/editorContext';
 
 type ModulesDialogProps = {
 	modules: Module[];
@@ -26,6 +27,8 @@ const ModulesDialog = ({
 	deleteModule,
 	visible,
 }: ModulesDialogProps) => {
+	const ctx = getEditorContext();
+
 	return (
 		<Popup
 			title='Modules'
@@ -58,42 +61,53 @@ const ModulesDialog = ({
 					flexDirection: 'column',
 				}}
 			>
-				{modules?.map((module, idx) => (
-					<div
-						key={`${module.type}${idx}`}
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							gap: '2px',
-						}}
-					>
-						<ToolButton
-							icon={Box}
-							label={module.label}
-							onClick={onClick}
-							actionType={`module:${module.label}:${module.type}`}
-							style={{
-								height: '50px',
-								width: '100px',
-							}}
-						/>
+				{modules
+					?.filter((module) => {
+						// Avoid recursively nested modules
+						return !ctx.currentModule?.find(
+							(m) => m.type === module.type,
+						);
+					})
+					.map((module, idx) => (
 						<div
+							key={`${module.type}${idx}`}
 							style={{
 								display: 'flex',
-								flexDirection: 'column',
+								flexDirection: 'row',
 								gap: '2px',
-								justifyContent: 'center',
 							}}
 						>
-							<button onClick={() => editModule?.(module.type)}>
-								Edit
-							</button>
-							<button onClick={() => deleteModule?.(module.type)}>
-								Delete
-							</button>
+							<ToolButton
+								icon={Box}
+								label={module.label}
+								onClick={onClick}
+								actionType={`module:${module.label}:${module.type}`}
+								style={{
+									height: '50px',
+									width: '100px',
+								}}
+							/>
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '2px',
+									justifyContent: 'center',
+								}}
+							>
+								<button
+									onClick={() => editModule?.(module.type)}
+								>
+									Edit
+								</button>
+								<button
+									onClick={() => deleteModule?.(module.type)}
+								>
+									Delete
+								</button>
+							</div>
 						</div>
-					</div>
-				))}
+					))}
 			</div>
 		</Popup>
 	);

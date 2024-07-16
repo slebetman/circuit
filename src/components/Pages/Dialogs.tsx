@@ -42,7 +42,7 @@ const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose }) => {
 				editModule={handlers.handleEditModule}
 				deleteModule={handlers.handleDeleteModule}
 				modules={ctx.modules || []}
-				visible={ctx.mode !== 'module'}
+				// visible={ctx.mode !== 'module'}
 			/>
 			<CodeDialog
 				isOpen={ctx.codeOpen || false}
