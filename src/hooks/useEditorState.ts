@@ -15,7 +15,7 @@ export const useEditorState = () => {
 		[],
 	);
 	const [modules, setModules] = useState<Module[]>([]);
-	const [currentModule, setCurrentModule] = useState<Module | null>(null);
+	const [currentModule, setCurrentModule] = useState<Module[]>([]);
 	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
 	const [mode, setMode] = useState<EditorMode>('chart');
 	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);

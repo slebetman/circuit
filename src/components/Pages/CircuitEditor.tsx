@@ -169,7 +169,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 							Simulation running..
 							{ctx.mode === 'module' && (
 								<span style={{marginLeft:'10px'}}>
-									Module: {ctx.currentModule?.label}
+									Module: {ctx.currentModule[0]?.label}
 								</span>
 							)}
 						</Panel>
@@ -186,19 +186,19 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 									border: '1px solid #999',
 								}}
 								type='text'
-								value={ctx.currentModule?.label}
+								value={ctx.currentModule[0]?.label}
 								onChange={(e) => {
 									const val = e.currentTarget?.value;
 
 									if (val !== undefined) {
 										ctx.setCurrentModule((prevModule) => {
-											if (prevModule) {
-												return {
-													...prevModule,
+											if (prevModule.length) {
+												prevModule[0] = {
+													...prevModule[0],
 													label: val,
 												};
 											}
-											return null;
+											return [...prevModule];
 										});
 									}
 								}}

@@ -14,8 +14,8 @@ export type EditorMode = 'open' | 'import' | 'save' | 'chart' | 'module';
 
 export type EditorContextType = {
 	chartContainerRef?: MutableRefObject<any>;
-	currentModule?: Module | null;
-	setCurrentModule?: Dispatch<SetStateAction<Module | null>>;
+	currentModule?: Module[];
+	setCurrentModule?: Dispatch<SetStateAction<Module[]>>;
 	modules?: Module[];
 	setModules?: Dispatch<SetStateAction<Module[]>>;
 	nodes?: Node[];

@@ -120,12 +120,12 @@ export const handleDeleteModule = (type: string) => {
 };
 
 export const handleCreateModule = () => {
-	ctx.setCurrentModule?.({
+	ctx.setCurrentModule?.((prevModule) => ([{
 		type: `${generateId(ctx.instance || null)}`,
 		label: '',
 		nodes: [],
 		edges: [],
-	});
+	}, ...prevModule]));
 	ctx.setModuleEdges?.([]);
 	ctx.setModuleNodes?.([]);
 	ctx.setMode?.('module');
@@ -142,10 +142,10 @@ export const handleEditModule = (n: Node | string) => {
 	const m = ctx.modules?.find((x) => x.type === type);
 
 	if (m) {
-		ctx.setCurrentModule?.({
+		ctx.setCurrentModule?.((prevModule) => ([{
 			...m,
 			id,
-		});
+		}, ...prevModule]));
 		ctx.setModuleEdges?.(m.edges);
 		ctx.setModuleNodes?.(m.nodes);
 		ctx.setMode?.('module');
@@ -179,23 +179,33 @@ export const handleSaveModule = () => {
 	if (ctx.currentModule) {
 		ctx.setModules?.((prevModules) => {
 			const m = prevModules.filter(
-				(m) => m.type !== ctx.currentModule?.type,
+				(m) => m.type !== ctx.currentModule?.[0]?.type,
 			);
 			m.push({
-				type: ctx.currentModule?.type || '',
-				label: ctx.currentModule?.label || '',
+				type: ctx.currentModule?.[0]?.type || '',
+				label: ctx.currentModule?.[0]?.label || '',
 				nodes: [...(ctx.moduleNodes?.map(resetNodeData) || [])],
 				edges: [...(ctx.moduleEdges?.map(resetEdgeData) || [])],
 			});
 			return m;
 		});
-		ctx.setMode?.('chart');
+		if (ctx.currentModule?.length <= 1) {
+			ctx.setMode?.('chart');
+		}
+		else {
+			const m = ctx.modules?.find((x) => x.type === ctx.currentModule?.[1]?.type);
+
+			if (m) {
+				ctx.setModuleEdges?.(m.edges);
+				ctx.setModuleNodes?.(m.nodes);
+			}
+		}
 		setTimeout(() => {
 			ctx.instance?.fitView({
 				padding: 0.25,
 			});
 		}, 50);
-		ctx.setCurrentModule?.(null);
+		ctx.setCurrentModule?.((prevModule) => ([...prevModule.slice(1)]));
 	}
 };
 
@@ -244,11 +254,11 @@ const startSim = () => {
 			ctx.setModuleNodes?.((prevNodes) =>
 				prevNodes.map((n) => {
 					if (
-						state[`${ctx.currentModule?.id}_${n.id}`] !== undefined
+						state[`${ctx.currentModule?.[0]?.id}_${n.id}`] !== undefined
 					) {
 						n.data = {
 							...n.data,
-							on: state[`${ctx.currentModule?.id}_${n.id}`],
+							on: state[`${ctx.currentModule?.[0]?.id}_${n.id}`],
 						};
 					}
 					return n;
@@ -257,7 +267,7 @@ const startSim = () => {
 			ctx.setModuleEdges?.((prevEdges) =>
 				prevEdges.map((e) => {
 					const key = varName(e.id, {
-						prefix: ctx.currentModule?.id,
+						prefix: ctx.currentModule?.[0]?.id,
 					});
 					const val = state[key];
 					e.data = {

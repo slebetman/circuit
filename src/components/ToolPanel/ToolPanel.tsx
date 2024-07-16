@@ -93,7 +93,7 @@ const ToolPanel: FC<ToolPanelProp> = ({
 				<ToolButton
 					icon={ArrowBack}
 					onClick={handlers.backToChart}
-					title='Open circuit'
+					title='Back'
 				/>
 				<ToolButton
 					label='Nodes'
