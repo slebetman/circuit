@@ -5,7 +5,7 @@ import { EditorMode, setEditorContext } from 'lib/editorContext';
 import { SimObject } from 'lib/simulator';
 import { useRouter } from 'next/router';
 
-export const useEditorContext = () => {
+export const useEditorState = () => {
 	const [nodes, setNodes, onNodesChange] = useNodesState([]);
 	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(

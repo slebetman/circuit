@@ -10,7 +10,7 @@ import { setChartRef } from 'lib/chartRefs';
 import * as handlers from './Handlers';
 import { setEditorContext } from 'lib/editorContext';
 import Dialogs from './Dialogs';
-import { useEditorContext } from 'hooks/useEditorContext';
+import { useEditorState } from 'hooks/useEditorState';
 
 type EditorProps = {
 	fileName?: string;
@@ -28,7 +28,7 @@ const titlePanelStyle: CSSProperties = {
 };
 
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
-	const ctx = useEditorContext();
+	const ctx = useEditorState();
 
 	const onConnect = useCallback(
 		(params: Connection | Edge) => {
