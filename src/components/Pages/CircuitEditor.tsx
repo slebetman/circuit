@@ -80,30 +80,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 
 	useEffect(() => {
 		const name = ctx.mod.name;
-		const found = ctx.modules.find((x) => x.label === name);
-
-		if (found) {
-			return ctx.setError('Module has already been imported!');
-		}
-
-		if (ctx.mod.chart?.modules && ctx.mod.chart.modules.length > 0) {
-			return ctx.setError('Cannot import modules containing modules!');
-		}
-
-		if (ctx.mod.chart) {
-			ctx.setModules((prevModules) => {
-				const m = [
-					...prevModules,
-					{
-						label: ctx.mod.name,
-						type: ctx.mod.name,
-						nodes: ctx.mod.chart?.nodes,
-						edges: ctx.mod.chart?.edges,
-					} as Module,
-				];
-				return m;
-			});
-		}
+		handlers.loadModule(name, ctx.mod.chart);
 	}, [ctx.mod.chart]);
 
 	useEffect(() => {

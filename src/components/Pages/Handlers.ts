@@ -1,3 +1,4 @@
+import { Chart, Module } from 'hooks/useChart';
 import { getEditorContext } from 'lib/editorContext';
 import generateId from 'lib/generateId';
 import varName from 'lib/normaliseVarName';
@@ -302,5 +303,39 @@ const stopSim = () => {
 		ctx.setEdges?.((prevEdges) => prevEdges.map(resetEdgeData));
 
 		ctx.setSim?.(null);
+	}
+};
+
+export const loadModule = (name: string, chart: Chart | null | undefined) => {
+	const found = ctx.modules?.find((x) => x.label === name);
+
+	if (found) {
+		return ctx.setError('Module has already been imported!');
+	}
+
+	if (chart) {
+		ctx.setModules?.((prevModules) => {
+			const importedModules = [];
+
+			if (chart.modules?.length) {
+				importedModules.push(
+					...chart.modules.filter(
+						(m) => !prevModules.find((x) => x.type === m.type),
+					),
+				);
+			}
+
+			const m = [
+				...prevModules,
+				{
+					label: name,
+					type: name,
+					nodes: chart.nodes,
+					edges: chart.edges,
+				} as Module,
+				...importedModules,
+			];
+			return m;
+		});
 	}
 };
