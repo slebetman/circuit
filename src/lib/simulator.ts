@@ -82,7 +82,7 @@ export const simulator = (opt: ComilerOptions) => {
 
 	function start(updater?: UpdaterFunction) {
 		stop();
-		interval = setInterval(() => step(updater), 10);
+		interval = setInterval(() => step(updater));
 	}
 
 	function set(key: string, val: boolean) {
