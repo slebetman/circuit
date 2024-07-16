@@ -176,6 +176,7 @@ export const handleSaveModule = () => {
 				padding: 0.25,
 			});
 		}, 50);
+		ctx.setCurrentModule?.(null);
 	}
 };
 
