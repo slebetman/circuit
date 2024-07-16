@@ -9,7 +9,7 @@ import {
 import Flow from 'components/Flow/Flow';
 
 import useChart, { Module } from 'hooks/useChart';
-import { compile, compileNonRecursive } from 'lib/compiler';
+import { compile } from 'lib/compiler';
 import { useRouter } from 'next/router';
 import {
 	addEdge,
@@ -87,7 +87,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			const e = instance.getEdges();
 
 			setCode(
-				compileNonRecursive({
+				compile({
 					nodes: n,
 					edges: e,
 				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
