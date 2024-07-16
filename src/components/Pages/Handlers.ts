@@ -245,7 +245,8 @@ const stopSim = () => {
 		);
 		ctx.setEdges?.((prevEdges) =>
 			prevEdges.map((e) => {
-				e.data = {};
+				delete e.data.on;
+				e.data = { ...e.data };
 				return e;
 			})
 		);
