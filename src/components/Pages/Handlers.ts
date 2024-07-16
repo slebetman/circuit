@@ -3,7 +3,7 @@ import generateId from 'lib/generateId';
 import varName from 'lib/normaliseVarName';
 import { SimState, simulator } from 'lib/simulator';
 import { SetStateAction } from 'react';
-import { Node } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 
 type Setter<t> = (v: SetStateAction<t>) => void;
 
@@ -136,14 +136,15 @@ export const handleCreateModule = () => {
 	}, 50);
 };
 
-export const handleEditModule = (n: Node) => {
-	const type = n.data.type;
+export const handleEditModule = (n: Node | string) => {
+	const type = typeof n === 'string' ? n : n.data.type;
+	const id = typeof n === 'string' ? '' : n.id;
 	const m = ctx.modules?.find((x) => x.type === type);
 
 	if (m) {
 		ctx.setCurrentModule?.({
 			...m,
-			id: n.id,
+			id,
 		});
 		ctx.setModuleEdges?.(m.edges);
 		ctx.setModuleNodes?.(m.nodes);
@@ -156,6 +157,24 @@ export const handleEditModule = (n: Node) => {
 	}
 };
 
+const resetNodeData = (n:Node) => {
+	if (n.data) {
+		delete n.data.on;
+		delete n.data.sim;
+		n.data = {
+			...n.data,
+		};
+	}
+	return n;
+}
+
+const resetEdgeData = (e: Edge) => {
+	delete e.data.on;
+	delete e.data.sim;
+	e.data = { ...e.data };
+	return e;
+}
+
 export const handleSaveModule = () => {
 	if (ctx.currentModule) {
 		ctx.setModules?.((prevModules) => {
@@ -165,8 +184,8 @@ export const handleSaveModule = () => {
 			m.push({
 				type: ctx.currentModule?.type || '',
 				label: ctx.currentModule?.label || '',
-				nodes: [...(ctx.moduleNodes || [])],
-				edges: [...(ctx.moduleEdges || [])],
+				nodes: [...(ctx.moduleNodes?.map(resetNodeData) || [])],
+				edges: [...(ctx.moduleEdges?.map(resetEdgeData) || [])],
 			});
 			return m;
 		});
@@ -262,23 +281,10 @@ const stopSim = () => {
 		ctx.sim.stop();
 
 		ctx.setNodes?.((prevNodes) =>
-			prevNodes.map((n) => {
-				if (n.data) {
-					delete n.data.on;
-					delete n.data.sim;
-					n.data = {
-						...n.data,
-					};
-				}
-				return n;
-			}),
+			prevNodes.map(resetNodeData),
 		);
 		ctx.setEdges?.((prevEdges) =>
-			prevEdges.map((e) => {
-				delete e.data.on;
-				e.data = { ...e.data };
-				return e;
-			}),
+			prevEdges.map(resetEdgeData),
 		);
 
 		ctx.setSim?.(null);

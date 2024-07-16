@@ -1,32 +1,16 @@
-import {
-	CSSProperties,
-	FC,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { CSSProperties, FC, useCallback, useEffect, useRef } from 'react';
 import Flow from 'components/Flow/Flow';
 
-import useChart, { Module } from 'hooks/useChart';
+import { Module } from 'hooks/useChart';
 import { compile } from 'lib/compiler';
-import { useRouter } from 'next/router';
-import {
-	addEdge,
-	Connection,
-	Edge,
-	Panel,
-	ReactFlowInstance,
-	useEdgesState,
-	useNodesState,
-} from 'reactflow';
+import { addEdge, Connection, Edge, Panel } from 'reactflow';
 import ToolPanel from 'components/ToolPanel/ToolPanel';
-import { SimObject } from 'lib/simulator';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
 import { setChartRef } from 'lib/chartRefs';
 import * as handlers from './Handlers';
-import { EditorMode, setEditorContext } from 'lib/editorContext';
+import { setEditorContext } from 'lib/editorContext';
 import Dialogs from './Dialogs';
+import { useEditorContext } from 'hooks/useEditorContext';
 
 type EditorProps = {
 	fileName?: string;
@@ -44,153 +28,109 @@ const titlePanelStyle: CSSProperties = {
 };
 
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
-	const [nodes, setNodes, onNodesChange] = useNodesState([]);
-	const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-	const [moduleNodes, setModuleNodes, onModuleNodesChange] = useNodesState(
-		[],
-	);
-	const [moduleEdges, setModuleEdges, onModuleEdgesChange] = useEdgesState(
-		[],
-	);
-	const [modules, setModules] = useState<Module[]>([]);
-	const [currentModule, setCurrentModule] = useState<Module | null>(null);
-	const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
-	const [mode, setMode] = useState<EditorMode>('chart');
-	const [nodesPaletteOpen, setNodesPaletteOpen] = useState(false);
-	const [modulesPaletteOpen, setModulesPaletteOpen] = useState(false);
-	const [codeOpen, setCodeOpen] = useState(false);
-	const [code, setCode] = useState<string[]>([]);
-	const [sim, setSim] = useState<SimObject | null>(null);
-	const [editable, setEditable] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const ctx = useEditorContext();
+
 	const onConnect = useCallback(
 		(params: Connection | Edge) => {
 			const e = params as Edge<any>;
 			e.data = {};
-			if (mode === 'module') {
-				setModuleEdges((eds) => addEdge(e, eds));
+			if (ctx.mode === 'module') {
+				ctx.setModuleEdges((eds) => addEdge(e, eds));
 			} else {
-				setEdges((eds) => addEdge(e, eds));
+				ctx.setEdges((eds) => addEdge(e, eds));
 			}
 		},
-		[setEdges, setModuleEdges, mode],
+		[ctx.setEdges, ctx.setModuleEdges, ctx.mode],
 	);
-	const chart = useChart();
-	const mod = useChart();
-	const router = useRouter();
 
 	const chartContainerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		if (instance && codeOpen) {
-			const n = instance.getNodes();
-			const e = instance.getEdges();
+		if (ctx.instance && ctx.codeOpen) {
+			const n = ctx.instance.getNodes();
+			const e = ctx.instance.getEdges();
 
-			setCode(
+			ctx.setCode(
 				compile({
 					nodes: n,
 					edges: e,
 				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
 			);
 		}
-	}, [codeOpen, nodes, edges]);
+	}, [ctx.codeOpen, ctx.nodes, ctx.edges]);
 
 	useEffect(() => {
-		if (chart.chart) {
+		if (ctx.chart.chart) {
 			// HACK: Not sure why but need some delay to set nodes
-			setNodes([]);
-			setEdges([]);
-			setModules([]);
+			ctx.setNodes([]);
+			ctx.setEdges([]);
+			ctx.setModules([]);
 			setTimeout(() => {
-				setNodes(chart.chart?.nodes || []);
-				setEdges(chart.chart?.edges || []);
-				setModules(chart.chart?.modules || []);
+				ctx.setNodes(ctx.chart.chart?.nodes || []);
+				ctx.setEdges(ctx.chart.chart?.edges || []);
+				ctx.setModules(ctx.chart.chart?.modules || []);
 				setTimeout(() => {
-					instance?.fitView({
+					ctx.instance?.fitView({
 						padding: 0.25,
 					});
 				}, 50);
 			}, 0);
 		}
-	}, [chart.chart]);
+	}, [ctx.chart.chart]);
 
 	useEffect(() => {
-		const name = mod.name;
-		const found = modules.find((x) => x.label === name);
+		const name = ctx.mod.name;
+		const found = ctx.modules.find((x) => x.label === name);
 
 		if (found) {
-			return setError('Module has already been imported!');
+			return ctx.setError('Module has already been imported!');
 		}
 
-		if (mod.chart?.modules && mod.chart.modules.length > 0) {
-			return setError('Cannot import modules containing modules!');
+		if (ctx.mod.chart?.modules && ctx.mod.chart.modules.length > 0) {
+			return ctx.setError('Cannot import modules containing modules!');
 		}
 
-		if (mod.chart) {
-			setModules((prevModules) => {
+		if (ctx.mod.chart) {
+			ctx.setModules((prevModules) => {
 				const m = [
 					...prevModules,
 					{
-						label: mod.name,
-						type: mod.name,
-						nodes: mod.chart?.nodes,
-						edges: mod.chart?.edges,
+						label: ctx.mod.name,
+						type: ctx.mod.name,
+						nodes: ctx.mod.chart?.nodes,
+						edges: ctx.mod.chart?.edges,
 					} as Module,
 				];
 				return m;
 			});
 		}
-	}, [mod.chart]);
+	}, [ctx.mod.chart]);
 
 	useEffect(() => {
 		if (fileName) {
-			chart.load(fileName);
+			ctx.chart.load(fileName);
 		}
 	}, [fileName]);
 
 	useEffect(() => {
-		setChartRef({ nodes, edges, modules });
-	}, [nodes, edges, modules]);
+		setChartRef({
+			nodes: ctx.nodes,
+			edges: ctx.edges,
+			modules: ctx.modules,
+		});
+	}, [ctx.nodes, ctx.edges, ctx.modules]);
 
 	useEffect(() => {
-		if (chart.error) {
-			setError(chart.error.message);
+		if (ctx.chart.error) {
+			ctx.setError(ctx.chart.error.message);
 		}
-		if (mod.error) {
-			setError(mod.error.message);
+		if (ctx.mod.error) {
+			ctx.setError(ctx.mod.error.message);
 		}
-	}, [chart.error, mod.error]);
+	}, [ctx.chart.error, ctx.mod.error]);
 
 	setEditorContext({
 		chartContainerRef,
-		currentModule,
-		setCurrentModule,
-		modules,
-		setModules,
-		nodes,
-		setNodes,
-		onNodesChange,
-		edges,
-		setEdges,
-		onEdgesChange,
-		mode,
-		setMode,
-		moduleNodes,
-		setModuleNodes,
-		onModuleNodesChange,
-		moduleEdges,
-		setModuleEdges,
-		onModuleEdgesChange,
-		router,
-		instance,
-		setEditable,
-		chart,
-		mod,
-		setSim,
-		sim,
-		code,
-		codeOpen,
-		setCodeOpen,
 	});
 
 	return (
@@ -203,83 +143,81 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 				}}
 			>
 				<Flow
-					nodes={mode === 'module' ? moduleNodes : nodes}
-					edges={mode === 'module' ? moduleEdges : edges}
+					nodes={ctx.mode === 'module' ? ctx.moduleNodes : ctx.nodes}
+					edges={ctx.mode === 'module' ? ctx.moduleEdges : ctx.edges}
 					onConnect={onConnect}
 					onNodesChange={
-						mode === 'module' ? onModuleNodesChange : onNodesChange
+						ctx.mode === 'module' ?
+							ctx.onModuleNodesChange
+						:	ctx.onNodesChange
 					}
 					onEdgesChange={
-						mode === 'module' ? onModuleEdgesChange : onEdgesChange
+						ctx.mode === 'module' ?
+							ctx.onModuleEdgesChange
+						:	ctx.onEdgesChange
 					}
-					onInit={(i) => setInstance(i)}
-					editable={editable}
+					onInit={(i) => ctx.setInstance(i)}
+					editable={ctx.editable}
 					onNodeDoubleClick={(e, n) => {
 						if (n.type === 'module') {
 							handlers.handleEditModule(n);
 						}
 					}}
 				>
-					{sim && mode !== 'module' && (
+					{ctx.sim ?
 						<Panel position='top-center' style={titlePanelStyle}>
 							Simulation running..
-						</Panel>
-					)}
-					{mode === 'module' && (
-						<Panel position='top-center' style={titlePanelStyle}>
-							{!sim ?
-								<>
-									<span style={{ marginRight: '5px' }}>
-										Edit Module:
-									</span>
-									<input
-										style={{
-											...titleFont,
-											padding: '5px 10px',
-											borderRadius: '5px',
-											border: '1px solid #999',
-										}}
-										type='text'
-										value={currentModule?.label}
-										onChange={(e) => {
-											const val = e.currentTarget?.value;
-
-											if (val !== undefined) {
-												setCurrentModule(
-													(prevModule) => {
-														if (prevModule) {
-															return {
-																...prevModule,
-																label: val,
-															};
-														}
-														return null;
-													},
-												);
-											}
-										}}
-									/>
-								</>
-							:	<span>
-									Simulation running.. Module:{' '}
-									{currentModule?.label}
+							{ctx.mode === 'module' && (
+								<span style={{marginLeft:'10px'}}>
+									Module: {ctx.currentModule?.label}
 								</span>
-							}
+							)}
 						</Panel>
-					)}
+					: ctx.mode === 'module' ?
+						<Panel position='top-center' style={titlePanelStyle}>
+							<span style={{ marginRight: '5px' }}>
+								Edit Module:
+							</span>
+							<input
+								style={{
+									...titleFont,
+									padding: '5px 10px',
+									borderRadius: '5px',
+									border: '1px solid #999',
+								}}
+								type='text'
+								value={ctx.currentModule?.label}
+								onChange={(e) => {
+									const val = e.currentTarget?.value;
+
+									if (val !== undefined) {
+										ctx.setCurrentModule((prevModule) => {
+											if (prevModule) {
+												return {
+													...prevModule,
+													label: val,
+												};
+											}
+											return null;
+										});
+									}
+								}}
+							/>
+						</Panel>
+					:	''}
 					<ToolPanel
-						mode={mode === 'module' ? 'module' : 'chart'}
+						mode={ctx.mode === 'module' ? 'module' : 'chart'}
 						position='top-left'
-						simRunning={sim !== null}
+						simRunning={ctx.sim !== null}
 						handlers={{
 							open: handlers.handleOpenFolder,
 							save: handlers.handleSaveDialog,
 							new: handlers.handleNew,
-							compile: handlers.handleCompile(setCodeOpen),
+							compile: handlers.handleCompile(ctx.setCodeOpen),
 							run: handlers.handleSim,
 							tools: handlers.handleTools(
-								setNodesPaletteOpen,
-								setModulesPaletteOpen,
+								ctx.setNodesPaletteOpen,
+								ctx.setModulesPaletteOpen,
 							),
 							backToChart: handlers.handleSaveModule,
 						}}
@@ -289,18 +227,18 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 			<Dialogs
 				fileName={fileName || ''}
 				isOpen={{
-					nodes: nodesPaletteOpen,
-					modules: modulesPaletteOpen,
+					nodes: ctx.nodesPaletteOpen,
+					modules: ctx.modulesPaletteOpen,
 				}}
 				onClose={{
-					nodes: () => setNodesPaletteOpen(false),
-					modules: () => setModulesPaletteOpen(false),
+					nodes: () => ctx.setNodesPaletteOpen(false),
+					modules: () => ctx.setModulesPaletteOpen(false),
 				}}
 			/>
 			<ErrorDialog
-				isOpen={error != null}
-				onClose={() => setError(null)}
-				error={error || ''}
+				isOpen={ctx.error != null}
+				onClose={() => ctx.setError(null)}
+				error={ctx.error || ''}
 			/>
 		</>
 	);
