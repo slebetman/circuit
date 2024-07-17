@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Module } from '../../../hooks/useChart';
-import ToolButton from 'components/ToolPanel/ToolButton';
+import ToolButton from 'components/Panels/ToolButton';
 import Box from 'components/Icons/Box';
 
 type ModulesListProps = {
