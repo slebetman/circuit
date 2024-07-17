@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { DirListing } from 'lib/fileLister';
+import { useState } from 'react';
 
 const useChartList = () => {
 	const [isBusy, setIsBusy] = useState<boolean>(false);
 	const [error, setError] = useState<Error | null>(null);
-	const [files, setFiles] = useState<string[] | null>(null);
+	const [files, setFiles] = useState<DirListing[] | null>(null);
 
 	const load = async () => {
 		setIsBusy(true);

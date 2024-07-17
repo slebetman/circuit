@@ -1,13 +1,12 @@
 import fs from 'fs/promises';
 import { chartsdir } from './files';
 import path from 'path';
+import { listFiles } from './fileLister';
 
 const chartFileName = (name: string) => path.join(chartsdir(), `${name}.json`);
 
-export const listCharts = async () => {
-	return (await fs.readdir(chartsdir()))
-		.filter((x) => x.match(/\.json$/))
-		.map((x) => path.basename(x, '.json'));
+export const listCharts = () => {
+	return listFiles();
 };
 
 export const loadChart = async (name: string) => {

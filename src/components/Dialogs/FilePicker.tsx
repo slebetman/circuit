@@ -1,7 +1,7 @@
-import File from 'components/Icons/File';
 import Popup from 'components/Popup/Popup';
 import useChartList from 'hooks/useChartList';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { FileList } from './FilePicker/FileList';
 
 type FilePickerProps = {
 	title: string;
@@ -25,34 +25,14 @@ const FilePicker = ({ title, onSelect, onClose, isOpen }: FilePickerProps) => {
 					overflow: 'hidden auto',
 				}}
 			>
-				<table
-					style={{
-						width: '100%',
-						margin: '10px',
+				<FileList
+					files={chartList.files || []}
+					onSelect={(f) => {
+						if (f.type === 'file') {
+							onSelect(f.name);
+						}
 					}}
-				>
-					<tbody>
-						{chartList.files?.map((f, i) => (
-							<tr key={i}>
-								<td>
-									<File />
-								</td>
-								<td
-									style={{
-										minWidth: '220px',
-									}}
-								>
-									{f}
-								</td>
-								<td>
-									<button onClick={() => onSelect(f)}>
-										Open
-									</button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				/>
 			</div>
 		</Popup>
 	);
