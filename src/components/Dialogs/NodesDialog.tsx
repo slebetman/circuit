@@ -7,7 +7,7 @@ import Or from 'components/Icons/Or';
 import Xnor from 'components/Icons/Xnor';
 import Xor from 'components/Icons/Xor';
 import Popup from 'components/Popup/Popup';
-import ToolButton from 'components/ToolPanel/ToolButton';
+import ToolButton from 'components/Panels/ToolButton';
 
 type NodesDialogProps = {
 	onClick: (actionType: string) => void;

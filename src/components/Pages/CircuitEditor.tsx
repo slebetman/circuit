@@ -1,30 +1,17 @@
-import { CSSProperties, FC, useCallback, useEffect, useRef } from 'react';
+import { FC, useCallback, useRef } from 'react';
 import Flow from 'components/Flow/Flow';
-
-import { Module } from 'hooks/useChart';
-import { compile } from 'lib/compiler';
-import { addEdge, Connection, Edge, Panel } from 'reactflow';
-import ToolPanel from 'components/ToolPanel/ToolPanel';
+import { addEdge, Connection, Edge } from 'reactflow';
+import ToolPanel from 'components/Panels/ToolPanel';
 import ErrorDialog from 'components/Dialogs/ErrorDialog';
-import { setChartRef } from 'lib/chartRefs';
 import * as handlers from './Handlers';
 import { setEditorContext } from 'lib/editorContext';
 import Dialogs from './Dialogs';
 import { useEditorState } from 'hooks/useEditorState';
+import { StatusPanel } from 'components/Panels/StatusPanel';
+import { Effects } from './Effects';
 
 type EditorProps = {
 	fileName?: string;
-};
-
-const titleFont: CSSProperties = {
-	fontSize: '20px',
-};
-
-const titlePanelStyle: CSSProperties = {
-	...titleFont,
-	backgroundColor: '#ccc',
-	padding: '10px',
-	borderRadius: '10px',
 };
 
 const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
@@ -44,74 +31,16 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 	);
 
 	const chartContainerRef = useRef<HTMLDivElement | null>(null);
-
-	useEffect(() => {
-		if (ctx.instance && ctx.codeOpen) {
-			const n = ctx.instance.getNodes();
-			const e = ctx.instance.getEdges();
-
-			ctx.setCode(
-				compile({
-					nodes: n,
-					edges: e,
-				}).map((x) => x.replace(/this\["(.+?)"\]/g, '$1')),
-			);
-		}
-	}, [ctx.codeOpen, ctx.nodes, ctx.edges]);
-
-	useEffect(() => {
-		if (ctx.chart.chart) {
-			// HACK: Not sure why but need some delay to set nodes
-			ctx.setNodes([]);
-			ctx.setEdges([]);
-			ctx.setModules([]);
-			setTimeout(() => {
-				ctx.setNodes(ctx.chart.chart?.nodes || []);
-				ctx.setEdges(ctx.chart.chart?.edges || []);
-				ctx.setModules(ctx.chart.chart?.modules || []);
-				setTimeout(() => {
-					ctx.instance?.fitView({
-						padding: 0.25,
-					});
-				}, 50);
-			}, 0);
-		}
-	}, [ctx.chart.chart]);
-
-	useEffect(() => {
-		const name = ctx.mod.name;
-		handlers.loadModule(name, ctx.mod.chart);
-	}, [ctx.mod.chart]);
-
-	useEffect(() => {
-		if (fileName) {
-			ctx.chart.load(fileName);
-		}
-	}, [fileName]);
-
-	useEffect(() => {
-		setChartRef({
-			nodes: ctx.nodes,
-			edges: ctx.edges,
-			modules: ctx.modules,
-		});
-	}, [ctx.nodes, ctx.edges, ctx.modules]);
-
-	useEffect(() => {
-		if (ctx.chart.error) {
-			ctx.setError(ctx.chart.error.message);
-		}
-		if (ctx.mod.error) {
-			ctx.setError(ctx.mod.error.message);
-		}
-	}, [ctx.chart.error, ctx.mod.error]);
-
 	setEditorContext({
 		chartContainerRef,
 	});
 
 	return (
 		<>
+			<Effects
+				ctx={ctx}
+				fileName={fileName}
+			/>
 			<div
 				ref={chartContainerRef}
 				style={{
@@ -141,47 +70,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 						}
 					}}
 				>
-					{ctx.sim ?
-						<Panel position='top-center' style={titlePanelStyle}>
-							Simulation running..
-							{ctx.mode === 'module' && (
-								<span style={{ marginLeft: '10px' }}>
-									Module: {ctx.currentModule[0]?.label}
-								</span>
-							)}
-						</Panel>
-					: ctx.mode === 'module' ?
-						<Panel position='top-center' style={titlePanelStyle}>
-							<span style={{ marginRight: '5px' }}>
-								Edit Module:
-							</span>
-							<input
-								style={{
-									...titleFont,
-									padding: '5px 10px',
-									borderRadius: '5px',
-									border: '1px solid #999',
-								}}
-								type='text'
-								value={ctx.currentModule[0]?.label}
-								onChange={(e) => {
-									const val = e.currentTarget?.value;
-
-									if (val !== undefined) {
-										ctx.setCurrentModule((prevModule) => {
-											if (prevModule.length) {
-												prevModule[0] = {
-													...prevModule[0],
-													label: val,
-												};
-											}
-											return [...prevModule];
-										});
-									}
-								}}
-							/>
-						</Panel>
-					:	''}
+					<StatusPanel />
 					<ToolPanel
 						mode={ctx.mode === 'module' ? 'module' : 'chart'}
 						position='top-left'

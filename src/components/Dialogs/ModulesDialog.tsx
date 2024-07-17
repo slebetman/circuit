@@ -1,8 +1,9 @@
 import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
-import ToolButton from 'components/ToolPanel/ToolButton';
+import ToolButton from 'components/Panels/ToolButton';
 import { Module } from 'hooks/useChart';
 import { getEditorContext } from 'lib/editorContext';
+import { ModulesList } from './ModulesDialog/ModulesList';
 
 type ModulesDialogProps = {
 	modules: Module[];
@@ -53,62 +54,17 @@ const ModulesDialog = ({
 				<button onClick={createModule}>New</button>
 				<button onClick={importModule}>Import</button>
 			</div>
-			<div
-				style={{
-					padding: '2px',
-					display: 'flex',
-					gap: '2px',
-					flexDirection: 'column',
-				}}
-			>
-				{modules
-					?.filter((module) => {
-						// Avoid recursively nested modules
-						return !ctx.currentModule?.find(
-							(m) => m.type === module.type,
-						);
-					})
-					.map((module, idx) => (
-						<div
-							key={`${module.type}${idx}`}
-							style={{
-								display: 'flex',
-								flexDirection: 'row',
-								gap: '2px',
-							}}
-						>
-							<ToolButton
-								icon={Box}
-								label={module.label}
-								onClick={onClick}
-								actionType={`module:${module.label}:${module.type}`}
-								style={{
-									height: '50px',
-									width: '100px',
-								}}
-							/>
-							<div
-								style={{
-									display: 'flex',
-									flexDirection: 'column',
-									gap: '2px',
-									justifyContent: 'center',
-								}}
-							>
-								<button
-									onClick={() => editModule?.(module.type)}
-								>
-									Edit
-								</button>
-								<button
-									onClick={() => deleteModule?.(module.type)}
-								>
-									Delete
-								</button>
-							</div>
-						</div>
-					))}
-			</div>
+			<ModulesList
+				modules={modules.filter((module) => {
+					// Avoid recursively nested modules
+					return !ctx.currentModule?.find(
+						(m) => m.type === module.type,
+					);
+				})}
+				onSelect={onClick}
+				editModule={editModule}
+				deleteModule={deleteModule}
+			/>
 		</Popup>
 	);
 };
