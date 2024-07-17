@@ -2,8 +2,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { listCharts } from "lib/charts";
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
+  let {dir} = req.query;
+
+  if (dir instanceof Array) {
+    dir = dir[0];
+  }
+
   res.json({
-    charts: await listCharts(),
+    charts: await listCharts(dir),
   });
 };
 

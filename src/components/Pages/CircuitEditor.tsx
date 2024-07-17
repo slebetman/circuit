@@ -37,10 +37,7 @@ const CircuitEditor: FC<EditorProps> = ({ fileName }) => {
 
 	return (
 		<>
-			<Effects
-				ctx={ctx}
-				fileName={fileName}
-			/>
+			<Effects ctx={ctx} fileName={fileName} />
 			<div
 				ref={chartContainerRef}
 				style={{

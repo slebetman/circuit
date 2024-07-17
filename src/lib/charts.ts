@@ -5,8 +5,8 @@ import { listFiles } from './fileLister';
 
 const chartFileName = (name: string) => path.join(chartsdir(), `${name}.json`);
 
-export const listCharts = () => {
-	return listFiles();
+export const listCharts = (dir?: string) => {
+	return listFiles(dir);
 };
 
 export const loadChart = async (name: string) => {

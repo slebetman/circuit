@@ -9,8 +9,12 @@ export type DirListing = {
 	type: FileTypes;
 };
 
-export const listFiles = async () => {
-	return (await fs.readdir(chartsdir(), { withFileTypes: true }))
+export const listFiles = async (dir?: string) => {
+	return (
+		await fs.readdir(path.join(chartsdir(), dir || ''), {
+			withFileTypes: true,
+		})
+	)
 		.filter(
 			(x) => (x.isFile() && x.name.match(/\.json$/)) || x.isDirectory(),
 		)

@@ -1,7 +1,7 @@
 import CodeDialog from 'components/Dialogs/CodeDialog';
-import FilePicker from 'components/Dialogs/FilePicker';
 import ModulesDialog from 'components/Dialogs/ModulesDialog';
 import NodesDialog from 'components/Dialogs/NodesDialog';
+import OpenDialog from 'components/Dialogs/OpenDialog';
 import SaveDialog from 'components/Dialogs/SaveDialog';
 import { FC } from 'react';
 import * as handlers from './Handlers';
@@ -49,13 +49,13 @@ const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose }) => {
 				onClose={() => ctx.setCodeOpen?.(false)}
 				code={ctx.code || []}
 			/>
-			<FilePicker
+			<OpenDialog
 				title='Open File'
 				isOpen={ctx.mode === 'open'}
 				onSelect={handlers.handleSelectFile(fileName)}
 				onClose={() => ctx.setMode?.('chart')}
 			/>
-			<FilePicker
+			<OpenDialog
 				title='Import Module'
 				isOpen={ctx.mode === 'import'}
 				onSelect={(fileName) => {

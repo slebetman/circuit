@@ -6,11 +6,11 @@ const useChartList = () => {
 	const [error, setError] = useState<Error | null>(null);
 	const [files, setFiles] = useState<DirListing[] | null>(null);
 
-	const load = async () => {
+	const load = async (dir?: string) => {
 		setIsBusy(true);
 
 		try {
-			const res = await fetch('/api/charts');
+			const res = await fetch(`/api/charts${dir ? `?dir=${dir}` : ''}`);
 			const list = await res.json();
 
 			setFiles(list.charts);

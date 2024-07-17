@@ -1,15 +1,15 @@
-import { compile } from "lib/compiler";
-import { EditorContextType } from "lib/editorContext"
-import { FC, useEffect } from "react";
+import { compile } from 'lib/compiler';
+import { EditorContextType } from 'lib/editorContext';
+import { FC, useEffect } from 'react';
 import * as handlers from './Handlers';
-import { setChartRef } from "lib/chartRefs";
+import { setChartRef } from 'lib/chartRefs';
 
 type EffectsProps = {
 	ctx: EditorContextType;
 	fileName?: string;
-}
+};
 
-export const Effects:FC<EffectsProps> = ({ctx, fileName}) => {
+export const Effects: FC<EffectsProps> = ({ ctx, fileName }) => {
 	useEffect(() => {
 		if (ctx.instance && ctx.codeOpen) {
 			const n = ctx.instance.getNodes();
@@ -72,4 +72,4 @@ export const Effects:FC<EffectsProps> = ({ctx, fileName}) => {
 	}, [ctx.chart.error, ctx.mod.error]);
 
 	return <></>;
-}
+};
