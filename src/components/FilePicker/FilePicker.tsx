@@ -1,6 +1,7 @@
 import useChartList from 'hooks/useChartList';
 import { useEffect, useState } from 'react';
 import { FileList } from './FileList';
+import path from 'path';
 
 type FilePickerProps = {
 	onSelect: (file: string) => void;
@@ -26,7 +27,13 @@ const FilePicker = ({ onSelect }: FilePickerProps) => {
 				files={chartList.files || []}
 				onSelect={(f) => {
 					if (f.type === 'file') {
-						onSelect(f.name);
+						onSelect(path.join(...dir,f.name));
+					}
+					else if (f.name === '..') {
+						setDir((prev) => [...prev.slice(0,-1)])
+					}
+					else {
+						setDir((prev) => [...prev, f.name])
 					}
 				}}
 			/>

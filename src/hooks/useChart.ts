@@ -1,5 +1,6 @@
 import { Node, Edge } from 'reactflow';
 import { useEffect, useState } from 'react';
+import path from 'path';
 
 export type Module = {
 	type: string;
@@ -73,7 +74,7 @@ const useChart = () => {
 	const [chart, setChart] = useState<Chart | null>(null);
 
 	const load = async (filename: string) => {
-		setName(filename);
+		setName(path.basename(filename));
 		setIsBusy(true);
 
 		try {

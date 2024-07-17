@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { loadChart, saveChart } from "lib/charts";
+import path from "path";
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
-  const name = req.query.name as string;
+  let name = req.query.name;
   const chart = req.body;
 
-  await saveChart(name, chart);
+  if (typeof name === 'string') name = [name];
+  
+  if (name) await saveChart(path.join(...name), chart);
 
   res.json({
     status: "OK",
@@ -13,9 +16,11 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
-  const name = req.query.name as string;
+  let name = req.query.name;
 
-  res.json(await loadChart(name));
+  if (typeof name === 'string') name = [name];
+
+  if (name) res.json(await loadChart(path.join(...name)));
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
