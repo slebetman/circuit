@@ -26,8 +26,6 @@ const Home: NextPage = () => {
 				/>
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
-
-			{/* <header className={styles.header}>React Flow - Next.js Example</header> */}
 			<CircuitEditor fileName={path.join(...fileName)} />
 		</div>
 	);
