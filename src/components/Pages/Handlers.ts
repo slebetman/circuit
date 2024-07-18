@@ -126,7 +126,7 @@ export const handleDeleteModule = (type: string) => {
 	});
 	ctx.instance?.deleteElements({
 		nodes: ctx.nodes?.filter(
-			(x) => x.type === 'module' && x.data.type === type
+			(x) => x.type === 'module' && x.data.type === type,
 		),
 	});
 };
@@ -197,7 +197,7 @@ export const handleSaveModule = () => {
 	if (ctx.currentModule) {
 		ctx.setModules?.((prevModules) => {
 			const m = prevModules.filter(
-				(m) => m.type !== ctx.currentModule?.[0]?.type
+				(m) => m.type !== ctx.currentModule?.[0]?.type,
 			);
 			m.push({
 				type: ctx.currentModule?.[0]?.type || '',
@@ -211,7 +211,7 @@ export const handleSaveModule = () => {
 			ctx.setMode?.('chart');
 		} else {
 			const m = ctx.modules?.find(
-				(x) => x.type === ctx.currentModule?.[1]?.type
+				(x) => x.type === ctx.currentModule?.[1]?.type,
 			);
 
 			if (m) {
@@ -244,7 +244,7 @@ const startSim = () => {
 				};
 			}
 			return n;
-		})
+		}),
 	);
 
 	const updater = (state: SimState) => {
@@ -258,7 +258,7 @@ const startSim = () => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			ctx.setEdges?.((prevEdges) =>
 				prevEdges.map((e) => {
@@ -267,7 +267,7 @@ const startSim = () => {
 						on: state[varName(e.id)],
 					};
 					return e;
-				})
+				}),
 			);
 		} else {
 			ctx.setModuleNodes?.((prevNodes) =>
@@ -282,7 +282,7 @@ const startSim = () => {
 						};
 					}
 					return n;
-				})
+				}),
 			);
 			ctx.setModuleEdges?.((prevEdges) =>
 				prevEdges.map((e) => {
@@ -295,7 +295,7 @@ const startSim = () => {
 						on: val,
 					};
 					return e;
-				})
+				}),
 			);
 		}
 	};
@@ -331,8 +331,8 @@ export const loadModule = (name: string, chart: Chart | null | undefined) => {
 			if (chart.modules?.length) {
 				importedModules.push(
 					...chart.modules.filter(
-						(m) => !prevModules.find((x) => x.type === m.type)
-					)
+						(m) => !prevModules.find((x) => x.type === m.type),
+					),
 				);
 			}
 

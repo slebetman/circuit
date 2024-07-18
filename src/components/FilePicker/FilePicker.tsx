@@ -27,13 +27,11 @@ const FilePicker = ({ onSelect }: FilePickerProps) => {
 				files={chartList.files || []}
 				onSelect={(f) => {
 					if (f.type === 'file') {
-						onSelect(path.join(...dir,f.name));
-					}
-					else if (f.name === '..') {
-						setDir((prev) => [...prev.slice(0,-1)])
-					}
-					else {
-						setDir((prev) => [...prev, f.name])
+						onSelect(path.join(...dir, f.name));
+					} else if (f.name === '..') {
+						setDir((prev) => [...prev.slice(0, -1)]);
+					} else {
+						setDir((prev) => [...prev, f.name]);
 					}
 				}}
 			/>
