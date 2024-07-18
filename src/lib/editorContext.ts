@@ -13,7 +13,7 @@ import { SimObject } from './simulator';
 export type EditorMode = 'open' | 'import' | 'save' | 'chart' | 'module';
 
 export type EditorContextType = {
-	chartContainerRef?: MutableRefObject<any>;
+	chartContainerRef?: MutableRefObject<HTMLDivElement | null>;
 	currentModule?: Module[];
 	setCurrentModule?: Dispatch<SetStateAction<Module[]>>;
 	modules?: Module[];

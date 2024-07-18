@@ -67,34 +67,45 @@ export const handleCreateNode = (actionType: string) => {
 
 	const setter = ctx.mode === 'module' ? ctx.setModuleNodes : ctx.setNodes;
 
-	setter?.((prev) => {
-		let data: Record<string, any> = {};
+	if (ctx.instance) {
+		const center = ctx.instance.project({
+			x: (ctx.chartContainerRef?.current?.offsetWidth || 0) / 2,
+			y: (ctx.chartContainerRef?.current?.offsetHeight || 0) / 2,
+		});
 
-		switch (type) {
-			case 'comment':
-			case 'in':
-			case 'out':
-				data.label = type;
-				break;
-			case 'module':
-				data.label = moduleLabel;
-				data.type = moduleType;
-				break;
-		}
+		ctx.nodes?.forEach((n) => {
+			if (n.position.x === center.x && n.position.y === center.y) {
+				center.x += 5;
+				center.y += 3;
+			}
+		});
 
-		return [
-			...prev,
-			{
-				id: `${generateId(ctx.instance || null)}`,
-				type,
-				data,
-				position: {
-					x: 0,
-					y: 0,
+		setter?.((prev) => {
+			let data: Record<string, any> = {};
+
+			switch (type) {
+				case 'comment':
+				case 'in':
+				case 'out':
+					data.label = type;
+					break;
+				case 'module':
+					data.label = moduleLabel;
+					data.type = moduleType;
+					break;
+			}
+
+			return [
+				...prev,
+				{
+					id: `${generateId(ctx.instance || null)}`,
+					type,
+					data,
+					position: { x: center.x, y: center.y },
 				},
-			},
-		];
-	});
+			];
+		});
+	}
 };
 
 export const handleTools =
@@ -115,7 +126,7 @@ export const handleDeleteModule = (type: string) => {
 	});
 	ctx.instance?.deleteElements({
 		nodes: ctx.nodes?.filter(
-			(x) => x.type === 'module' && x.data.type === type,
+			(x) => x.type === 'module' && x.data.type === type
 		),
 	});
 };
@@ -186,7 +197,7 @@ export const handleSaveModule = () => {
 	if (ctx.currentModule) {
 		ctx.setModules?.((prevModules) => {
 			const m = prevModules.filter(
-				(m) => m.type !== ctx.currentModule?.[0]?.type,
+				(m) => m.type !== ctx.currentModule?.[0]?.type
 			);
 			m.push({
 				type: ctx.currentModule?.[0]?.type || '',
@@ -200,7 +211,7 @@ export const handleSaveModule = () => {
 			ctx.setMode?.('chart');
 		} else {
 			const m = ctx.modules?.find(
-				(x) => x.type === ctx.currentModule?.[1]?.type,
+				(x) => x.type === ctx.currentModule?.[1]?.type
 			);
 
 			if (m) {
@@ -233,7 +244,7 @@ const startSim = () => {
 				};
 			}
 			return n;
-		}),
+		})
 	);
 
 	const updater = (state: SimState) => {
@@ -247,7 +258,7 @@ const startSim = () => {
 						};
 					}
 					return n;
-				}),
+				})
 			);
 			ctx.setEdges?.((prevEdges) =>
 				prevEdges.map((e) => {
@@ -256,7 +267,7 @@ const startSim = () => {
 						on: state[varName(e.id)],
 					};
 					return e;
-				}),
+				})
 			);
 		} else {
 			ctx.setModuleNodes?.((prevNodes) =>
@@ -271,7 +282,7 @@ const startSim = () => {
 						};
 					}
 					return n;
-				}),
+				})
 			);
 			ctx.setModuleEdges?.((prevEdges) =>
 				prevEdges.map((e) => {
@@ -284,7 +295,7 @@ const startSim = () => {
 						on: val,
 					};
 					return e;
-				}),
+				})
 			);
 		}
 	};
@@ -320,8 +331,8 @@ export const loadModule = (name: string, chart: Chart | null | undefined) => {
 			if (chart.modules?.length) {
 				importedModules.push(
 					...chart.modules.filter(
-						(m) => !prevModules.find((x) => x.type === m.type),
-					),
+						(m) => !prevModules.find((x) => x.type === m.type)
+					)
 				);
 			}
 
