@@ -98,7 +98,8 @@ function getPoints({
 	const currDir = dir[dirAccessor];
 
 	let points: XYPosition[] = [];
-	let centerX = 0, centerY = 0;
+	let centerX = 0,
+		centerY = 0;
 	const sourceGapOffset = { x: 0, y: 0 };
 	const targetGapOffset = { x: 0, y: 0 };
 
@@ -124,8 +125,8 @@ function getPoints({
 				// ---  |
 				//      |
 				//      ---
-				verticalSplit.push({x: sourceGapped.x ,y: centerY});
-				verticalSplit.push({x: centerX ,y: centerY});
+				verticalSplit.push({ x: sourceGapped.x, y: centerY });
+				verticalSplit.push({ x: centerX, y: centerY });
 			}
 			if (centerY > targetGapped.y) {
 				// ---
@@ -133,27 +134,25 @@ function getPoints({
 				//   |  ---
 				//   |  |
 				//   ----
-				verticalSplit.push({x: centerX ,y: sourceGapped.y});
-				verticalSplit.push({x: centerX ,y: centerY});
-				verticalSplit.push({x: targetGapped.x ,y: centerY});
-			}
-			else {
+				verticalSplit.push({ x: centerX, y: sourceGapped.y });
+				verticalSplit.push({ x: centerX, y: centerY });
+				verticalSplit.push({ x: targetGapped.x, y: centerY });
+			} else {
 				// ---
 				//   |
 				//   ---
 				verticalSplit.push({ x: centerX, y: sourceGapped.y });
 				verticalSplit.push({ x: centerX, y: targetGapped.y });
 			}
-		}
-		else {
+		} else {
 			if (centerY > sourceGapped.y) {
 				//   ----
 				//   |  |
 				//   |  ---
 				//   |
 				// ---
-				verticalSplit.push({x: sourceGapped.x ,y: centerY});
-				verticalSplit.push({x: centerX ,y: centerY});
+				verticalSplit.push({ x: sourceGapped.x, y: centerY });
+				verticalSplit.push({ x: centerX, y: centerY });
 			}
 			if (centerY < targetGapped.y) {
 				//   ----
@@ -161,11 +160,10 @@ function getPoints({
 				//   |  ---
 				//   |
 				// ---
-				verticalSplit.push({x: centerX ,y: sourceGapped.y});
-				verticalSplit.push({x: centerX ,y: centerY});
-				verticalSplit.push({x: targetGapped.x ,y: centerY});
-			}
-			else {
+				verticalSplit.push({ x: centerX, y: sourceGapped.y });
+				verticalSplit.push({ x: centerX, y: centerY });
+				verticalSplit.push({ x: targetGapped.x, y: centerY });
+			} else {
 				//   ---
 				//   |
 				// ---
@@ -173,7 +171,6 @@ function getPoints({
 				verticalSplit.push({ x: centerX, y: targetGapped.y });
 			}
 		}
-
 
 		//    |
 		//  ---
@@ -196,17 +193,14 @@ function getPoints({
 		// const targetSource: XYPosition[] = [
 		// 	{ x: targetGapped.x, y: sourceGapped.y },
 		// ];
-
 		// // this handles edges with same handle positions
 		// if (dirAccessor === 'x') {
 		// 	points = sourceDir.x === currDir ? targetSource : sourceTarget;
 		// } else {
 		// 	points = sourceDir.y === currDir ? sourceTarget : targetSource;
 		// }
-
 		// if (sourcePosition === targetPosition) {
 		// 	const diff = Math.abs(source[dirAccessor] - target[dirAccessor]);
-
 		// 	// if an edge goes from right to right for example (sourcePosition === targetPosition) and
 		// 	// the distance between source.x and target.x is less than the offset, the added point and
 		// 	// the gapped source/target will overlap. This leads to a weird edge path. To avoid this we add
@@ -225,7 +219,6 @@ function getPoints({
 		// 		}
 		// 	}
 		// }
-
 		// // these are conditions for handling mixed handle positions like Right -> Bottom for example
 		// if (sourcePosition !== targetPosition) {
 		// 	const dirAccessorOpposite = dirAccessor === 'x' ? 'y' : 'x';
@@ -244,12 +237,10 @@ function getPoints({
 		// 		(sourceDir[dirAccessor] !== 1 &&
 		// 			((!isSameDir && sourceLtTargetOppo) ||
 		// 				(isSameDir && sourceGtTargetOppo)));
-
 		// 	if (flipSourceTarget) {
 		// 		points = dirAccessor === 'x' ? sourceTarget : targetSource;
 		// 	}
 		// }
-
 		// const sourceGapPoint = {
 		// 	x: sourceGapped.x + sourceGapOffset.x,
 		// 	y: sourceGapped.y + sourceGapOffset.y,
@@ -266,7 +257,6 @@ function getPoints({
 		// 	Math.abs(sourceGapPoint.y - points[0].y),
 		// 	Math.abs(targetGapPoint.y - points[0].y),
 		// );
-
 		// // we want to place the label on the longest segment of the edge
 		// if (maxXDistance >= maxYDistance) {
 		// 	centerX = (sourceGapPoint.x + targetGapPoint.x) / 2;
