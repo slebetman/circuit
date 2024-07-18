@@ -41,13 +41,13 @@ const Dialogs: FC<DialogsProps> = ({ fileName, isOpen, onClose }) => {
 				createModule={handlers.handleCreateModule}
 				editModule={handlers.handleEditModule}
 				deleteModule={handlers.handleDeleteModule}
-				modules={ctx.modules || []}
+				modules={ctx.modules ?? []}
 				// visible={ctx.mode !== 'module'}
 			/>
 			<CodeDialog
-				isOpen={ctx.codeOpen || false}
+				isOpen={ctx.codeOpen ?? false}
 				onClose={() => ctx.setCodeOpen?.(false)}
-				code={ctx.code || []}
+				code={ctx.code ?? []}
 			/>
 			<OpenDialog
 				title='Open File'

@@ -59,7 +59,7 @@ const Flow: FC<FlowProps> = ({ editable, children, edges, ...props }) => {
 				nodesFocusable={editable}
 				elementsSelectable={editable}
 				fitView
-				isValidConnection={onlyOneConnectionPerInput(edges || [])}
+				isValidConnection={onlyOneConnectionPerInput(edges ?? [])}
 				edges={edges}
 				{...props}
 			>

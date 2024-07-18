@@ -98,7 +98,7 @@ export const handleCreateNode = (actionType: string) => {
 			return [
 				...prev,
 				{
-					id: `${generateId(ctx.instance || null)}`,
+					id: `${generateId(ctx.instance)}`,
 					type,
 					data,
 					position: { x: center.x, y: center.y },
@@ -134,7 +134,7 @@ export const handleDeleteModule = (type: string) => {
 export const handleCreateModule = () => {
 	ctx.setCurrentModule?.((prevModule) => [
 		{
-			type: `${generateId(ctx.instance || null)}`,
+			type: `${generateId(ctx.instance)}`,
 			label: '',
 			nodes: [],
 			edges: [],
@@ -200,10 +200,10 @@ export const handleSaveModule = () => {
 				(m) => m.type !== ctx.currentModule?.[0]?.type,
 			);
 			m.push({
-				type: ctx.currentModule?.[0]?.type || '',
-				label: ctx.currentModule?.[0]?.label || '',
-				nodes: [...(ctx.moduleNodes?.map(resetNodeData) || [])],
-				edges: [...(ctx.moduleEdges?.map(resetEdgeData) || [])],
+				type: ctx.currentModule?.[0]?.type ?? '',
+				label: ctx.currentModule?.[0]?.label ?? '',
+				nodes: [...(ctx.moduleNodes?.map(resetNodeData) ?? [])],
+				edges: [...(ctx.moduleEdges?.map(resetEdgeData) ?? [])],
 			});
 			return m;
 		});
@@ -231,8 +231,8 @@ export const handleSaveModule = () => {
 const startSim = () => {
 	ctx.setEditable?.(false);
 	const s = simulator({
-		nodes: ctx.nodes || [],
-		edges: ctx.edges || [],
+		nodes: ctx.nodes ?? [],
+		edges: ctx.edges ?? [],
 	});
 
 	ctx.setNodes?.((nodes) =>

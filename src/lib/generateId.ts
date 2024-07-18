@@ -5,7 +5,7 @@ const nanoid = customAlphabet(
 	'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 );
 
-const generateId = (instance: ReactFlowInstance | null) => {
+const generateId = (instance: ReactFlowInstance | null | undefined) => {
 	let ok = false;
 	let id;
 	// retry if id is duplicate

@@ -24,7 +24,7 @@ const FilePicker = ({ onSelect }: FilePickerProps) => {
 		>
 			<FileList
 				isRoot={dir.length === 0}
-				files={chartList.files || []}
+				files={chartList.files ?? []}
 				onSelect={(f) => {
 					if (f.type === 'file') {
 						onSelect(path.join(...dir, f.name));

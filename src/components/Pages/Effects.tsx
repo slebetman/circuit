@@ -31,9 +31,9 @@ export const Effects: FC<EffectsProps> = ({ ctx, fileName }) => {
 			ctx.setEdges?.([]);
 			ctx.setModules?.([]);
 			setTimeout(() => {
-				ctx.setNodes?.(ctx.chart.chart?.nodes || []);
-				ctx.setEdges?.(ctx.chart.chart?.edges || []);
-				ctx.setModules?.(ctx.chart.chart?.modules || []);
+				ctx.setNodes?.(ctx.chart.chart?.nodes ?? []);
+				ctx.setEdges?.(ctx.chart.chart?.edges ?? []);
+				ctx.setModules?.(ctx.chart.chart?.modules ?? []);
 				setTimeout(() => {
 					ctx.instance?.fitView({
 						padding: 0.25,
@@ -56,8 +56,8 @@ export const Effects: FC<EffectsProps> = ({ ctx, fileName }) => {
 
 	useEffect(() => {
 		setChartRef({
-			nodes: ctx.nodes || [],
-			edges: ctx.edges || [],
+			nodes: ctx.nodes ?? [],
+			edges: ctx.edges ?? [],
 			modules: ctx.modules,
 		});
 	}, [ctx.nodes, ctx.edges, ctx.modules]);
