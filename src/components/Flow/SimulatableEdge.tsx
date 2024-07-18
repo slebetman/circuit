@@ -88,14 +88,6 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 		return y;
 	};
 
-	const drawMidHandleLine = () => {
-		return (
-			drawDragHandles() &&
-			labelX >= sourceX + handleOffset.source + defaultHandleOffset - 1 &&
-			labelX <= targetX - handleOffset.target - defaultHandleOffset + 1
-		);
-	};
-
 	const drawDragHandles = () => {
 		return selected && data?.on === undefined;
 	};
@@ -111,16 +103,6 @@ export const SimulatableEdge: FC<EdgeProps<SimulatableEdgeData>> = ({
 
 	return (
 		<>
-			{drawMidHandleLine() && (
-				<line
-					x1={labelX}
-					x2={labelX}
-					y1={labelY}
-					y2={midHandleLineY()}
-					stroke='#999'
-					strokeDasharray={2}
-				/>
-			)}
 			<path
 				style={style}
 				stroke={
