@@ -1,9 +1,9 @@
 import { memo, FC, useState, FormEvent, CSSProperties, useEffect } from 'react';
 import { NodeProps } from 'reactflow';
+import { labelFont } from './NodeFont';
 
 const commentFont: CSSProperties = {
-	fontFamily: 'monospace',
-	fontSize: '10px',
+	...labelFont,
 	fontStyle: 'italic',
 	whiteSpace: 'pre-wrap',
 };

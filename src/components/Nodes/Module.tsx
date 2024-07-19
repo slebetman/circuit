@@ -1,10 +1,7 @@
 import { getChartRef } from 'lib/chartRefs';
 import { memo, FC, CSSProperties, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-
-const labelFont: CSSProperties = {
-	fontSize: '8px',
-};
+import { labelFont } from './NodeFont';
 
 const nodeStyle: CSSProperties = {
 	...labelFont,
