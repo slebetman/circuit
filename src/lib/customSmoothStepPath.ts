@@ -198,7 +198,14 @@ function getPoints({
 		}
 
 		if (sourceDir[dirAccessor] === currDir) {
-			points = dirAccessor === 'x' ? verticalSplit : horizontalSplit;
+			points =
+				(
+					dirAccessor === 'x' &&
+					centerX <= targetGapped.x &&
+					centerX >= sourceGapped.x
+				) ?
+					verticalSplit
+				:	horizontalSplit;
 		} else {
 			points = dirAccessor === 'x' ? horizontalSplit : verticalSplit;
 		}
