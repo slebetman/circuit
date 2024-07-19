@@ -146,13 +146,14 @@ function getPoints({
 			}
 		} else {
 			if (centerY > sourceGapped.y) {
-				//   ----
+				//      ---
+				//      |
+				// ---  |
 				//   |  |
-				//   |  ---
-				//   |
-				// ---
+				//   ----
 				verticalSplit.push({ x: sourceGapped.x, y: centerY });
 				verticalSplit.push({ x: centerX, y: centerY });
+				verticalSplit.push({ x: centerX, y: targetGapped.y });
 			} else if (centerY < targetGapped.y) {
 				//   ----
 				//   |  |
