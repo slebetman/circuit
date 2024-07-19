@@ -127,8 +127,8 @@ function getPoints({
 				//      ---
 				verticalSplit.push({ x: sourceGapped.x, y: centerY });
 				verticalSplit.push({ x: centerX, y: centerY });
-			}
-			if (centerY > targetGapped.y) {
+				verticalSplit.push({ x: centerX, y: targetGapped.y });
+			} else if (centerY > targetGapped.y) {
 				// ---
 				//   |
 				//   |  ---
@@ -153,8 +153,7 @@ function getPoints({
 				// ---
 				verticalSplit.push({ x: sourceGapped.x, y: centerY });
 				verticalSplit.push({ x: centerX, y: centerY });
-			}
-			if (centerY < targetGapped.y) {
+			} else if (centerY < targetGapped.y) {
 				//   ----
 				//   |  |
 				//   |  ---
@@ -172,13 +171,31 @@ function getPoints({
 			}
 		}
 
-		//    |
-		//  ---
-		//  |
-		const horizontalSplit: XYPosition[] = [
-			{ x: sourceGapped.x, y: centerY },
-			{ x: targetGapped.x, y: centerY },
-		];
+		const horizontalSplit: XYPosition[] = [];
+
+		if (centerX > sourceGapped.x) {
+			//      --
+			//       |
+			//  ------
+			//  |
+			horizontalSplit.push({ x: centerX, y: sourceGapped.y });
+			horizontalSplit.push({ x: centerX, y: centerY });
+			horizontalSplit.push({ x: targetGapped.x, y: centerY });
+		} else if (centerX < targetGapped.x) {
+			//       |
+			//  ------
+			//  |
+			//  --
+			horizontalSplit.push({ x: sourceGapped.x, y: centerY });
+			horizontalSplit.push({ x: centerX, y: centerY });
+			horizontalSplit.push({ x: centerX, y: targetGapped.y });
+		} else {
+			//    |
+			//  ---
+			//  |
+			horizontalSplit.push({ x: sourceGapped.x, y: centerY });
+			horizontalSplit.push({ x: targetGapped.x, y: centerY });
+		}
 
 		if (sourceDir[dirAccessor] === currDir) {
 			points = dirAccessor === 'x' ? verticalSplit : horizontalSplit;
