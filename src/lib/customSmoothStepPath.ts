@@ -120,31 +120,27 @@ function getPoints({
 
 		if (source.y < target.y) {
 			if (centerY < sourceGapped.y) {
-				//   ----
-				//   |  |
-				// ---  |
-				//      |
-				//      ---
+				//   ,--,
+				// --'  |
+				//      '--
 				verticalSplit = [
 					{ x: sourceGapped.x, y: centerY },
 					{ x: centerX, y: centerY },
 					{ x: centerX, y: targetGapped.y },
 				];
 			} else if (centerY > targetGapped.y) {
-				// ---
-				//   |
-				//   |  ---
-				//   |  |
-				//   ----
+				// --,
+				//   |  ,--
+				//   '--'
 				verticalSplit = [
 					{ x: centerX, y: sourceGapped.y },
 					{ x: centerX, y: centerY },
 					{ x: targetGapped.x, y: centerY },
 				];
 			} else {
-				// ---
+				// --,
 				//   |
-				//   ---
+				//   '--
 				verticalSplit = [
 					{ x: centerX, y: sourceGapped.y },
 					{ x: centerX, y: targetGapped.y },
@@ -152,31 +148,27 @@ function getPoints({
 			}
 		} else {
 			if (centerY > sourceGapped.y) {
-				//      ---
-				//      |
-				// ---  |
-				//   |  |
-				//   ----
+				//      ,--
+				// --,  |
+				//   '--'
 				verticalSplit = [
 					{ x: sourceGapped.x, y: centerY },
 					{ x: centerX, y: centerY },
 					{ x: centerX, y: targetGapped.y },
 				];
 			} else if (centerY < targetGapped.y) {
-				//   ----
-				//   |  |
-				//   |  ---
-				//   |
-				// ---
+				//   ,--,
+				//   |  '--
+				// --'
 				verticalSplit = [
 					{ x: centerX, y: sourceGapped.y },
 					{ x: centerX, y: centerY },
 					{ x: targetGapped.x, y: centerY },
 				];
 			} else {
-				//   ---
+				//   ,--
 				//   |
-				// ---
+				// --'
 				verticalSplit = [
 					{ x: centerX, y: sourceGapped.y },
 					{ x: centerX, y: targetGapped.y },
@@ -187,9 +179,8 @@ function getPoints({
 		let horizontalSplit: XYPosition[] = [];
 
 		if (centerX > sourceGapped.x) {
-			//      --
-			//       |
-			//  ------
+			//      --,
+			//  ,-----'
 			//  |
 			horizontalSplit = [
 				{ x: centerX, y: sourceGapped.y },
@@ -197,18 +188,17 @@ function getPoints({
 				{ x: targetGapped.x, y: centerY },
 			];
 		} else if (centerX < targetGapped.x) {
-			//       |
-			//  ------
-			//  |
-			//  --
+			//        |
+			//  ,-----'
+			//  '--
 			horizontalSplit = [
 				{ x: sourceGapped.x, y: centerY },
 				{ x: centerX, y: centerY },
 				{ x: centerX, y: targetGapped.y },
 			];
 		} else {
-			//    |
-			//  ---
+			//     |
+			//  ,--'
 			//  |
 			horizontalSplit = [
 				{ x: sourceGapped.x, y: centerY },
