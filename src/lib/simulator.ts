@@ -58,10 +58,12 @@ export const compileForSimNonRecursive = (opt: ComilerOptions) => {
 export const simulator = (opt: ComilerOptions) => {
 	const simData = compileForSimNonRecursive(opt);
 
-	let interval: any;
+	let running: boolean;
+	let SPEED = 1; // 19, 313, 1913, 2687
+	let DELAY = 1;
 
 	function stop() {
-		clearInterval(interval);
+		running = false;
 	}
 
 	function step(updater?: UpdaterFunction) {
@@ -80,18 +82,24 @@ export const simulator = (opt: ComilerOptions) => {
 		return newState;
 	}
 
-	const SPEED = 1; // 19, 313, 1913, 2687
-	const DELAY = 0;
-
 	function start(updater?: UpdaterFunction) {
 		stop();
-		interval = setInterval(() => {
-			for (let i = 0; i < SPEED; i++) step(updater);
+		running = true;
+		setTimeout(function loop() {
+			if (running) {
+				for (let i = 0; i < SPEED; i++) step(updater);
+				setTimeout(loop, DELAY);
+			}
 		}, DELAY);
 	}
 
 	function set(key: string, val: boolean) {
 		simData.state[key] = val;
+	}
+
+	function setSpeed(speed: number, delay: number) {
+		SPEED = speed;
+		DELAY = delay;
 	}
 
 	return {
@@ -101,5 +109,6 @@ export const simulator = (opt: ComilerOptions) => {
 		stop,
 		step,
 		set,
+		setSpeed,
 	} as SimObject;
 };
