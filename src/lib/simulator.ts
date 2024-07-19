@@ -17,6 +17,7 @@ export type SimObject = {
 	stop: Function;
 	step: (updater?: UpdaterFunction) => void;
 	set: (key: string, val: boolean) => void;
+	setSpeed: (speed: number, delay: number) => void;
 };
 
 export type UpdaterFunction = (state: SimState) => void;
