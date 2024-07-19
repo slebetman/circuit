@@ -27,7 +27,7 @@ const DragHandle: FC<DragHandleProps> = ({
 		fontSize: '12px',
 		padding: drag ? '100px' : 0,
 		borderRadius: drag ? '200px' : 0,
-		zIndex: '9999999',
+		zIndex: drag ? '9999999' : '99999',
 	};
 
 	if (debugBorderColor) {
