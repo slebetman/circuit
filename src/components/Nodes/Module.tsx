@@ -1,7 +1,7 @@
 import { getChartRef } from 'lib/chartRefs';
 import { memo, FC, CSSProperties, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { labelFont } from './NodeFont';
+import { labelFont } from './nodeFont';
 
 const nodeStyle: CSSProperties = {
 	...labelFont,

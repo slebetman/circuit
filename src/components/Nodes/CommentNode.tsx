@@ -1,6 +1,6 @@
 import { memo, FC, useState, FormEvent, CSSProperties, useEffect } from 'react';
 import { NodeProps } from 'reactflow';
-import { labelFont } from './NodeFont';
+import { labelFont } from './nodeFont';
 
 const commentFont: CSSProperties = {
 	...labelFont,

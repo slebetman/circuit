@@ -1,7 +1,7 @@
 import { getEditorContext } from 'lib/editorContext';
 import { memo, FC, useState, FormEvent, CSSProperties, useEffect } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
-import { labelFont } from './NodeFont';
+import { labelFont } from './nodeFont';
 
 const inputStyle: CSSProperties = {
 	...labelFont,
