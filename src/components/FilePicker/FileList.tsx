@@ -1,5 +1,5 @@
 import { DirListing } from 'lib/fileLister';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import FileItem from './FileItem';
 
 type FileListProps = {
