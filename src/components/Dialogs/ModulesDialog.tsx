@@ -1,6 +1,4 @@
-import Box from 'components/Icons/Box';
 import Popup from 'components/Popup/Popup';
-import ToolButton from 'components/Panels/ToolButton';
 import { Module } from 'hooks/useChart';
 import { getEditorContext } from 'lib/editorContext';
 import { ModulesList } from './ModulesDialog/ModulesList';
